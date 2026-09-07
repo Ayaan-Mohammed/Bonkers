@@ -238,13 +238,17 @@
 <!-- ============ 2. DIGITAL LAND PASSPORT ============ -->
 <section class="dark-section passport-section" id="passport" style="display:none;">
   <div class="wrap">
-    <div class="section-top-row">
-      <div>
-        <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 2</div>
-        <h2 class="section-head">Digital Land Passport</h2>
-        <p class="section-lede">A single verifiable digital land certificate — consolidating parcel identity, ownership, area, and cadastral status.</p>
+    <div class="passport-intro">
+      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 2</div>
+      <h2 class="section-head">Digital Land Passport</h2>
+      <p class="section-lede">A single verifiable digital land certificate — consolidating parcel identity, ownership, area, and cadastral status.</p>
+    </div>
+
+    <div class="passport-action-bar">
+      <div class="pab-status">
+        <span class="pab-dot"></span> Official Verifiable Digital Certificate
       </div>
-      <button type="button" class="passport-print-btn" onclick="window.print()">
+      <button type="button" class="passport-print-btn" id="passport-print-btn" onclick="printPassport()">
         <span>Print Passport</span> 🖨️
       </button>
     </div>

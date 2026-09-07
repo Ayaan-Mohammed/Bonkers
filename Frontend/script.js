@@ -540,8 +540,130 @@
         '</div>' +
       '</div>';
 
+    window.__currentParcel = p;
     drawQr("passport-qr-canvas");
   }
+
+  // Dedicated Print Passport function: opens ONLY the verifiable Digital Land Passport certificate
+  window.printPassport = function(){
+    var p = window.__currentParcel;
+    var sheet = document.getElementById("passport-sheet");
+    if(!sheet){
+      window.print();
+      return;
+    }
+
+    var ulpin = (p && p.ulpin) || "TS-DEMO-245-018";
+    var survey = (p && p.survey) || "245/A";
+    var area = (p && p.area) || "2.30 Acres";
+    var state = (p && p.state) || "Telangana";
+    var district = (p && p.district) || "Rangareddy";
+    var location = (p && (p.village ? (p.village + ", " + (p.mandal || "") + (p.coords ? " (" + p.coords + ")" : "")) : p.location)) || "Kanakamamidi, Moinabad";
+    var status = (p && p.status) || "✓ Verified — Consistent";
+    var holder = (p && p.holder) || "K. Venkat Reddy";
+    var ror = (p && p.ror) || "Dharani e-Pattadar Passbook";
+    var isWarn = (p && p.score && p.score < 90);
+
+    var qrCanvas = document.getElementById("passport-qr-canvas");
+    var qrDataUrl = qrCanvas ? qrCanvas.toDataURL("image/png") : "";
+
+    var printFrame = document.getElementById("passport-print-frame");
+    if(printFrame) printFrame.remove();
+
+    printFrame = document.createElement("iframe");
+    printFrame.id = "passport-print-frame";
+    printFrame.style.position = "fixed";
+    printFrame.style.right = "-9999px";
+    printFrame.style.bottom = "-9999px";
+    printFrame.style.width = "1024px";
+    printFrame.style.height = "768px";
+    printFrame.style.border = "0";
+    document.body.appendChild(printFrame);
+
+    var html = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+      '<title>Digital Land Passport — ' + ulpin + '</title>' +
+      '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+      '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">' +
+      '<style>' +
+      '@page { size: A4 portrait; margin: 12mm 15mm; }' +
+      '* { box-sizing: border-box; }' +
+      'body { margin: 0; padding: 12px; font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; background: #fff; color: #1a1207; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.cert-card { border: 2.5px solid #1a1207; border-radius: 12px; padding: 28px 32px; background: #fff; position: relative; }' +
+      '.cert-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1a1207; padding-bottom: 18px; margin-bottom: 22px; gap: 16px; }' +
+      '.cert-brand { display: flex; align-items: center; gap: 14px; }' +
+      '.cert-emblem { font-size: 2.4rem; line-height: 1; }' +
+      '.cert-title h1 { margin: 0; font-size: 1.35rem; font-weight: 800; color: #1a1207; letter-spacing: -0.02em; }' +
+      '.cert-title p { margin: 4px 0 0; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6b5a45; font-weight: 700; }' +
+      '.cert-meta { text-align: right; display: flex; align-items: center; gap: 14px; }' +
+      '.ulpin-pill { font-family: "JetBrains Mono", monospace; font-size: 0.92rem; font-weight: 700; background: #fdfaf3; color: #1a1207; padding: 7px 14px; border-radius: 6px; border: 1.5px solid #c29e69; }' +
+      '.ulpin-sub { font-size: 0.68rem; color: #6b5a45; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }' +
+      '.qr-box { width: 56px; height: 56px; border-radius: 6px; border: 1px solid #d4c5b0; display: block; }' +
+      '.fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }' +
+      '.field-box { background: #faf8f5; border: 1px solid #ddd2c4; border-radius: 8px; padding: 11px 13px; }' +
+      '.field-box dt { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7a6a55; font-weight: 700; margin-bottom: 4px; }' +
+      '.field-box dd { margin: 0; font-size: 0.92rem; font-weight: 700; color: #1a1207; }' +
+      '.field-box.mono dd { font-family: "JetBrains Mono", monospace; color: #92510b; }' +
+      '.cert-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1.5px solid #ddd2c4; padding-top: 16px; gap: 16px; }' +
+      '.cert-seal { display: inline-flex; align-items: center; gap: 8px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; background: #eafaf1; color: #1e8449; border: 1.5px solid #27ae60; }' +
+      '.cert-seal.warn { background: #fef5e7; color: #ba4a00; border-color: #d35400; }' +
+      '.cert-legal { font-size: 0.70rem; color: #6b5a45; line-height: 1.4; max-width: 480px; text-align: right; }' +
+      '</style></head><body>' +
+      '<div class="cert-card">' +
+        '<div class="cert-header">' +
+          '<div class="cert-brand">' +
+            '<div class="cert-emblem">🏛️</div>' +
+            '<div class="cert-title">' +
+              '<h1>National Land Intelligence Platform</h1>' +
+              '<p>Digital Land Certificate &middot; Government of India / ' + state + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cert-meta">' +
+            '<div>' +
+              '<div class="ulpin-pill">' + ulpin + '</div>' +
+              '<div class="ulpin-sub">Unique Land Parcel Identifier</div>' +
+            '</div>' +
+            (qrDataUrl ? '<img class="qr-box" src="' + qrDataUrl + '" alt="QR Code">' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="fields-grid">' +
+          '<div class="field-box mono"><dt>1. ULPIN / Parcel ID</dt><dd>' + ulpin + '</dd></div>' +
+          '<div class="field-box"><dt>2. Survey / Khasra / Patta</dt><dd>' + survey + '</dd></div>' +
+          '<div class="field-box"><dt>3. Area</dt><dd>' + area + '</dd></div>' +
+          '<div class="field-box"><dt>4. State</dt><dd>' + state + '</dd></div>' +
+          '<div class="field-box"><dt>5. District</dt><dd>' + district + '</dd></div>' +
+          '<div class="field-box"><dt>6. Location</dt><dd>' + location + '</dd></div>' +
+          '<div class="field-box"><dt>7. Status</dt><dd>' + status + '</dd></div>' +
+          '<div class="field-box"><dt>Recorded Holder</dt><dd>' + holder + '</dd></div>' +
+          '<div class="field-box"><dt>Record of Rights (RoR)</dt><dd>' + ror + '</dd></div>' +
+        '</div>' +
+        '<div class="cert-footer">' +
+          '<div class="cert-seal' + (isWarn ? ' warn' : '') + '">' +
+            '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED' : '✓ OFFICIAL DIGITAL RECORD') + '</span>' +
+            '<span>&middot;</span>' +
+            '<span>Presumptive Title Standard</span>' +
+          '</div>' +
+          '<div class="cert-legal">' +
+            'Consolidated digital certificate issued for administrative reference under National Land Intelligence Platform standard.' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '</body></html>';
+
+    var doc = printFrame.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    setTimeout(function(){
+      try {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+      } catch(e) {
+        console.warn("Print frame fallback:", e);
+        window.print();
+      }
+    }, 200);
+  };
 
   /* ============================================================
      3. LAND INTELLIGENCE
