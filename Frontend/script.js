@@ -509,7 +509,7 @@
         '<div class="ps-qr-meta">' +
           '<div>' +
             '<div class="ps-ulpin-box">' + ulpin + '</div>' +
-            '<div style="font-size:0.7rem;color:#786c5a;margin-top:3px;">Unique Land Parcel Identifier</div>' +
+            '<div style="font-size:0.7rem;color:#a89b88;margin-top:3px;">Unique Land Parcel Identifier</div>' +
           '</div>' +
           '<canvas id="passport-qr-canvas" width="56" height="56"></canvas>' +
         '</div>' +
@@ -713,8 +713,8 @@
     if(!canvas) return;
     var ctx = canvas.getContext("2d"), size=16, px=4, seed=42;
     function rand(){ seed=(seed*9301+49297)%233280; return seed/233280; }
-    ctx.fillStyle="#FBF8EF"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="#232019";
+    ctx.fillStyle="#1c1813"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#f3cf8c";
     for(var r=0;r<size;r++) for(var c=0;c<size;c++){
       var corner=(r<3&&c<3)||(r<3&&c>size-4)||(r>size-4&&c<3);
       if(corner){ if(r===0||r===2||c===0||c===2) ctx.fillRect(c*px,r*px,px,px); continue; }
