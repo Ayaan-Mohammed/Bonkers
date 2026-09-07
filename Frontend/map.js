@@ -179,7 +179,7 @@
             geometry: {
               type: "Polygon",
               coordinates: [[
-                [77.0442, 11.0016], [77.0461, 11.0019], [77.0458, 11.0036], [77.0446, 11.0031], [77.0442, 11.0016]
+                [77.0442, 11.0016], [77.0461, 11.0019], [77.0458, 11.0036], [77.0446, 11.0033], [77.0442, 11.0016]
               ]]
             }
           },
@@ -190,6 +190,63 @@
               type: "Polygon",
               coordinates: [[
                 [77.0426, 11.0034], [77.0446, 11.0031], [77.0449, 11.0048], [77.0429, 11.0051], [77.0426, 11.0034]
+              ]]
+            }
+          }
+        ]
+      }
+    },
+    TS: {
+      label: "Survey No. 245/A — Kanakamamidi, Rangareddy, Telangana",
+      center: [78.2680, 17.3195],
+      zoom: 17.3,
+      pitch: 32,
+      bearing: -10,
+      parcel: {
+        type: "Feature",
+        properties: { id: "TS-DEMO-245-018", survey: "245/A", label: "Survey 245/A" },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [78.2668, 17.3186],
+            [78.2692, 17.3190],
+            [78.2696, 17.3205],
+            [78.2676, 17.3208],
+            [78.2665, 17.3197],
+            [78.2668, 17.3186]
+          ]]
+        }
+      },
+      neighbors: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: { id: "244" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [78.2668, 17.3186], [78.2652, 17.3182], [78.2648, 17.3196], [78.2665, 17.3197], [78.2668, 17.3186]
+              ]]
+            }
+          },
+          {
+            type: "Feature",
+            properties: { id: "245/B" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [78.2692, 17.3190], [78.2711, 17.3193], [78.2708, 17.3210], [78.2696, 17.3205], [78.2692, 17.3190]
+              ]]
+            }
+          },
+          {
+            type: "Feature",
+            properties: { id: "246" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [78.2676, 17.3208], [78.2696, 17.3205], [78.2699, 17.3222], [78.2679, 17.3225], [78.2676, 17.3208]
               ]]
             }
           }
@@ -320,7 +377,7 @@
     if(labelEl && site) labelEl.textContent = site.label;
   }
 
-  function selectParcel(key){
+  function selectParcel(key, customLabel){
     var upper = (key || "UP").toUpperCase();
     if(!SITES[upper]) upper = "UP";
     currentKey = upper;
@@ -328,6 +385,10 @@
 
     if(ready && map){
       updateLayerVisibilities();
+      if(customLabel){
+        var labelEl = document.getElementById("map-label");
+        if(labelEl) labelEl.textContent = customLabel;
+      }
       map.flyTo({
         center: site.center,
         zoom: site.zoom,

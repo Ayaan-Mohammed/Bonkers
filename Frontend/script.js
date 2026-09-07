@@ -124,17 +124,48 @@
         {date:"2022-06-14", title:"Boundary re-survey", desc:"Cadastral boundary re-verified against drone survey under SVAMITVA."},
         {date:"2011-03-30", title:"Patta issued", desc:"Record of rights formally issued to current recorded holder."}
       ]
+    },
+    "TS": {
+      ulpin: "TS-DEMO-245-018", survey: "245/A", state: "Telangana",
+      district: "Rangareddy", mandal: "Moinabad", village: "Kanakamamidi",
+      area: "2.30 Acres (0.93 ha)", type: "Agricultural — Irrigated (Wet crop / Borewell)",
+      zoning: "Rural / Agricultural Zone", coords: "17.3195° N, 78.2680° E",
+      holder: "K. Venkat Reddy", ownership: "Pattadar (Presumptive record of rights)",
+      ror: "Dharani e-Pattadar Passbook (Khata No. 1204)",
+      mutation: "Cleared — Dharani digital registration & mutation (Order 2023-11-18)",
+      encumbrance: "None recorded (Dharani EC verification cleared)", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹24.5L / acre", status: "✓ Verified — Consistent",
+      history: [
+        {date:"2025-02-10", title:"Rythu Bandhu & revenue audit", desc:"Annual cadastral audit synced with Dharani integrated land portal."},
+        {date:"2023-11-18", title:"Dharani digital mutation completed", desc:"Instant digital mutation executed post-registration at Moinabad sub-registrar office."},
+        {date:"2019-06-25", title:"Pattadar passbook issued", desc:"Title deed & digital passbook generated under Telangana Land Records Updation Programme (LRUP)."}
+      ]
     }
   };
 
+  var TS_DISTRICTS = {
+    "rangareddy": { district: "Rangareddy", mandal: "Moinabad", village: "Kanakamamidi", survey: "245/A", ulpin: "TS-DEMO-245-018", area: "2.30 Acres (0.93 ha)", coords: "17.3195° N, 78.2680° E", holder: "K. Venkat Reddy", passbook: "T2819004128" },
+    "siddipet": { district: "Siddipet", mandal: "Gajwel", village: "Pragnapur", survey: "108/AA", ulpin: "TS-DEMO-108-032", area: "3.15 Acres (1.27 ha)", coords: "17.8512° N, 78.6820° E", holder: "G. Srinivas Rao", passbook: "T2822019481" },
+    "medchal": { district: "Medchal-Malkajgiri", mandal: "Ghatkesar", village: "Ankushapur", survey: "312/1", ulpin: "TS-DEMO-312-009", area: "1.75 Acres (0.71 ha)", coords: "17.4470° N, 78.6835° E", holder: "B. Anjaneyulu", passbook: "T2818006742" },
+    "warangal": { district: "Warangal", mandal: "Khazipet", village: "Madikonda", survey: "520/B", ulpin: "TS-DEMO-520-044", area: "2.60 Acres (1.05 ha)", coords: "17.9780° N, 79.5240° E", holder: "P. Ramachandra Murthy", passbook: "T2815003920" },
+    "sangareddy": { district: "Sangareddy", mandal: "Kandi", village: "Erdnoor", survey: "174/2", ulpin: "TS-DEMO-174-015", area: "2.05 Acres (0.83 ha)", coords: "17.5820° N, 78.1180° E", holder: "M. Mallikarjun Goud", passbook: "T2824005819" },
+    "nalgonda": { district: "Nalgonda", mandal: "Miryalaguda", village: "Alagadapa", survey: "402/1", ulpin: "TS-DEMO-402-027", area: "3.40 Acres (1.38 ha)", coords: "16.8710° N, 79.5620° E", holder: "V. Narsimha Rao", passbook: "T2820008432" },
+    "khammam": { district: "Khammam", mandal: "Nelakondapalli", village: "Bodulabanda", survey: "89/A", ulpin: "TS-DEMO-089-011", area: "2.80 Acres (1.13 ha)", coords: "17.1850° N, 80.1240° E", holder: "T. Venkataramana", passbook: "T2817004391" },
+    "karimnagar": { district: "Karimnagar", mandal: "Thimmapur", village: "Nustulapur", survey: "221/3", ulpin: "TS-DEMO-221-019", area: "2.25 Acres (0.91 ha)", coords: "18.3240° N, 79.1670° E", holder: "Ch. Raji Reddy", passbook: "T2816005120" },
+    "nizamabad": { district: "Nizamabad", mandal: "Armoor", village: "Perkit", survey: "165/A", ulpin: "TS-DEMO-165-007", area: "2.90 Acres (1.17 ha)", coords: "18.7910° N, 78.2830° E", holder: "K. Satyanarayana", passbook: "T2814002984" },
+    "mahabubnagar": { district: "Mahabubnagar", mandal: "Jadcherla", village: "Badepally", survey: "340/2", ulpin: "TS-DEMO-340-022", area: "3.10 Acres (1.25 ha)", coords: "16.7640° N, 78.1420° E", holder: "A. Balakrishnama Chary", passbook: "T2821006540" },
+    "yadadri": { district: "Yadadri Bhuvanagiri", mandal: "Bhongir", village: "Raigiri", survey: "198/B", ulpin: "TS-DEMO-198-012", area: "2.15 Acres (0.87 ha)", coords: "17.5180° N, 78.8920° E", holder: "S. Narsing Rao", passbook: "T2823007194" },
+    "suryapet": { district: "Suryapet", mandal: "Kodad", village: "Komarabanda", survey: "277/1", ulpin: "TS-DEMO-277-016", area: "2.50 Acres (1.01 ha)", coords: "16.9980° N, 79.9670° E", holder: "K. Mohan Reddy", passbook: "T2819003856" }
+  };
+
   var CHECKS = [
-    {name:"Boundary verification", desc:"Cadastral boundary matched against latest survey.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Record vs. map", desc:"Record of rights area compared against mapped parcel area.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Land-use consistency", desc:"Recorded land use checked against zoning classification.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Ownership verification", desc:"Recorded holder cross-checked against registration filings.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Duplicate record check", desc:"Parcel checked against neighbouring ULPINs for overlap.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Land-change detection", desc:"Compared against the last two available survey cycles.", ok:{UP:"ok",TN:"ok",KA:"ok"}},
-    {name:"Encumbrance check", desc:"Cross-checked against registered charges and mortgages.", ok:{UP:"ok",TN:"ok",KA:"ok"}}
+    {name:"Boundary verification", desc:"Cadastral boundary matched against latest survey.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Record vs. map", desc:"Record of rights area compared against mapped parcel area.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Land-use consistency", desc:"Recorded land use checked against zoning classification.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Ownership verification", desc:"Recorded holder cross-checked against registration filings.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Duplicate record check", desc:"Parcel checked against neighbouring ULPINs for overlap.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Land-change detection", desc:"Compared against the last two available survey cycles.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
+    {name:"Encumbrance check", desc:"Cross-checked against registered charges and mortgages.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}}
   ];
 
   var STAMP_LABEL = {ok:"Verified", warn:"Attention", crit:"Critical"};
@@ -233,6 +264,15 @@
   function findParcelKey(query, state){
     var q = (query || "").toLowerCase();
     var s = (state || selectedState || "").toLowerCase();
+
+    // Check Telangana first if state or query contains TS keywords or any TS district
+    if(s.indexOf("telangana") !== -1 || q.indexOf("ts-demo") !== -1 || q.indexOf("tg-demo") !== -1 || q.indexOf("dharani") !== -1 || q.indexOf("245") !== -1){
+      return "TS";
+    }
+    for(var dist in TS_DISTRICTS){
+      if(q.indexOf(dist) !== -1 || s.indexOf(dist) !== -1) return "TS";
+    }
+
     if(q.indexOf("412") !== -1 || q.indexOf("up-demo") !== -1 || (s.indexOf("uttar") !== -1 && q)) return "UP";
     if(q.indexOf("88") !== -1 || q.indexOf("ka-demo") !== -1 || (s.indexOf("karnataka") !== -1 && q)) return "KA";
     if(q.indexOf("1042") !== -1 || q.indexOf("187") !== -1 || q.indexOf("tn-demo") !== -1 || (s.indexOf("tamil") !== -1 && q)) return "TN";
@@ -253,6 +293,30 @@
     var key = findParcelKey(query, selectedState);
     var p = PARCELS[key] || PARCELS["UP"];
 
+    // If TS, check for specific district in query
+    if(key === "TS"){
+      var q = (query || "").toLowerCase();
+      var matchedDist = null;
+      for(var d in TS_DISTRICTS){
+        if(q.indexOf(d) !== -1){ matchedDist = TS_DISTRICTS[d]; break; }
+      }
+      if(!matchedDist && (selectedState || "").toLowerCase().indexOf("telangana") !== -1){
+        matchedDist = TS_DISTRICTS["rangareddy"];
+      }
+      if(matchedDist){
+        p = JSON.parse(JSON.stringify(PARCELS["TS"]));
+        p.district = matchedDist.district;
+        p.mandal = matchedDist.mandal;
+        p.village = matchedDist.village;
+        p.survey = matchedDist.survey;
+        p.ulpin = matchedDist.ulpin;
+        p.area = matchedDist.area;
+        p.coords = matchedDist.coords;
+        p.holder = matchedDist.holder;
+        p.ror = "Dharani e-Pattadar Passbook (Passbook No. " + matchedDist.passbook + ")";
+      }
+    }
+
     // Show loading
     showFeedback("Searching for your parcel...", "loading");
 
@@ -266,7 +330,7 @@
 
       // Update banner
       var bannerDesc = document.getElementById("pf-banner-text");
-      if(bannerDesc) bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.state;
+      if(bannerDesc) bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.district + ", " + p.state;
 
       // Update compact card
       setText("pic-ulpin", p.ulpin);
@@ -277,7 +341,10 @@
       setText("pic-status", "✓ Presumptive Title Clear");
 
       // Map
-      if(window.LandMap && window.LandMap.selectParcel) window.LandMap.selectParcel(key);
+      if(window.LandMap && window.LandMap.selectParcel){
+        var mapLabel = p.state === "Telangana" ? ("Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana") : null;
+        window.LandMap.selectParcel(key, mapLabel);
+      }
 
       // Deep cards
       renderParcelCard(p);
