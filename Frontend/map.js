@@ -47,414 +47,159 @@
     };
   }
 
-  function generate1KmNeighbors(center, baseNum, initialFeatures) {
-    var list = (initialFeatures && initialFeatures.slice()) || [];
+  // Generates a seamless, non-overlapping planar cadastral mesh within the 1 km buffer
+  // using a shared-vertex lattice where adjacent plots and target parcel share exact edges
+  function buildNonOverlappingCadastre(center, baseNum, targetSurvey, targetId, siteLabel) {
     var lat = center[1];
     var lng = center[0];
     var degLat = 1.0 / 110.574;
     var degLng = 1.0 / (111.320 * Math.cos(lat * (Math.PI / 180)));
 
-    var steps = 6;
-    var stepX = (degLng * 2) / steps;
-    var stepY = (degLat * 2) / steps;
+    var M = 7;
+    var targetC = 3;
+    var targetR = 3;
+    var stepX = (degLng * 2.05) / M;
+    var stepY = (degLat * 2.05) / M;
+    var startLng = lng - (targetC + 0.5) * stepX;
+    var startLat = lat - (targetR + 0.5) * stepY;
 
-    var num = parseInt(baseNum, 10) || 100;
+    // 1. Compute shared corner vertices (M+1 x M+1)
+    var nodes = {};
+    for(var r = 0; r <= M; r++) {
+      for(var c = 0; c <= M; c++) {
+        var baseLng = startLng + c * stepX;
+        var baseLat = startLat + r * stepY;
+        var jx = 0;
+        var jy = 0;
+        // Inner vertices have organic, deterministic cadastral jitter
+        if(c > 0 && c < M && r > 0 && r < M) {
+          var seed = c * 17.13 + r * 31.41 + baseNum;
+          var r1 = Math.abs(Math.sin(seed) * 10000) % 1;
+          var r2 = Math.abs(Math.cos(seed) * 10000) % 1;
+          jx = (r1 - 0.5) * stepX * 0.30;
+          jy = (r2 - 0.5) * stepY * 0.30;
+        }
+        nodes[c + "_" + r] = [+(baseLng + jx).toFixed(6), +(baseLat + jy).toFixed(6)];
+      }
+    }
+
+    // 2. Primary target parcel (occupies slot targetC, targetR)
+    var targetCoords = [
+      nodes[targetC + "_" + targetR],
+      nodes[(targetC + 1) + "_" + targetR],
+      nodes[(targetC + 1) + "_" + (targetR + 1)],
+      nodes[targetC + "_" + (targetR + 1)],
+      nodes[targetC + "_" + targetR]
+    ];
+    var targetParcel = {
+      type: "Feature",
+      properties: { id: targetId, survey: targetSurvey, label: siteLabel },
+      geometry: { type: "Polygon", coordinates: [targetCoords] }
+    };
+
+    // 3. Contiguous, non-colliding neighboring parcels within 1 km radius
+    var neighborsList = [];
     var count = 1;
+    for(var gr = 0; gr < M; gr++) {
+      for(var gc = 0; gc < M; gc++) {
+        if(gc === targetC && gr === targetR) continue;
 
-    for(var r = 0; r < steps; r++) {
-      for(var c = 0; c < steps; c++) {
-        var minX = lng - degLng + c * stepX;
-        var maxX = minX + stepX;
-        var minY = lat - degLat + r * stepY;
-        var maxY = minY + stepY;
-
-        var jx = ((r * 7 + c * 13) % 10 - 5) * 0.00018;
-        var jy = ((r * 11 + c * 3) % 10 - 5) * 0.00018;
-
-        var pMinX = +(minX + jx).toFixed(6);
-        var pMaxX = +(maxX - jx).toFixed(6);
-        var pMinY = +(minY + jy).toFixed(6);
-        var pMaxY = +(maxY - jy).toFixed(6);
-
-        var cX = (pMinX + pMaxX) / 2;
-        var cY = (pMinY + pMaxY) / 2;
+        var cX = (nodes[gc + "_" + gr][0] + nodes[(gc + 1) + "_" + (gr + 1)][0]) / 2;
+        var cY = (nodes[gc + "_" + gr][1] + nodes[(gc + 1) + "_" + (gr + 1)][1]) / 2;
         var distSq = Math.pow((cX - lng) / degLng, 2) + Math.pow((cY - lat) / degLat, 2);
+        if(distSq > 1.05) continue; // Boundary constrained to 1 km radius
 
-        if(distSq > 1.08) continue;
-        if(distSq < 0.08) continue;
-
-        var sVal = (num - 15 + count);
+        var sVal = (baseNum - 12 + count);
         if(sVal <= 0) sVal = count + 2;
-        var sub = (count % 3 === 0) ? "/1" : (count % 4 === 0 ? "/2" : (count % 5 === 0 ? "/A" : ""));
+        var sub = (count % 4 === 0) ? "/1" : (count % 5 === 0 ? "/2" : (count % 3 === 0 ? "/B" : ""));
         var label = sVal + sub;
         count++;
 
-        list.push({
+        var poly = [
+          nodes[gc + "_" + gr],
+          nodes[(gc + 1) + "_" + gr],
+          nodes[(gc + 1) + "_" + (gr + 1)],
+          nodes[gc + "_" + (gr + 1)],
+          nodes[gc + "_" + gr]
+        ];
+
+        var areaAc = (1.4 + ((gc * 3 + gr * 5) % 9) * 0.35).toFixed(1);
+        neighborsList.push({
           type: "Feature",
-          properties: { id: "N-" + label, survey: label, area: (1.1 + (count % 6) * 0.35).toFixed(1) + " Ac" },
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [pMinX, pMinY],
-              [pMaxX, pMinY],
-              [pMaxX, pMaxY],
-              [pMinX, pMaxY],
-              [pMinX, pMinY]
-            ]]
-          }
+          properties: {
+            id: "N-" + label,
+            survey: label,
+            area: areaAc + " Ac"
+          },
+          geometry: { type: "Polygon", coordinates: [poly] }
         });
       }
     }
 
     return {
-      type: "FeatureCollection",
-      features: list
+      parcel: targetParcel,
+      neighbors: { type: "FeatureCollection", features: neighborsList }
     };
   }
 
-  // Predefined sites with target parcel + realistic neighboring parcels
-  var SITES = {
+  var SITES_CONFIG = {
     UP: {
       label: "Khasra 412/1 — Demo District, Uttar Pradesh",
       center: [80.9462, 26.8467],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      // Irregular target parcel polygon (Khasra 412/1)
-      parcel: {
-        type: "Feature",
-        properties: { id: "UP-DEMO-412-001", survey: "412/1", label: "Khasra 412/1" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [80.9448, 26.8458],
-            [80.9472, 26.8463],
-            [80.9477, 26.8475],
-            [80.9455, 26.8479],
-            [80.9445, 26.8469],
-            [80.9448, 26.8458]
-          ]]
-        }
-      },
-      // Neighboring parcel polygons surrounding the target
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "411/2", survey: "411/2" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [80.9448, 26.8458], [80.9432, 26.8452], [80.9428, 26.8468], [80.9445, 26.8469], [80.9448, 26.8458]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "412/2", survey: "412/2" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [80.9472, 26.8463], [80.9490, 26.8467], [80.9485, 26.8482], [80.9477, 26.8475], [80.9472, 26.8463]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "413/1", survey: "413/1" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [80.9455, 26.8479], [80.9477, 26.8475], [80.9482, 26.8492], [80.9458, 26.8496], [80.9455, 26.8479]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "410", survey: "410" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [80.9448, 26.8458], [80.9456, 26.8442], [80.9478, 26.8447], [80.9472, 26.8463], [80.9448, 26.8458]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 412,
+      targetSurvey: "412/1",
+      targetId: "UP-DEMO-412-001"
     },
     KA: {
       label: "Survey No. 88/2 — Kundana, Bengaluru Rural, Karnataka",
       center: [77.7141, 13.2432],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      parcel: {
-        type: "Feature",
-        properties: { id: "KA-DEMO-088-002", survey: "88/2", label: "Survey 88/2" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [77.7128, 13.2423],
-            [77.7152, 13.2426],
-            [77.7156, 13.2441],
-            [77.7136, 13.2444],
-            [77.7125, 13.2433],
-            [77.7128, 13.2423]
-          ]]
-        }
-      },
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "88/1" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.7128, 13.2423], [77.7112, 13.2418], [77.7108, 13.2432], [77.7125, 13.2433], [77.7128, 13.2423]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "89" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.7152, 13.2426], [77.7171, 13.2429], [77.7168, 13.2446], [77.7156, 13.2441], [77.7152, 13.2426]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "87" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.7136, 13.2444], [77.7156, 13.2441], [77.7159, 13.2458], [77.7139, 13.2461], [77.7136, 13.2444]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 88,
+      targetSurvey: "88/2",
+      targetId: "KA-DEMO-088-002"
     },
     TN: {
-      label: "Patta 1042 — Vellalore, Coimbatore, Tamil Nadu",
+      label: "Patta 1042 (Survey 187/2A) — Vellalore, Coimbatore, Tamil Nadu",
       center: [77.0432, 11.0021],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      parcel: {
-        type: "Feature",
-        properties: { id: "TN-DEMO-104-042", survey: "187/2A", label: "Patta 1042" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [77.0418, 11.0012],
-            [77.0442, 11.0016],
-            [77.0446, 11.0031],
-            [77.0426, 11.0034],
-            [77.0415, 11.0023],
-            [77.0418, 11.0012]
-          ]]
-        }
-      },
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "187/1" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.0418, 11.0012], [77.0402, 11.0008], [77.0398, 11.0022], [77.0415, 11.0023], [77.0418, 11.0012]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "188" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.0442, 11.0016], [77.0461, 11.0019], [77.0458, 11.0036], [77.0446, 11.0033], [77.0442, 11.0016]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "186" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [77.0426, 11.0034], [77.0446, 11.0031], [77.0449, 11.0048], [77.0429, 11.0051], [77.0426, 11.0034]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 187,
+      targetSurvey: "187/2A",
+      targetId: "TN-DEMO-104-042"
     },
     TS: {
       label: "Survey No. 245/A — Kanakamamidi, Rangareddy, Telangana",
       center: [78.2680, 17.3195],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      parcel: {
-        type: "Feature",
-        properties: { id: "TS-DEMO-245-018", survey: "245/A", label: "Survey 245/A" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [78.2668, 17.3186],
-            [78.2692, 17.3190],
-            [78.2696, 17.3205],
-            [78.2676, 17.3208],
-            [78.2665, 17.3197],
-            [78.2668, 17.3186]
-          ]]
-        }
-      },
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "244" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [78.2668, 17.3186], [78.2652, 17.3182], [78.2648, 17.3196], [78.2665, 17.3197], [78.2668, 17.3186]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "245/B" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [78.2692, 17.3190], [78.2711, 17.3193], [78.2708, 17.3210], [78.2696, 17.3205], [78.2692, 17.3190]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "246" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [78.2676, 17.3208], [78.2696, 17.3205], [78.2699, 17.3222], [78.2679, 17.3225], [78.2676, 17.3208]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 245,
+      targetSurvey: "245/A",
+      targetId: "TS-DEMO-245-018"
     },
     BR: {
       label: "Khasra 512/3 — Walmi, Phulwari Sharif, Patna, Bihar (⚠️ Discrepancy Flagged)",
       center: [85.0741, 25.5682],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      parcel: {
-        type: "Feature",
-        properties: { id: "BR-DEMO-512-004", survey: "512/3", label: "Khasra 512/3 (Jamabandi 418)" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [85.0728, 25.5673],
-            [85.0754, 25.5677],
-            [85.0759, 25.5691],
-            [85.0736, 25.5694],
-            [85.0725, 25.5684],
-            [85.0728, 25.5673]
-          ]]
-        }
-      },
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "511/1" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [85.0728, 25.5673], [85.0712, 25.5668], [85.0708, 25.5682], [85.0725, 25.5684], [85.0728, 25.5673]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "512/4" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [85.0754, 25.5677], [85.0772, 25.5680], [85.0768, 25.5697], [85.0759, 25.5691], [85.0754, 25.5677]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 512,
+      targetSurvey: "512/3",
+      targetId: "BR-DEMO-512-004"
     },
     MH: {
       label: "Gat No. 88/1A — Wagholi, Haveli Taluka, Pune, Maharashtra (⚠️ Active Bojha)",
       center: [73.9812, 18.5793],
-      zoom: 15.0,
-      pitch: 15,
-      bearing: 0,
-      parcel: {
-        type: "Feature",
-        properties: { id: "MH-DEMO-712-088", survey: "88/1A", label: "7/12 Gat 88/1A" },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [73.9798, 18.5784],
-            [73.9824, 18.5788],
-            [73.9828, 18.5803],
-            [73.9806, 18.5806],
-            [73.9795, 18.5795],
-            [73.9798, 18.5784]
-          ]]
-        }
-      },
-      neighbors: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { id: "88/1B" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [73.9798, 18.5784], [73.9782, 18.5779], [73.9778, 18.5793], [73.9795, 18.5795], [73.9798, 18.5784]
-              ]]
-            }
-          },
-          {
-            type: "Feature",
-            properties: { id: "89" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [[
-                [73.9824, 18.5788], [73.9842, 18.5791], [73.9839, 18.5808], [73.9828, 18.5803], [73.9824, 18.5788]
-              ]]
-            }
-          }
-        ]
-      }
+      baseNum: 88,
+      targetSurvey: "88/1A",
+      targetId: "MH-DEMO-712-088"
     }
   };
 
-  // Augment sites with realistic 1 km neighboring cadastral grid
-  var SITES_BASE_NUMS = { UP: 412, KA: 88, TN: 187, TS: 245, BR: 512, MH: 88 };
-  Object.keys(SITES).forEach(function(k){
-    var s = SITES[k];
-    s.neighbors = generate1KmNeighbors(s.center, SITES_BASE_NUMS[k] || 100, s.neighbors.features);
+  var SITES = {};
+  Object.keys(SITES_CONFIG).forEach(function(k){
+    var cfg = SITES_CONFIG[k];
+    var cad = buildNonOverlappingCadastre(cfg.center, cfg.baseNum, cfg.targetSurvey, cfg.targetId, cfg.label);
+    SITES[k] = {
+      label: cfg.label,
+      center: cfg.center,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
+      parcel: cad.parcel,
+      neighbors: cad.neighbors
+    };
   });
 
   var map = null;
@@ -525,8 +270,8 @@
           type: "fill",
           source: "neighbors-" + id,
           paint: {
-            "fill-color": "#382f22",
-            "fill-opacity": key === currentKey ? 0.38 : 0.0
+            "fill-color": "#2e2417",
+            "fill-opacity": key === currentKey ? 0.32 : 0.0
           }
         });
 
@@ -535,10 +280,9 @@
           type: "line",
           source: "neighbors-" + id,
           paint: {
-            "line-color": "#d8c7ad",
-            "line-width": 1.2,
-            "line-opacity": key === currentKey ? 0.5 : 0.0,
-            "line-dasharray": [2, 2]
+            "line-color": "#c29e69",
+            "line-width": 1.1,
+            "line-opacity": key === currentKey ? 0.60 : 0.0
           }
         });
 
@@ -617,10 +361,10 @@
         map.setPaintProperty("parcel-line-" + id, "line-width", isCurrent ? 3.5 : 0.0);
       }
       if(map.getLayer("neighbors-fill-" + id)){
-        map.setPaintProperty("neighbors-fill-" + id, "fill-opacity", isCurrent ? 0.38 : 0.0);
+        map.setPaintProperty("neighbors-fill-" + id, "fill-opacity", isCurrent ? 0.32 : 0.0);
       }
       if(map.getLayer("neighbors-line-" + id)){
-        map.setPaintProperty("neighbors-line-" + id, "line-opacity", isCurrent ? 0.5 : 0.0);
+        map.setPaintProperty("neighbors-line-" + id, "line-opacity", isCurrent ? 0.60 : 0.0);
       }
     });
 
