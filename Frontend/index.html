@@ -6,12 +6,18 @@
 <title>Unified National Land Intelligence Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=land1">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
+
+<!-- ============ FULL-SCREEN LAND BACKGROUND ============ -->
+<div class="land-bg-canvas" id="land-bg" aria-hidden="true">
+  <div class="land-bg-image" id="land-bg-image"></div>
+  <div class="land-bg-overlay"></div>
+</div>
 
 <header class="site-head">
   <div class="wrap head-row">
@@ -26,48 +32,166 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="hero-mosaic" id="mosaic" aria-hidden="true"></div>
-  <div class="wrap hero-inner">
-    <p class="eyebrow-plain">A common record for every parcel of land</p>
-    <h1 class="hero-head">Unified National<br>Land Intelligence Platform</h1>
-    <p class="hero-sub">One nation. One land identity. One record you can trust — and check for yourself.</p>
-
-    <form class="search-slot" id="search-form">
-      <label for="ulpin-input" class="search-label">Search by ULPIN or survey number</label>
-      <div class="search-row">
-        <input type="text" id="ulpin-input" placeholder="e.g. TN04-0021-0087-00456 or Survey No. 187/2A" autocomplete="off">
-        <button type="submit">Search</button>
+  <div class="wrap hero-grid">
+    <!-- LEFT SIDE -->
+    <div class="hero-left">
+      <div class="eyebrow-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-brand">Bhu-InterOp</span>
+        <span class="badge-divider">·</span>
+        <span class="badge-sub">Open DPI Engine</span>
       </div>
-      <div class="search-hint">Try: <button type="button" class="try-btn" data-sample="TN04-0021-0087-00456">TN04-0021-0087-00456</button> or <button type="button" class="try-btn" data-sample="KA09-0114-0033-00921">KA09-0114-0033-00921</button></div>
-    </form>
-  </div>
-</section>
-
-<!-- ============ PARCEL RESULT ============ -->
-<!-- ============ GIS PARCEL VIEW ============ -->
-<section class="dark-section" id="gis-view">
-  <div class="wrap">
-    <h2 class="section-head">GIS parcel view</h2>
-    <p class="section-lede">The same parcel, on the map. Drill in from the country down to the individual boundary — the highlighted shape is what the record above describes.</p>
-
-    <nav class="crumb-nav" id="crumb-nav" aria-label="Zoom to level">
-      <button data-level="india">India</button>
-      <button data-level="state">State</button>
-      <button data-level="district">District</button>
-      <button data-level="village">Village</button>
-      <button data-level="parcel" class="active">Parcel</button>
-    </nav>
-
-    <div class="map-frame">
-      <div id="gis-map"></div>
-      <div class="map-label" id="map-label">Vellalore, Coimbatore — Survey No. 187/2A</div>
+      <h1 class="hero-title">Unified Parcel Intelligence <span class="hero-title-accent">&amp; Interoperability Stack</span></h1>
+      <p class="hero-desc">One place to search, understand and verify land parcels across India.</p>
+      
+      <div class="hero-trust-row">
+        <span class="trust-item"><i class="trust-icon">✓</i> National DPI Framework</span>
+        <span class="trust-item"><i class="trust-icon">✓</i> Standardized ISO 19152 (LADM)</span>
+      </div>
     </div>
 
-    <p class="map-note">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, tiles via <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>. Parcel boundaries shown are illustrative, not surveyed geometry.</p>
+    <!-- RIGHT SIDE / SEARCH BOX -->
+    <div class="hero-right">
+      <div class="search-panel" id="search-panel">
+        <div class="search-panel-head">
+          <div class="search-title-row">
+            <h2 class="search-title">Search Your Land</h2>
+            <span class="demo-tag">Prototype / Demonstration Data</span>
+          </div>
+          <p class="search-subtitle">Find your parcel using ULPIN, Survey Number, Khasra, Gata or Patta.</p>
+        </div>
+
+        <form class="search-form" id="search-form">
+          <div class="form-group">
+            <label class="field-label" for="state-selector-btn">State / Union Territory</label>
+            <div class="state-select-wrapper">
+              <button type="button" class="state-select-btn" id="state-selector-btn" aria-haspopup="listbox" aria-expanded="false">
+                <span class="state-pin-icon">📍</span>
+                <span class="selected-state-name" id="selected-state-name">Uttar Pradesh</span>
+                <span class="chevron-icon">⌄</span>
+              </button>
+
+              <!-- Searchable State Dropdown Popover -->
+              <div class="state-dropdown" id="state-dropdown" role="listbox" style="display:none;">
+                <div class="state-search-box">
+                  <input type="text" id="state-search-input" placeholder="Search state or UT..." autocomplete="off">
+                </div>
+                <div class="state-list" id="state-list">
+                  <!-- dynamically filled with 28 States + 8 UTs -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label" for="ulpin-input">Land Identifier</label>
+            <div class="input-with-action">
+              <input type="text" id="ulpin-input" placeholder="Enter ULPIN, Survey Number, Khasra or Gata..." autocomplete="off" value="Khasra: 412/1">
+              <button type="submit" class="search-submit-btn" id="search-submit-btn">
+                <span>Search</span>
+                <span class="arrow-icon">→</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="quick-samples">
+            <span class="samples-label">Demo Samples:</span>
+            <div class="sample-chips">
+              <button type="button" class="sample-chip active" data-state="Uttar Pradesh" data-query="Khasra: 412/1">UP: Khasra 412/1</button>
+              <button type="button" class="sample-chip" data-state="Karnataka" data-query="Survey: 88/2">KA: Survey 88/2</button>
+              <button type="button" class="sample-chip" data-state="Tamil Nadu" data-query="Patta: 1042">TN: Patta 1042</button>
+              <button type="button" class="sample-chip" data-state="Uttar Pradesh" data-query="ULPIN-DEMO-001">ULPIN-DEMO-001</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="doc-section" id="search" style="display:none;" >
+<!-- ============ GIS PARCEL VIEW & RESULT ============ -->
+<section class="dark-section gis-section" id="gis-view">
+  <div class="wrap">
+    <!-- RESULT HEADER BANNER -->
+    <div class="parcel-found-banner" id="parcel-found-banner">
+      <div class="pf-pill"><span class="pf-check">✓</span> PARCEL FOUND</div>
+      <span class="pf-divider">|</span>
+      <span class="pf-desc" id="pf-banner-text">Showing surveyed boundary for <b>UP-DEMO-412-001</b> (Khasra 412/1) in Uttar Pradesh</span>
+      <span class="pf-proto-badge">Prototype Data</span>
+    </div>
+
+    <!-- MAP + COMPACT PARCEL INFO CARD WRAPPER -->
+    <div class="gis-layout">
+      <!-- MAP CONTAINER -->
+      <div class="map-container">
+        <div class="map-frame" id="map-frame">
+          <div id="gis-map"></div>
+          <div class="map-label" id="map-label">Khasra 412/1 — Demo District, Uttar Pradesh</div>
+
+          <!-- Minimal GIS Controls -->
+          <div class="map-gis-controls" aria-label="Map navigation controls">
+            <button type="button" id="map-zoom-in" title="Zoom In">+</button>
+            <button type="button" id="map-zoom-out" title="Zoom Out">−</button>
+            <button type="button" id="map-fit-parcel" title="Fit Selected Parcel">⛶</button>
+            <button type="button" id="map-reset-view" title="Reset View">↺</button>
+          </div>
+
+          <!-- Boundary Legend -->
+          <div class="map-legend">
+            <span class="legend-item"><span class="legend-swatch golden"></span> Selected Parcel</span>
+            <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring Parcels</span>
+          </div>
+        </div>
+        <p class="map-note">Map imagery © OpenStreetMap contributors. Cadastral parcel boundaries shown are illustrative demonstration polygons.</p>
+      </div>
+
+      <!-- COMPACT PARCEL INFO CARD -->
+      <aside class="parcel-info-card" id="parcel-info-card" aria-label="Found Parcel Summary">
+        <div class="pic-header">
+          <span class="pic-badge">PARCEL FOUND ✓</span>
+          <span class="pic-verified-tag">✓ Verified</span>
+        </div>
+
+        <div class="pic-body">
+          <div class="pic-row">
+            <span class="pic-label">ULPIN / Parcel ID</span>
+            <span class="pic-val mono" id="pic-ulpin">UP-DEMO-412-001</span>
+          </div>
+          <div class="pic-row">
+            <span class="pic-label">Area</span>
+            <span class="pic-val" id="pic-area">2.48 Acres</span>
+          </div>
+          <div class="pic-row">
+            <span class="pic-label">State</span>
+            <span class="pic-val" id="pic-state">Uttar Pradesh</span>
+          </div>
+          <div class="pic-row">
+            <span class="pic-label">District</span>
+            <span class="pic-val" id="pic-district">Demo District</span>
+          </div>
+          <div class="pic-row">
+            <span class="pic-label">Survey / Khasra</span>
+            <span class="pic-val mono" id="pic-survey">412/1</span>
+          </div>
+          <div class="pic-row">
+            <span class="pic-label">Status</span>
+            <span class="pic-status-pill">✓ Presumptive Title Clear</span>
+          </div>
+        </div>
+
+        <div class="pic-footer">
+          <button type="button" class="pic-details-btn" id="pic-details-btn">
+            <span>View Land Details</span>
+            <span aria-hidden="true">↓</span>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DETAILED PARCEL RECORD ============ -->
+<section class="doc-section" id="search" style="display:none;">
   <div class="wrap">
     <div class="paper-card" id="parcel-card">
       <!-- filled by script.js -->
@@ -79,7 +203,6 @@
 <section class="dark-section" id="intelligence">
   <div class="wrap">
     <h2 class="section-head">Land Intelligence &amp; Verification</h2>
-    <p class="section-lede">Every parcel record is checked against the map, against itself, and against every other record that touches it. Nothing here is a guess — each line is either confirmed or flagged for a person to look at.</p>
 
     <div class="stamp-grid" id="stamp-grid">
       <!-- filled by script.js -->
@@ -170,7 +293,7 @@
   </div>
 </div>
 
-<script src="map.js"></script>
-<script src="script.js"></script>
+<script src="map.js?v=demo1"></script>
+<script src="script.js?v=demo1"></script>
 </body>
 </html>
