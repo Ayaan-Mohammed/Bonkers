@@ -1331,27 +1331,9 @@ button{font-family:var(--font-body);cursor:pointer;}
   text-align: center;
 }
 
-/* ===== Cadastral Laser Scanline Sweep ===== */
-.cadastral-scanline {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 2.5px;
-  background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.35) 20%, #fef08a 50%, rgba(245, 158, 11, 0.35) 80%, transparent 100%);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.75), 0 0 32px rgba(245, 158, 11, 0.4);
-  pointer-events: none;
-  z-index: 99998;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-body.is-scrolling .cadastral-scanline {
-  opacity: 0.85;
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 1080px){
-  .cadastral-hud-nav, .scroll-telemetry-hud, .cadastral-scanline {
+  .cadastral-hud-nav, .scroll-telemetry-hud {
     display: none !important;
   }
 }

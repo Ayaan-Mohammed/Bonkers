@@ -1105,14 +1105,7 @@
         laserBar.style.width = scrollPct + "%";
       }
 
-      // 2. High-Tech Cadastral Scanline Sweep
-      var scanline = document.getElementById("cadastral-scanline");
-      if(scanline){
-        var scanY = Math.round((scrollPos / (maxScroll || 1)) * (windowHeight - 8));
-        scanline.style.transform = "translateY(" + scanY + "px)";
-      }
-
-      // 3. Dynamic scroll glow on body & scrollbar
+      // 2. Dynamic scroll glow on body & scrollbar
       document.body.classList.add("is-scrolling");
       clearTimeout(scrollStopTimer);
       scrollStopTimer = setTimeout(function(){
