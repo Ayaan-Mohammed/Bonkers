@@ -1089,6 +1089,62 @@
 
       navLinks.forEach(function(a){ a.classList.remove("active"); });
       activeSection.link.classList.add("active");
+
+      // Update Crazy Cadastral Scroll HUD, Laser Bar, Telemetry & Scanline
+      updateCadastralScrollHud(scrollPos, docHeight, windowHeight, activeSection);
+    }
+
+    var scrollStopTimer = null;
+    function updateCadastralScrollHud(scrollPos, docHeight, windowHeight, activeSection){
+      var maxScroll = docHeight - windowHeight;
+      var scrollPct = maxScroll > 0 ? Math.min(100, Math.max(0, Math.round((scrollPos / maxScroll) * 100))) : 0;
+
+      // 1. Top Laser Scanner Bar
+      var laserBar = document.getElementById("scroll-laser-bar");
+      if(laserBar){
+        laserBar.style.width = scrollPct + "%";
+      }
+
+      // 2. High-Tech Cadastral Scanline Sweep
+      var scanline = document.getElementById("cadastral-scanline");
+      if(scanline){
+        var scanY = Math.round((scrollPos / (maxScroll || 1)) * (windowHeight - 8));
+        scanline.style.transform = "translateY(" + scanY + "px)";
+      }
+
+      // 3. Dynamic scroll glow on body & scrollbar
+      document.body.classList.add("is-scrolling");
+      clearTimeout(scrollStopTimer);
+      scrollStopTimer = setTimeout(function(){
+        document.body.classList.remove("is-scrolling");
+        var teleHud = document.getElementById("scroll-telemetry-hud");
+        if(teleHud) teleHud.classList.remove("active");
+      }, 700);
+
+      // 4. Floating Cadastral Telemetry Pill
+      var teleHud = document.getElementById("scroll-telemetry-hud");
+      var teleText = document.getElementById("tele-readout");
+      var elev = Math.round(120 + scrollPct * 14.8);
+      if(teleHud && teleText){
+        teleHud.classList.add("active");
+        var parcelTag = (window.__currentParcel && window.__currentParcel.survey) ? ("PARCEL " + window.__currentParcel.survey) : "CADASTRE SCAN";
+        teleText.textContent = parcelTag + " · " + scrollPct + "% · ELEV " + elev + "m";
+      }
+      var chnAlt = document.getElementById("chn-altitude");
+      if(chnAlt) chnAlt.textContent = "ELEV " + elev + "m";
+
+      // 5. Waypoint Radar HUD Navigation
+      var hudNodes = document.querySelectorAll(".chn-node");
+      if(hudNodes.length && activeSection){
+        hudNodes.forEach(function(node){
+          var targetId = node.getAttribute("data-target");
+          if(targetId === activeSection.id){
+            node.classList.add("active");
+          } else {
+            node.classList.remove("active");
+          }
+        });
+      }
     }
 
     var scrollTicking = false;
@@ -1132,6 +1188,47 @@
 
         // Target section is already visible
         document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
+        this.classList.add("active");
+
+        isClickScrolling = true;
+        clearTimeout(clickScrollTimer);
+        clickScrollTimer = setTimeout(function(){
+          isClickScrolling = false;
+          updateActiveNavOnScroll();
+        }, 900);
+
+        if(targetEl){
+          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        }
+      });
+    });
+
+    // Cadastral Waypoint HUD click handler
+    document.querySelectorAll(".chn-node").forEach(function(node){
+      node.addEventListener("click", function(e){
+        var targetId = this.getAttribute("data-target");
+        if(!targetId) return;
+        var targetEl = document.getElementById(targetId);
+        e.preventDefault();
+
+        if(targetId === "search-top"){
+          document.querySelectorAll(".chn-node").forEach(function(n){ n.classList.remove("active"); });
+          this.classList.add("active");
+          if(targetEl){
+            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          }
+          return;
+        }
+
+        var isHidden = !targetEl || targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none";
+        if(!window.__currentParcel || isHidden){
+          var inputVal = document.getElementById("ulpin-input") ? document.getElementById("ulpin-input").value.trim() : "";
+          var query = inputVal || (selectedState === "Telangana" ? "Rangareddy: Survey 245/A" : (selectedState === "Bihar" ? "Patna: Jamabandi 418" : (selectedState === "Maharashtra" ? "Pune: 7/12 Gat 88/1A" : "Khasra 412/1")));
+          doSearch(query, targetId);
+          return;
+        }
+
+        document.querySelectorAll(".chn-node").forEach(function(n){ n.classList.remove("active"); });
         this.classList.add("active");
 
         isClickScrolling = true;

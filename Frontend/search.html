@@ -39,6 +39,63 @@
   </div>
 </header>
 
+<!-- ============ CADASTRAL SCROLL SCANNER & HUD ============ -->
+<div class="scroll-laser-bar" id="scroll-laser-bar">
+  <div class="laser-sparkle"></div>
+</div>
+
+<div class="scroll-telemetry-hud" id="scroll-telemetry-hud">
+  <span class="tele-dot"></span>
+  <span class="tele-text" id="tele-readout">CADASTRE SCAN · 0%</span>
+</div>
+
+<nav class="cadastral-hud-nav" id="cadastral-hud-nav" aria-label="Cadastral Waypoint HUD">
+  <div class="chn-header">
+    <span class="chn-radar-ping"></span>
+    <span class="chn-title">SURVEY HUD</span>
+  </div>
+  <div class="chn-track">
+    <div class="chn-fill-line" id="chn-fill-line"></div>
+    <a href="#search-top" class="chn-node active" data-target="search-top" title="01 Search">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">01 Search</span>
+    </a>
+    <a href="#dashboard" class="chn-node" data-target="dashboard" title="02 Dashboard">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">02 Dashboard</span>
+    </a>
+    <a href="#gis-view" class="chn-node" data-target="gis-view" title="03 GIS Cadastre">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">03 GIS Map</span>
+    </a>
+    <a href="#passport" class="chn-node" data-target="passport" title="04 Land Passport">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">04 Passport</span>
+    </a>
+    <a href="#intelligence" class="chn-node" data-target="intelligence" title="05 Intelligence">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">05 Intelligence</span>
+    </a>
+    <a href="#history" class="chn-node" data-target="history" title="06 History">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">06 History</span>
+    </a>
+    <a href="#integration" class="chn-node" data-target="integration" title="07 Integration">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">07 Integration</span>
+    </a>
+    <a href="#ledger" class="chn-node" data-target="ledger" title="08 Global Ledger">
+      <span class="chn-dot"></span>
+      <span class="chn-tooltip">08 Ledger</span>
+    </a>
+  </div>
+  <div class="chn-footer">
+    <span id="chn-altitude">ELEV 120m</span>
+  </div>
+</nav>
+
+<div class="cadastral-scanline" id="cadastral-scanline"></div>
+
 <!-- ============ SEARCH SECTION ============ -->
 <section class="search-hero" id="search-top">
   <div class="wrap search-hero-wrap">

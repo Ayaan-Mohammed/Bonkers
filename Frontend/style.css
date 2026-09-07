@@ -31,6 +31,45 @@
 
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
+
+/* ===== Ultra-Futuristic Cadastral Glowing Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0a07;
+  border-left: 1px solid rgba(231, 174, 89, 0.16);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.95);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 45%, #92400e 100%);
+  border-radius: 999px;
+  border: 2px solid #0d0a07;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.55), inset 0 0 4px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 45%, #b45309 100%);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.95), inset 0 0 6px #fff;
+  border-width: 1.5px;
+}
+::-webkit-scrollbar-corner {
+  background: #0d0a07;
+}
+
+/* Firefox custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d97706 #0d0a07;
+}
+
+/* Dynamic scroll active glow on thumb */
+body.is-scrolling ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 35%, #b45309 100%);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 1), 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
 body{
   margin:0;
   font-family:var(--font-body);
@@ -1091,7 +1130,232 @@ button{font-family:var(--font-body);cursor:pointer;}
 }
 .back-to-top-btn:hover{background:rgba(241,204,137,0.16);color:#fff;border-color:rgba(241,204,137,0.35);}
 
+/* ===== Top Cadastral Laser Progress Scanner ===== */
+.scroll-laser-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3.5px;
+  width: 0%;
+  background: linear-gradient(90deg, #92400e 0%, #f59e0b 50%, #fef08a 100%);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.8), 0 0 28px rgba(245, 158, 11, 0.4);
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.08s ease-out;
+}
+.laser-sparkle {
+  position: absolute;
+  right: -5px;
+  top: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px #fef08a, 0 0 24px #f59e0b;
+  animation: laserPulse 1.2s infinite alternate;
+}
+@keyframes laserPulse {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(1.3); opacity: 1; }
+}
+
+/* ===== Floating Cadastral Telemetry Pill ===== */
+.scroll-telemetry-hud {
+  position: fixed;
+  top: 76px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(18, 14, 11, 0.88);
+  border: 1px solid rgba(231, 174, 89, 0.32);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fef08a;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 16px rgba(245, 158, 11, 0.2);
+  backdrop-filter: blur(16px);
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.scroll-telemetry-hud.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.tele-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+  animation: radarBlink 1s infinite alternate;
+}
+@keyframes radarBlink {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; box-shadow: 0 0 12px rgba(34, 197, 94, 1); }
+}
+
+/* ===== Floating Cadastral Waypoint Radar (Right HUD) ===== */
+.cadastral-hud-nav {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(16, 13, 10, 0.85);
+  border: 1px solid rgba(231, 174, 89, 0.22);
+  border-radius: 24px;
+  padding: 14px 9px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(231, 174, 89, 0.1);
+  backdrop-filter: blur(16px);
+  z-index: 8000;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.chn-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.chn-radar-ping {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e7ae59;
+  box-shadow: 0 0 8px #e7ae59;
+  animation: radarPulse 1.8s infinite;
+}
+@keyframes radarPulse {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(231, 174, 89, 0.7); }
+  70% { transform: scale(1.4); box-shadow: 0 0 0 8px rgba(231, 174, 89, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(231, 174, 89, 0); }
+}
+.chn-title {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+  color: #a89b88;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-weight: 700;
+}
+.chn-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 4px 0;
+}
+.chn-fill-line {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(231, 174, 89, 0.15);
+  bottom: 6px;
+  border-radius: 2px;
+  z-index: 0;
+}
+.chn-node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+.chn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(241, 204, 137, 0.35);
+  border: 1.5px solid rgba(22, 18, 14, 0.9);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.chn-node:hover .chn-dot {
+  background: #fcd34d;
+  transform: scale(1.35);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+}
+.chn-node.active .chn-dot {
+  width: 12px;
+  height: 12px;
+  background: #f59e0b;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.9), 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+.chn-tooltip {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  background: rgba(20, 16, 12, 0.92);
+  border: 1px solid rgba(231, 174, 89, 0.32);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fef08a;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+.chn-node:hover .chn-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.chn-footer {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: #e7ae59;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* ===== Cadastral Laser Scanline Sweep ===== */
+.cadastral-scanline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.35) 20%, #fef08a 50%, rgba(245, 158, 11, 0.35) 80%, transparent 100%);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.75), 0 0 32px rgba(245, 158, 11, 0.4);
+  pointer-events: none;
+  z-index: 99998;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+body.is-scrolling .cadastral-scanline {
+  opacity: 0.85;
+}
+
 /* ===== Responsive ===== */
+@media (max-width: 1080px){
+  .cadastral-hud-nav, .scroll-telemetry-hud, .cadastral-scanline {
+    display: none !important;
+  }
+}
+
 @media (max-width: 960px){
   .idea-cards{grid-template-columns:1fr;}
   .landing-hero{min-height:auto;padding:60px 0 80px;}
