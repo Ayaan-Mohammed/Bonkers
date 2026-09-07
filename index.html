@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unified National Land Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <span class="mark">भू · <span class="mark-en">Land Registry Network</span></span>
+    <nav class="head-nav">
+      <a href="#search">Find a parcel</a>
+      <a href="#intelligence">Verification</a>
+      <a href="#architecture">How it works</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="hero-mosaic" id="mosaic" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow-plain">A common record for every parcel of land</p>
+    <h1 class="hero-head">Unified National<br>Land Intelligence Platform</h1>
+    <p class="hero-sub">One nation. One land identity. One record you can trust — and check for yourself.</p>
+
+    <form class="search-slot" id="search-form">
+      <label for="ulpin-input" class="search-label">Search by ULPIN or survey number</label>
+      <div class="search-row">
+        <input type="text" id="ulpin-input" placeholder="e.g. TN04-0021-0087-00456 or Survey No. 187/2A" autocomplete="off">
+        <button type="submit">Search</button>
+      </div>
+      <div class="search-hint">Try: <button type="button" class="try-btn" data-sample="TN04-0021-0087-00456">TN04-0021-0087-00456</button> or <button type="button" class="try-btn" data-sample="KA09-0114-0033-00921">KA09-0114-0033-00921</button></div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ PARCEL RESULT ============ -->
+<section class="doc-section" id="search" style="display:none;" >
+  <div class="wrap">
+    <div class="paper-card" id="parcel-card">
+      <!-- filled by script.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERIFICATION ============ -->
+<section class="dark-section" id="intelligence">
+  <div class="wrap">
+    <h2 class="section-head">Land Intelligence &amp; Verification</h2>
+    <p class="section-lede">Every parcel record is checked against the map, against itself, and against every other record that touches it. Nothing here is a guess — each line is either confirmed or flagged for a person to look at.</p>
+
+    <div class="stamp-grid" id="stamp-grid">
+      <!-- filled by script.js -->
+    </div>
+
+    <div class="assessment">
+      <div class="assessment-seal">
+        <div class="seal-box">
+          <span class="seal-num" id="score-num">—</span>
+          <span class="seal-den">/ 100</span>
+        </div>
+        <p class="seal-cap">Parcel assessment tally</p>
+      </div>
+      <ul class="assessment-list" id="assessment-list">
+        <!-- filled by script.js -->
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIGITAL LAND PASSPORT ============ -->
+<section class="doc-section" id="passport">
+  <div class="wrap">
+    <h2 class="section-head-paper">Digital land passport</h2>
+    <p class="section-lede-paper">A single running record of one parcel — identity, ownership, GIS boundary, legal status, tax, transactions and every change on file — in the order they happened.</p>
+    <div class="passport-book" id="passport-book">
+      <!-- filled by script.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ REPORT GENERATOR ============ -->
+<section class="doc-section alt" id="report">
+  <div class="wrap report-cta-wrap">
+    <div>
+      <h3 class="report-cta-head">Need this on record?</h3>
+      <p class="report-cta-sub">Generate a dated snapshot of everything shown above, with a verification code anyone can check later.</p>
+    </div>
+    <button class="report-btn" id="report-btn">Generate parcel status report</button>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="dark-section" id="architecture">
+  <div class="wrap">
+    <h2 class="section-head">How one record reaches every office</h2>
+    <p class="section-lede">Land is a state subject — every state keeps its own records, in its own format. This is the chain that turns thirty-six different systems into one answer.</p>
+
+    <ol class="flow-chain">
+      <li>
+        <span class="flow-n">1</span>
+        <div><b>State &amp; department data</b><span class="flow-sub">Revenue · registration · tax · cadastral · legal — each in its own schema</span></div>
+      </li>
+      <li>
+        <span class="flow-n">2</span>
+        <div><b>Interoperability layer</b><span class="flow-sub">Open APIs, shared data standards, validation, sync</span></div>
+      </li>
+      <li>
+        <span class="flow-n">3</span>
+        <div><b>Unified national land platform</b><span class="flow-sub">One record per parcel, keyed to its ULPIN</span></div>
+      </li>
+      <li>
+        <span class="flow-n">4</span>
+        <div><b>Land intelligence &amp; GIS verification</b><span class="flow-sub">Boundary, ownership and consistency checks</span></div>
+      </li>
+      <li>
+        <span class="flow-n">5</span>
+        <div><b>Digital land passport &amp; assessment tally</b><span class="flow-sub">The record, and how much of it checks out</span></div>
+      </li>
+      <li>
+        <span class="flow-n">6</span>
+        <div><b>Citizens &amp; government officials</b><span class="flow-sub">The same record, shown to whoever is entitled to see it</span></div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>This platform shows a presumptive record of rights, not a legal certificate of ownership. Court and dispute data shown here is illustrative. Records reflect the last available sync from each source system.</p>
+  </div>
+</footer>
+
+<!-- ============ REPORT MODAL ============ -->
+<div class="report-overlay" id="report-overlay">
+  <div class="report-sheet" id="report-sheet">
+    <!-- filled by script.js -->
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
