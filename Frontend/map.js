@@ -11,14 +11,115 @@
 
   var STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
+  function get1KmBounds(center) {
+    var lat = center[1];
+    var lng = center[0];
+    var degLat = 1.0 / 110.574;
+    var degLng = 1.0 / (111.320 * Math.cos(lat * (Math.PI / 180)));
+    return [
+      [+(lng - degLng).toFixed(6), +(lat - degLat).toFixed(6)],
+      [+(lng + degLng).toFixed(6), +(lat + degLat).toFixed(6)]
+    ];
+  }
+
+  function createCirclePolygon(center, radiusInMeters, points) {
+    if(!points) points = 64;
+    var coords = [];
+    var km = radiusInMeters / 1000;
+    var lat = center[1];
+    var lng = center[0];
+    var degLat = km / 110.574;
+    var degLng = km / (111.320 * Math.cos(lat * (Math.PI / 180)));
+
+    for(var i = 0; i <= points; i++) {
+      var theta = (i / points) * (2 * Math.PI);
+      var x = lng + degLng * Math.cos(theta);
+      var y = lat + degLat * Math.sin(theta);
+      coords.push([+x.toFixed(6), +y.toFixed(6)]);
+    }
+    return {
+      type: "Feature",
+      properties: { radius: "1 km" },
+      geometry: {
+        type: "Polygon",
+        coordinates: [coords]
+      }
+    };
+  }
+
+  function generate1KmNeighbors(center, baseNum, initialFeatures) {
+    var list = (initialFeatures && initialFeatures.slice()) || [];
+    var lat = center[1];
+    var lng = center[0];
+    var degLat = 1.0 / 110.574;
+    var degLng = 1.0 / (111.320 * Math.cos(lat * (Math.PI / 180)));
+
+    var steps = 6;
+    var stepX = (degLng * 2) / steps;
+    var stepY = (degLat * 2) / steps;
+
+    var num = parseInt(baseNum, 10) || 100;
+    var count = 1;
+
+    for(var r = 0; r < steps; r++) {
+      for(var c = 0; c < steps; c++) {
+        var minX = lng - degLng + c * stepX;
+        var maxX = minX + stepX;
+        var minY = lat - degLat + r * stepY;
+        var maxY = minY + stepY;
+
+        var jx = ((r * 7 + c * 13) % 10 - 5) * 0.00018;
+        var jy = ((r * 11 + c * 3) % 10 - 5) * 0.00018;
+
+        var pMinX = +(minX + jx).toFixed(6);
+        var pMaxX = +(maxX - jx).toFixed(6);
+        var pMinY = +(minY + jy).toFixed(6);
+        var pMaxY = +(maxY - jy).toFixed(6);
+
+        var cX = (pMinX + pMaxX) / 2;
+        var cY = (pMinY + pMaxY) / 2;
+        var distSq = Math.pow((cX - lng) / degLng, 2) + Math.pow((cY - lat) / degLat, 2);
+
+        if(distSq > 1.08) continue;
+        if(distSq < 0.08) continue;
+
+        var sVal = (num - 15 + count);
+        if(sVal <= 0) sVal = count + 2;
+        var sub = (count % 3 === 0) ? "/1" : (count % 4 === 0 ? "/2" : (count % 5 === 0 ? "/A" : ""));
+        var label = sVal + sub;
+        count++;
+
+        list.push({
+          type: "Feature",
+          properties: { id: "N-" + label, survey: label, area: (1.1 + (count % 6) * 0.35).toFixed(1) + " Ac" },
+          geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [pMinX, pMinY],
+              [pMaxX, pMinY],
+              [pMaxX, pMaxY],
+              [pMinX, pMaxY],
+              [pMinX, pMinY]
+            ]]
+          }
+        });
+      }
+    }
+
+    return {
+      type: "FeatureCollection",
+      features: list
+    };
+  }
+
   // Predefined sites with target parcel + realistic neighboring parcels
   var SITES = {
     UP: {
       label: "Khasra 412/1 — Demo District, Uttar Pradesh",
       center: [80.9462, 26.8467],
-      zoom: 17.4,
-      pitch: 35,
-      bearing: -15,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       // Irregular target parcel polygon (Khasra 412/1)
       parcel: {
         type: "Feature",
@@ -85,9 +186,9 @@
     KA: {
       label: "Survey No. 88/2 — Kundana, Bengaluru Rural, Karnataka",
       center: [77.7141, 13.2432],
-      zoom: 17.3,
-      pitch: 30,
-      bearing: 10,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       parcel: {
         type: "Feature",
         properties: { id: "KA-DEMO-088-002", survey: "88/2", label: "Survey 88/2" },
@@ -142,9 +243,9 @@
     TN: {
       label: "Patta 1042 — Vellalore, Coimbatore, Tamil Nadu",
       center: [77.0432, 11.0021],
-      zoom: 17.3,
-      pitch: 32,
-      bearing: -8,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       parcel: {
         type: "Feature",
         properties: { id: "TN-DEMO-104-042", survey: "187/2A", label: "Patta 1042" },
@@ -199,9 +300,9 @@
     TS: {
       label: "Survey No. 245/A — Kanakamamidi, Rangareddy, Telangana",
       center: [78.2680, 17.3195],
-      zoom: 17.3,
-      pitch: 32,
-      bearing: -10,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       parcel: {
         type: "Feature",
         properties: { id: "TS-DEMO-245-018", survey: "245/A", label: "Survey 245/A" },
@@ -256,9 +357,9 @@
     BR: {
       label: "Khasra 512/3 — Walmi, Phulwari Sharif, Patna, Bihar (⚠️ Discrepancy Flagged)",
       center: [85.0741, 25.5682],
-      zoom: 17.2,
-      pitch: 30,
-      bearing: 12,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       parcel: {
         type: "Feature",
         properties: { id: "BR-DEMO-512-004", survey: "512/3", label: "Khasra 512/3 (Jamabandi 418)" },
@@ -303,9 +404,9 @@
     MH: {
       label: "Gat No. 88/1A — Wagholi, Haveli Taluka, Pune, Maharashtra (⚠️ Active Bojha)",
       center: [73.9812, 18.5793],
-      zoom: 17.3,
-      pitch: 35,
-      bearing: -5,
+      zoom: 15.0,
+      pitch: 15,
+      bearing: 0,
       parcel: {
         type: "Feature",
         properties: { id: "MH-DEMO-712-088", survey: "88/1A", label: "7/12 Gat 88/1A" },
@@ -349,6 +450,13 @@
     }
   };
 
+  // Augment sites with realistic 1 km neighboring cadastral grid
+  var SITES_BASE_NUMS = { UP: 412, KA: 88, TN: 187, TS: 245, BR: 512, MH: 88 };
+  Object.keys(SITES).forEach(function(k){
+    var s = SITES[k];
+    s.neighbors = generate1KmNeighbors(s.center, SITES_BASE_NUMS[k] || 100, s.neighbors.features);
+  });
+
   var map = null;
   var currentKey = "UP";
   var ready = false;
@@ -378,7 +486,35 @@
         var site = SITES[key];
         var id = key.toLowerCase();
 
-        // 1. Neighboring parcels
+        // 1. 1 km Radius Buffer Ring
+        map.addSource("radius-ring-" + id, {
+          type: "geojson",
+          data: createCirclePolygon(site.center, 1000)
+        });
+
+        map.addLayer({
+          id: "radius-ring-fill-" + id,
+          type: "fill",
+          source: "radius-ring-" + id,
+          paint: {
+            "fill-color": "#f1cc89",
+            "fill-opacity": key === currentKey ? 0.04 : 0.0
+          }
+        });
+
+        map.addLayer({
+          id: "radius-ring-line-" + id,
+          type: "line",
+          source: "radius-ring-" + id,
+          paint: {
+            "line-color": "#e7ae59",
+            "line-width": 1.5,
+            "line-dasharray": [4, 3],
+            "line-opacity": key === currentKey ? 0.75 : 0.0
+          }
+        });
+
+        // 2. Neighboring parcels (1 km radius cadastre)
         map.addSource("neighbors-" + id, {
           type: "geojson",
           data: site.neighbors
@@ -401,12 +537,12 @@
           paint: {
             "line-color": "#d8c7ad",
             "line-width": 1.2,
-            "line-opacity": key === currentKey ? 0.45 : 0.0,
+            "line-opacity": key === currentKey ? 0.5 : 0.0,
             "line-dasharray": [2, 2]
           }
         });
 
-        // 2. Primary searched parcel (highlighted with radiant golden boundary)
+        // 3. Primary searched parcel (highlighted with radiant golden boundary)
         map.addSource("parcel-" + id, {
           type: "geojson",
           data: site.parcel
@@ -437,9 +573,25 @@
         map.on("click", "parcel-fill-" + id, function(e){
           new maplibregl.Popup({closeButton: false, offset: 12})
             .setLngLat(e.lngLat)
-            .setHTML("<b style='color:#1a1207;'>✓ " + site.label + "</b><br><small style='color:#555;'>Presumptive Verified Boundary</small>")
+            .setHTML("<b style='color:#1a1207;'>✓ " + site.label + "</b><br><small style='color:#555;'>Selected Target Parcel (Presumptive Verified)</small>")
             .addTo(map);
         });
+
+        // Click popup on neighboring parcel
+        map.on("click", "neighbors-fill-" + id, function(e){
+          var p = e.features && e.features[0] ? e.features[0].properties : null;
+          var sNum = p && p.survey ? ("Survey " + p.survey) : "Neighboring Plot";
+          var area = p && p.area ? ("<br><small style='color:#555;'>Area: " + p.area + "</small>") : "";
+          new maplibregl.Popup({closeButton: false, offset: 12})
+            .setLngLat(e.lngLat)
+            .setHTML("<b style='color:#1a1207;'>Neighbor: " + sNum + "</b>" + area + "<br><span style='color:#a37118;font-size:0.75rem;font-weight:600;'>Within 1 km Cadastral Buffer</span>")
+            .addTo(map);
+        });
+
+        map.on("mouseenter", "neighbors-fill-" + id, function(){ map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "neighbors-fill-" + id, function(){ map.getCanvas().style.cursor = ""; });
+        map.on("mouseenter", "parcel-fill-" + id, function(){ map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "parcel-fill-" + id, function(){ map.getCanvas().style.cursor = ""; });
       });
 
       ready = true;
@@ -452,6 +604,12 @@
     Object.keys(SITES).forEach(function(key){
       var id = key.toLowerCase();
       var isCurrent = key === currentKey;
+      if(map.getLayer("radius-ring-fill-" + id)){
+        map.setPaintProperty("radius-ring-fill-" + id, "fill-opacity", isCurrent ? 0.04 : 0.0);
+      }
+      if(map.getLayer("radius-ring-line-" + id)){
+        map.setPaintProperty("radius-ring-line-" + id, "line-opacity", isCurrent ? 0.75 : 0.0);
+      }
       if(map.getLayer("parcel-fill-" + id)){
         map.setPaintProperty("parcel-fill-" + id, "fill-opacity", isCurrent ? 0.42 : 0.0);
       }
@@ -462,7 +620,7 @@
         map.setPaintProperty("neighbors-fill-" + id, "fill-opacity", isCurrent ? 0.38 : 0.0);
       }
       if(map.getLayer("neighbors-line-" + id)){
-        map.setPaintProperty("neighbors-line-" + id, "line-opacity", isCurrent ? 0.45 : 0.0);
+        map.setPaintProperty("neighbors-line-" + id, "line-opacity", isCurrent ? 0.5 : 0.0);
       }
     });
 
@@ -484,11 +642,11 @@
         var labelEl = document.getElementById("map-label");
         if(labelEl) labelEl.textContent = customLabel;
       }
-      map.flyTo({
-        center: site.center,
-        zoom: site.zoom,
-        pitch: site.pitch,
-        bearing: site.bearing,
+      var bounds = get1KmBounds(site.center);
+      map.fitBounds(bounds, {
+        padding: { top: 40, bottom: 40, left: 40, right: 40 },
+        pitch: 15,
+        bearing: 0,
         speed: 1.1,
         curve: 1.4,
         essential: true
@@ -507,11 +665,12 @@
   function fitParcel(){
     if(!map || !SITES[currentKey]) return;
     var site = SITES[currentKey];
-    map.flyTo({
-      center: site.center,
-      zoom: site.zoom + 0.5,
-      pitch: 42,
-      bearing: site.bearing,
+    var bounds = get1KmBounds(site.center);
+    map.fitBounds(bounds, {
+      padding: { top: 40, bottom: 40, left: 40, right: 40 },
+      pitch: 15,
+      bearing: 0,
+      duration: 750,
       essential: true
     });
   }
@@ -519,11 +678,12 @@
   function resetView(){
     if(!map || !SITES[currentKey]) return;
     var site = SITES[currentKey];
-    map.flyTo({
-      center: site.center,
-      zoom: site.zoom,
-      pitch: site.pitch,
-      bearing: site.bearing,
+    var bounds = get1KmBounds(site.center);
+    map.fitBounds(bounds, {
+      padding: { top: 40, bottom: 40, left: 40, right: 40 },
+      pitch: 15,
+      bearing: 0,
+      duration: 750,
       essential: true
     });
   }

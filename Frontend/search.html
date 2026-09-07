@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=nlip_dark3">
+<link rel="stylesheet" href="style.css?v=nlip_dark4">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
@@ -199,12 +199,13 @@
           <div class="map-gis-controls" aria-label="Map navigation controls">
             <button type="button" id="map-zoom-in" title="Zoom In">+</button>
             <button type="button" id="map-zoom-out" title="Zoom Out">−</button>
-            <button type="button" id="map-fit-parcel" title="Fit Selected Parcel">⛶</button>
+            <button type="button" id="map-fit-parcel" title="Fit 1 km Neighboring Radius">⛶</button>
             <button type="button" id="map-reset-view" title="Reset View">↺</button>
           </div>
           <div class="map-legend">
             <span class="legend-item"><span class="legend-swatch golden"></span> Selected Parcel</span>
-            <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring</span>
+            <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring Plots</span>
+            <span class="legend-item"><span class="legend-swatch radius-ring"></span> 1 km Radius</span>
           </div>
         </div>
         <p class="map-note">Cadastral GIS parcel boundaries matched against open spatial layers for SIH demonstration.</p>
@@ -590,7 +591,7 @@
   <div class="report-sheet" id="report-sheet"></div>
 </div>
 
-<script src="map.js?v=nlip_dark1"></script>
-<script src="script.js?v=nlip_dark3"></script>
+<script src="map.js?v=nlip_dark4"></script>
+<script src="script.js?v=nlip_dark4"></script>
 </body>
 </html>

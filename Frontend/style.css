@@ -482,6 +482,7 @@ button{font-family:var(--font-body);cursor:pointer;}
 .legend-swatch{width:10px;height:10px;border-radius:2px;}
 .legend-swatch.golden{background:rgba(231,174,89,0.35);border:2px solid #e7ae59;}
 .legend-swatch.neighbor{background:rgba(50,42,32,0.35);border:1px solid rgba(220,195,150,0.3);}
+.legend-swatch.radius-ring{background:rgba(231,174,89,0.06);border:1.5px dashed #e7ae59;border-radius:50%;}
 
 /* Compact Parcel Card */
 .parcel-info-card{
