@@ -3,297 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unified National Land Intelligence Platform</title>
+<title>NLIP — National Land Intelligence Platform</title>
+<meta name="description" content="A unified digital experience to search, understand and explore land parcels through connected land records and geospatial information.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=land1">
-<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="stylesheet" href="style.css?v=nlip3">
 </head>
-<body>
+<body class="landing-page">
 
 <!-- ============ FULL-SCREEN LAND BACKGROUND ============ -->
 <div class="land-bg-canvas" id="land-bg" aria-hidden="true">
   <div class="land-bg-image" id="land-bg-image"></div>
-  <div class="land-bg-overlay"></div>
+  <div class="land-bg-overlay land-bg-overlay--landing"></div>
 </div>
 
+<!-- ============ HEADER ============ -->
 <header class="site-head">
   <div class="wrap head-row">
-    <span class="mark">भू · <span class="mark-en">Land Registry Network</span></span>
+    <span class="mark"><span class="mark-icon">◈</span> NLIP</span>
     <nav class="head-nav">
-      <a href="#search">Find a parcel</a>
-      <a href="#intelligence">Verification</a>
-      <a href="#architecture">How it works</a>
+      <a href="#idea">The Idea</a>
+      <a href="#how-it-works">How it Works</a>
+      <a href="search.html" class="nav-cta-link">Search Land →</a>
     </nav>
   </div>
 </header>
 
 <!-- ============ HERO ============ -->
-<section class="hero" id="top">
-  <div class="wrap hero-grid">
-    <!-- LEFT SIDE -->
-    <div class="hero-left">
-      <div class="eyebrow-badge">
-        <span class="badge-dot"></span>
-        <span class="badge-brand">Bhu-InterOp</span>
-        <span class="badge-divider">·</span>
-        <span class="badge-sub">Open DPI Engine</span>
-      </div>
-      <h1 class="hero-title">Unified Parcel Intelligence <span class="hero-title-accent">&amp; Interoperability Stack</span></h1>
-      <p class="hero-desc">One place to search, understand and verify land parcels across India.</p>
-      
-      <div class="hero-trust-row">
-        <span class="trust-item"><i class="trust-icon">✓</i> National DPI Framework</span>
-        <span class="trust-item"><i class="trust-icon">✓</i> Standardized ISO 19152 (LADM)</span>
-      </div>
+<section class="hero landing-hero" id="top">
+  <div class="wrap landing-hero-inner">
+    <div class="landing-eyebrow">
+      <span class="badge-dot"></span>
+      <span class="badge-brand">National Land Intelligence Platform</span>
     </div>
 
-    <!-- RIGHT SIDE / SEARCH BOX -->
-    <div class="hero-right">
-      <div class="search-panel" id="search-panel">
-        <div class="search-panel-head">
-          <div class="search-title-row">
-            <h2 class="search-title">Search Your Land</h2>
-            <span class="demo-tag">Prototype / Demonstration Data</span>
-          </div>
-          <p class="search-subtitle">Find your parcel using ULPIN, Survey Number, Khasra, Gata or Patta.</p>
-        </div>
+    <h1 class="landing-headline">
+      One Nation.<br>
+      One Land Intelligence<br>
+      <span class="landing-headline-accent">Platform.</span>
+    </h1>
 
-        <form class="search-form" id="search-form">
-          <div class="form-group">
-            <label class="field-label" for="state-selector-btn">State / Union Territory</label>
-            <div class="state-select-wrapper">
-              <button type="button" class="state-select-btn" id="state-selector-btn" aria-haspopup="listbox" aria-expanded="false">
-                <span class="state-pin-icon">📍</span>
-                <span class="selected-state-name" id="selected-state-name">Uttar Pradesh</span>
-                <span class="chevron-icon">⌄</span>
-              </button>
+    <p class="landing-tagline">Search, understand and explore land parcels across India — through connected land records and geospatial intelligence.</p>
 
-              <!-- Searchable State Dropdown Popover -->
-              <div class="state-dropdown" id="state-dropdown" role="listbox" style="display:none;">
-                <div class="state-search-box">
-                  <input type="text" id="state-search-input" placeholder="Search state or UT..." autocomplete="off">
-                </div>
-                <div class="state-list" id="state-list">
-                  <!-- dynamically filled with 28 States + 8 UTs -->
-                </div>
-              </div>
-            </div>
-          </div>
+    <a href="search.html" class="landing-cta" id="search-cta">
+      <span>Search Your Land</span>
+      <span class="landing-cta-arrow">→</span>
+    </a>
 
-          <div class="form-group">
-            <label class="field-label" for="ulpin-input">Land Identifier</label>
-            <div class="input-with-action">
-              <input type="text" id="ulpin-input" placeholder="Enter ULPIN, Survey Number, Khasra or Gata..." autocomplete="off" value="Khasra: 412/1">
-              <button type="submit" class="search-submit-btn" id="search-submit-btn">
-                <span>Search</span>
-                <span class="arrow-icon">→</span>
-              </button>
-            </div>
-          </div>
+    <div class="landing-trust">
+      <span class="trust-item"><i class="trust-icon">✓</i> 28 States & 8 UTs</span>
+      <span class="trust-item"><i class="trust-icon">✓</i> ULPIN Integrated</span>
+      <span class="trust-item"><i class="trust-icon">✓</i> GIS Verified</span>
+    </div>
+  </div>
+</section>
 
-          <div class="quick-samples">
-            <span class="samples-label">Demo Samples:</span>
-            <div class="sample-chips">
-              <button type="button" class="sample-chip active" data-state="Uttar Pradesh" data-query="Khasra: 412/1">UP: Khasra 412/1</button>
-              <button type="button" class="sample-chip" data-state="Karnataka" data-query="Survey: 88/2">KA: Survey 88/2</button>
-              <button type="button" class="sample-chip" data-state="Tamil Nadu" data-query="Patta: 1042">TN: Patta 1042</button>
-              <button type="button" class="sample-chip" data-state="Uttar Pradesh" data-query="ULPIN-DEMO-001">ULPIN-DEMO-001</button>
-            </div>
-          </div>
-        </form>
+<!-- ============ THE IDEA ============ -->
+<section class="landing-section" id="idea">
+  <div class="wrap">
+    <div class="landing-section-label">The Idea</div>
+    <h2 class="landing-section-title">Why India needs unified land intelligence</h2>
+    <p class="landing-section-desc">India's land records are spread across 36 different systems. A citizen, bank or court has no single place to search, verify and understand a land parcel.</p>
+
+    <div class="idea-cards">
+      <div class="idea-card idea-card--problem">
+        <div class="idea-card-icon">⚠</div>
+        <h3>The Challenge</h3>
+        <ul>
+          <li>36 disparate state & UT land registries</li>
+          <li>No unified search across states</li>
+          <li>Presumptive titles — not guaranteed ownership</li>
+          <li>Cadastral maps rarely digitally verified</li>
+        </ul>
+      </div>
+
+      <div class="idea-card idea-card--solution">
+        <div class="idea-card-icon">◈</div>
+        <h3>NLIP's Approach</h3>
+        <ul>
+          <li>Unified search by ULPIN, Survey No., Khasra, Patta</li>
+          <li>GIS boundary verification against cadastral maps</li>
+          <li>Cross-referenced ownership & encumbrance data</li>
+          <li>Digital Land Passport — one verifiable record</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ GIS PARCEL VIEW & RESULT ============ -->
-<section class="dark-section gis-section" id="gis-view">
+<!-- ============ HOW IT WORKS ============ -->
+<section class="landing-section landing-section--dark" id="how-it-works">
   <div class="wrap">
-    <!-- RESULT HEADER BANNER -->
-    <div class="parcel-found-banner" id="parcel-found-banner">
-      <div class="pf-pill"><span class="pf-check">✓</span> PARCEL FOUND</div>
-      <span class="pf-divider">|</span>
-      <span class="pf-desc" id="pf-banner-text">Showing surveyed boundary for <b>UP-DEMO-412-001</b> (Khasra 412/1) in Uttar Pradesh</span>
-      <span class="pf-proto-badge">Prototype Data</span>
-    </div>
-
-    <!-- MAP + COMPACT PARCEL INFO CARD WRAPPER -->
-    <div class="gis-layout">
-      <!-- MAP CONTAINER -->
-      <div class="map-container">
-        <div class="map-frame" id="map-frame">
-          <div id="gis-map"></div>
-          <div class="map-label" id="map-label">Khasra 412/1 — Demo District, Uttar Pradesh</div>
-
-          <!-- Minimal GIS Controls -->
-          <div class="map-gis-controls" aria-label="Map navigation controls">
-            <button type="button" id="map-zoom-in" title="Zoom In">+</button>
-            <button type="button" id="map-zoom-out" title="Zoom Out">−</button>
-            <button type="button" id="map-fit-parcel" title="Fit Selected Parcel">⛶</button>
-            <button type="button" id="map-reset-view" title="Reset View">↺</button>
-          </div>
-
-          <!-- Boundary Legend -->
-          <div class="map-legend">
-            <span class="legend-item"><span class="legend-swatch golden"></span> Selected Parcel</span>
-            <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring Parcels</span>
-          </div>
-        </div>
-        <p class="map-note">Map imagery © OpenStreetMap contributors. Cadastral parcel boundaries shown are illustrative demonstration polygons.</p>
-      </div>
-
-      <!-- COMPACT PARCEL INFO CARD -->
-      <aside class="parcel-info-card" id="parcel-info-card" aria-label="Found Parcel Summary">
-        <div class="pic-header">
-          <span class="pic-badge">PARCEL FOUND ✓</span>
-          <span class="pic-verified-tag">✓ Verified</span>
-        </div>
-
-        <div class="pic-body">
-          <div class="pic-row">
-            <span class="pic-label">ULPIN / Parcel ID</span>
-            <span class="pic-val mono" id="pic-ulpin">UP-DEMO-412-001</span>
-          </div>
-          <div class="pic-row">
-            <span class="pic-label">Area</span>
-            <span class="pic-val" id="pic-area">2.48 Acres</span>
-          </div>
-          <div class="pic-row">
-            <span class="pic-label">State</span>
-            <span class="pic-val" id="pic-state">Uttar Pradesh</span>
-          </div>
-          <div class="pic-row">
-            <span class="pic-label">District</span>
-            <span class="pic-val" id="pic-district">Demo District</span>
-          </div>
-          <div class="pic-row">
-            <span class="pic-label">Survey / Khasra</span>
-            <span class="pic-val mono" id="pic-survey">412/1</span>
-          </div>
-          <div class="pic-row">
-            <span class="pic-label">Status</span>
-            <span class="pic-status-pill">✓ Presumptive Title Clear</span>
-          </div>
-        </div>
-
-        <div class="pic-footer">
-          <button type="button" class="pic-details-btn" id="pic-details-btn">
-            <span>View Land Details</span>
-            <span aria-hidden="true">↓</span>
-          </button>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============ DETAILED PARCEL RECORD ============ -->
-<section class="doc-section" id="search" style="display:none;">
-  <div class="wrap">
-    <div class="paper-card" id="parcel-card">
-      <!-- filled by script.js -->
-    </div>
-  </div>
-</section>
-
-<!-- ============ VERIFICATION ============ -->
-<section class="dark-section" id="intelligence">
-  <div class="wrap">
-    <h2 class="section-head">Land Intelligence &amp; Verification</h2>
-
-    <div class="stamp-grid" id="stamp-grid">
-      <!-- filled by script.js -->
-    </div>
-
-    <div class="assessment">
-      <div class="assessment-seal">
-        <div class="seal-box">
-          <span class="seal-num" id="score-num">—</span>
-          <span class="seal-den">/ 100</span>
-        </div>
-        <p class="seal-cap">Parcel assessment tally</p>
-      </div>
-      <ul class="assessment-list" id="assessment-list">
-        <!-- filled by script.js -->
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ============ DIGITAL LAND PASSPORT ============ -->
-<section class="doc-section" id="passport">
-  <div class="wrap">
-    <h2 class="section-head-paper">Digital land passport</h2>
-    <p class="section-lede-paper">A single running record of one parcel — identity, ownership, GIS boundary, legal status, tax, transactions and every change on file — in the order they happened.</p>
-    <div class="passport-book" id="passport-book">
-      <!-- filled by script.js -->
-    </div>
-  </div>
-</section>
-
-<!-- ============ REPORT GENERATOR ============ -->
-<section class="doc-section alt" id="report">
-  <div class="wrap report-cta-wrap">
-    <div>
-      <h3 class="report-cta-head">Need this on record?</h3>
-      <p class="report-cta-sub">Generate a dated snapshot of everything shown above, with a verification code anyone can check later.</p>
-    </div>
-    <button class="report-btn" id="report-btn">Generate parcel status report</button>
-  </div>
-</section>
-
-<!-- ============ ARCHITECTURE ============ -->
-<section class="dark-section" id="architecture">
-  <div class="wrap">
-    <h2 class="section-head">How one record reaches every office</h2>
-    <p class="section-lede">Land is a state subject — every state keeps its own records, in its own format. This is the chain that turns thirty-six different systems into one answer.</p>
+    <div class="landing-section-label">How it Works</div>
+    <h2 class="landing-section-title">From thirty-six systems to one answer</h2>
+    <p class="landing-section-desc">Land is a state subject. Every state keeps its own records, in its own format. NLIP unifies them.</p>
 
     <ol class="flow-chain">
       <li>
         <span class="flow-n">1</span>
-        <div><b>State &amp; department data</b><span class="flow-sub">Revenue · registration · tax · cadastral · legal — each in its own schema</span></div>
+        <div><b>State & department data</b><span class="flow-sub">Revenue · registration · tax · cadastral · legal</span></div>
       </li>
       <li>
         <span class="flow-n">2</span>
-        <div><b>Interoperability layer</b><span class="flow-sub">Open APIs, shared data standards, validation, sync</span></div>
+        <div><b>Interoperability layer</b><span class="flow-sub">Open APIs, shared standards, validation</span></div>
       </li>
       <li>
         <span class="flow-n">3</span>
-        <div><b>Unified national land platform</b><span class="flow-sub">One record per parcel, keyed to its ULPIN</span></div>
+        <div><b>Unified national platform</b><span class="flow-sub">One record per parcel, keyed to ULPIN</span></div>
       </li>
       <li>
         <span class="flow-n">4</span>
-        <div><b>Land intelligence &amp; GIS verification</b><span class="flow-sub">Boundary, ownership and consistency checks</span></div>
+        <div><b>GIS verification</b><span class="flow-sub">Boundary & ownership consistency checks</span></div>
       </li>
       <li>
         <span class="flow-n">5</span>
-        <div><b>Digital land passport &amp; assessment tally</b><span class="flow-sub">The record, and how much of it checks out</span></div>
+        <div><b>Digital land passport</b><span class="flow-sub">The record, and how much of it checks out</span></div>
       </li>
       <li>
         <span class="flow-n">6</span>
-        <div><b>Citizens &amp; government officials</b><span class="flow-sub">The same record, shown to whoever is entitled to see it</span></div>
+        <div><b>Citizens & officials</b><span class="flow-sub">The same record, accessible to all</span></div>
       </li>
     </ol>
   </div>
 </section>
 
+<!-- ============ BOTTOM CTA ============ -->
+<section class="landing-section landing-bottom-cta">
+  <div class="wrap landing-bottom-cta-inner">
+    <h2 class="landing-bottom-title">Ready to find your land?</h2>
+    <p class="landing-bottom-desc">Search by ULPIN, Survey Number, Khasra, Gata or Patta — across any state or union territory.</p>
+    <a href="search.html" class="landing-cta">
+      <span>Search Your Land</span>
+      <span class="landing-cta-arrow">→</span>
+    </a>
+  </div>
+</section>
+
 <footer class="site-foot">
   <div class="wrap">
-    <p>This platform shows a presumptive record of rights, not a legal certificate of ownership. Court and dispute data shown here is illustrative. Records reflect the last available sync from each source system.</p>
+    <p>NLIP is a prototype demonstration. Data shown is illustrative and does not represent actual government records.</p>
   </div>
 </footer>
 
-<!-- ============ REPORT MODAL ============ -->
-<div class="report-overlay" id="report-overlay">
-  <div class="report-sheet" id="report-sheet">
-    <!-- filled by script.js -->
-  </div>
-</div>
-
-<script src="map.js?v=demo1"></script>
-<script src="script.js?v=demo1"></script>
+<!-- Parallax only -->
+<script>
+(function(){
+  var bgImage = document.getElementById("land-bg-image");
+  if(!bgImage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var tX=0,tY=0,cX=0,cY=0,tick=false;
+  function render(){
+    cX+=(tX-cX)*0.04; cY+=(tY-cY)*0.04;
+    bgImage.style.transform="translate3d("+(-(cX*12).toFixed(2))+"px,"+(-(cY*7).toFixed(2))+"px,0) scale(1.04)";
+    if(Math.abs(tX-cX)>0.001||Math.abs(tY-cY)>0.001) requestAnimationFrame(render);
+    else tick=false;
+  }
+  window.addEventListener("pointermove",function(e){
+    tX=Math.max(-1,Math.min(1,((e.clientX/window.innerWidth)-0.5)*2));
+    tY=Math.max(-1,Math.min(1,((e.clientY/window.innerHeight)-0.5)*2));
+    if(!tick){tick=true;requestAnimationFrame(render);}
+  },{passive:true});
+  document.addEventListener("mouseleave",function(){
+    tX=0;tY=0;if(!tick){tick=true;requestAnimationFrame(render);}
+  },{passive:true});
+})();
+</script>
 </body>
 </html>

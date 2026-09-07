@@ -1,71 +1,39 @@
 (function(){
   "use strict";
 
+  var isSearchPage = !!document.getElementById("search-form");
+  if(!isSearchPage) return;
+
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ============================================================
      1. LAND BACKGROUND PARALLAX
-     Very subtle, dampened mouse parallax for the full-screen
-     decorative Indian agricultural land background.
   ============================================================ */
   function initLandBackground(){
     var bgImage = document.getElementById("land-bg-image");
-    if(!bgImage) return;
+    if(!bgImage || reduceMotion) return;
 
-    if(reduceMotion) return;
+    var tX=0,tY=0,cX=0,cY=0,tick=false;
 
-    var targetX = 0, targetY = 0;
-    var currentX = 0, currentY = 0;
-    var isTicking = false;
-
-    // Movement is kept very subtle (±14px X, ±9px Y)
-    var maxShiftX = 14;
-    var maxShiftY = 9;
-
-    function renderParallax(){
-      currentX += (targetX - currentX) * 0.05;
-      currentY += (targetY - currentY) * 0.05;
-
-      var moveX = (currentX * maxShiftX).toFixed(2);
-      var moveY = (currentY * maxShiftY).toFixed(2);
-
-      bgImage.style.transform = "translate3d(" + (-moveX) + "px, " + (-moveY) + "px, 0) scale(1.04)";
-
-      if(Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001){
-        requestAnimationFrame(renderParallax);
-      } else {
-        isTicking = false;
-      }
+    function render(){
+      cX+=(tX-cX)*0.04; cY+=(tY-cY)*0.04;
+      bgImage.style.transform="translate3d("+(-(cX*12).toFixed(2))+"px,"+(-(cY*7).toFixed(2))+"px,0) scale(1.04)";
+      if(Math.abs(tX-cX)>0.001||Math.abs(tY-cY)>0.001) requestAnimationFrame(render);
+      else tick=false;
     }
 
-    function onPointerMove(e){
-      targetX = ((e.clientX / window.innerWidth) - 0.5) * 2;
-      targetY = ((e.clientY / window.innerHeight) - 0.5) * 2;
-
-      if(targetX > 1) targetX = 1; else if(targetX < -1) targetX = -1;
-      if(targetY > 1) targetY = 1; else if(targetY < -1) targetY = -1;
-
-      if(!isTicking){
-        isTicking = true;
-        requestAnimationFrame(renderParallax);
-      }
-    }
-
-    function onPointerLeave(){
-      targetX = 0;
-      targetY = 0;
-      if(!isTicking){
-        isTicking = true;
-        requestAnimationFrame(renderParallax);
-      }
-    }
-
-    window.addEventListener("pointermove", onPointerMove, {passive: true});
-    document.addEventListener("mouseleave", onPointerLeave, {passive: true});
+    window.addEventListener("pointermove",function(e){
+      tX=Math.max(-1,Math.min(1,((e.clientX/window.innerWidth)-0.5)*2));
+      tY=Math.max(-1,Math.min(1,((e.clientY/window.innerHeight)-0.5)*2));
+      if(!tick){tick=true;requestAnimationFrame(render);}
+    },{passive:true});
+    document.addEventListener("mouseleave",function(){
+      tX=0;tY=0;if(!tick){tick=true;requestAnimationFrame(render);}
+    },{passive:true});
   }
 
   /* ============================================================
-     2. 28 INDIAN STATES & 8 UNION TERRITORIES (Full Coverage)
+     2. STATES & UTs
   ============================================================ */
   var STATES_AND_UTS = [
     { name: "Andhra Pradesh", type: "State" },
@@ -107,28 +75,19 @@
   ];
 
   /* ============================================================
-     3. PREDEFINED DEMO DATASET (Illustrative Prototype Data)
+     3. DEMO DATASET
   ============================================================ */
   var PARCELS = {
     "UP": {
-      ulpin: "UP-DEMO-412-001",
-      survey: "412/1",
-      state: "Uttar Pradesh",
-      district: "Demo District (Lucknow)",
-      mandal: "Bakshi Ka Talab",
-      village: "Mahona",
-      area: "2.48 Acres (1.00 ha)",
-      type: "Agricultural — Irrigated",
-      zoning: "Rural / Agricultural Zone",
-      coords: "26.8467° N, 80.9462° E",
-      holder: "Ramesh Chandra Verma",
-      ownership: "Presumptive record of rights",
+      ulpin: "UP-DEMO-412-001", survey: "412/1", state: "Uttar Pradesh",
+      district: "Demo District (Lucknow)", mandal: "Bakshi Ka Talab", village: "Mahona",
+      area: "2.48 Acres (1.00 ha)", type: "Agricultural — Irrigated",
+      zoning: "Rural / Agricultural Zone", coords: "26.8467° N, 80.9462° E",
+      holder: "Ramesh Chandra Verma", ownership: "Presumptive record of rights",
       ror: "Khatauni verified (1428–1433 Fasli)",
       mutation: "Mutation cleared (Order dated 2023-04-12)",
-      encumbrance: "None recorded — Clean title",
-      tax: "Paid to date (FY 2025–26)",
-      valuation: "Guideline value ₹14.5L / acre",
-      status: "✓ Verified — Consistent",
+      encumbrance: "None recorded — Clean title", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹14.5L / acre", status: "✓ Verified — Consistent",
       history: [
         {date:"2025-01-15", title:"Annual land revenue tax paid", desc:"Electronic challan cleared via UP Bhulekh portal."},
         {date:"2023-04-12", title:"Inheritance mutation entered", desc:"Record of rights updated following succession order at taluk revenue court."},
@@ -136,24 +95,15 @@
       ]
     },
     "KA": {
-      ulpin: "KA-DEMO-088-002",
-      survey: "88/2",
-      state: "Karnataka",
-      district: "Bengaluru Rural",
-      mandal: "Devanahalli Taluk",
-      village: "Kundana",
-      area: "1.85 Acres (0.75 ha)",
-      type: "Agricultural — Dry crop",
-      zoning: "Rural Agricultural Zone",
-      coords: "13.2432° N, 77.7141° E",
-      holder: "R. Prashanth Rao",
-      ownership: "Presumptive record of rights",
+      ulpin: "KA-DEMO-088-002", survey: "88/2", state: "Karnataka",
+      district: "Bengaluru Rural", mandal: "Devanahalli Taluk", village: "Kundana",
+      area: "1.85 Acres (0.75 ha)", type: "Agricultural — Dry crop",
+      zoning: "Rural Agricultural Zone", coords: "13.2432° N, 77.7141° E",
+      holder: "R. Prashanth Rao", ownership: "Presumptive record of rights",
       ror: "Bhoomi RTC updated (2024)",
       mutation: "Cleared — sale deed dated 2022-08-12",
-      encumbrance: "None recorded (NOC issued by SBI)",
-      tax: "Paid (FY 2024–25)",
-      valuation: "Guideline value ₹32L / acre",
-      status: "✓ Verified — Consistent",
+      encumbrance: "None recorded (NOC issued by SBI)", tax: "Paid (FY 2024–25)",
+      valuation: "Guideline value ₹32L / acre", status: "✓ Verified — Consistent",
       history: [
         {date:"2024-08-12", title:"RTC re-verification", desc:"Digital Bhoomi record cross-referenced with Kaveri registration database."},
         {date:"2022-08-12", title:"Sale deed registered", desc:"Registered transfer of rights completed at Devanahalli sub-registrar office."},
@@ -161,24 +111,14 @@
       ]
     },
     "TN": {
-      ulpin: "TN-DEMO-104-042",
-      survey: "187/2A",
-      state: "Tamil Nadu",
-      district: "Coimbatore",
-      mandal: "Sulur Taluk",
-      village: "Vellalore",
-      area: "2.13 Acres (0.86 ha)",
-      type: "Agricultural — Irrigated",
-      zoning: "Rural / Agricultural Zone",
-      coords: "11.0021° N, 77.0432° E",
-      holder: "K. Meenakshi Sundaram",
-      ownership: "Presumptive record of rights",
-      ror: "Anyam Patta No. 1042 issued",
-      mutation: "No pending mutation",
-      encumbrance: "None recorded",
-      tax: "Paid to date (FY 2025–26)",
-      valuation: "Guideline value ₹18.2L / acre",
-      status: "✓ Verified — Consistent",
+      ulpin: "TN-DEMO-104-042", survey: "187/2A", state: "Tamil Nadu",
+      district: "Coimbatore", mandal: "Sulur Taluk", village: "Vellalore",
+      area: "2.13 Acres (0.86 ha)", type: "Agricultural — Irrigated",
+      zoning: "Rural / Agricultural Zone", coords: "11.0021° N, 77.0432° E",
+      holder: "K. Meenakshi Sundaram", ownership: "Presumptive record of rights",
+      ror: "Anyam Patta No. 1042 issued", mutation: "No pending mutation",
+      encumbrance: "None recorded", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹18.2L / acre", status: "✓ Verified — Consistent",
       history: [
         {date:"2024-11-02", title:"Property tax paid", desc:"Annual tax cleared for FY 2024–25 at the Sulur taluk office."},
         {date:"2022-06-14", title:"Boundary re-survey", desc:"Cadastral boundary re-verified against drone survey under SVAMITVA."},
@@ -201,7 +141,7 @@
   var ASSESSMENT_ROWS = ["Ownership","GIS boundary","Registration","Tax","Encumbrance","Mutation","Record consistency"];
 
   /* ============================================================
-     4. STATE SELECTOR DROPDOWN LOGIC
+     4. STATE SELECTOR DROPDOWN
   ============================================================ */
   var selectedState = "Uttar Pradesh";
 
@@ -211,33 +151,27 @@
     var searchInput = document.getElementById("state-search-input");
     var listContainer = document.getElementById("state-list");
     var stateNameEl = document.getElementById("selected-state-name");
-
     if(!btn || !dropdown || !listContainer) return;
 
     function renderList(filter){
       listContainer.innerHTML = "";
       var query = (filter || "").toLowerCase().trim();
-
       var filtered = STATES_AND_UTS.filter(function(item){
         return item.name.toLowerCase().indexOf(query) !== -1;
       });
-
       if(filtered.length === 0){
-        listContainer.innerHTML = '<div style="padding:12px 16px; font-size:0.82rem; color:#8c8172;">No matching State or UT found</div>';
+        listContainer.innerHTML = '<div style="padding:12px 16px;font-size:0.82rem;color:#8c8172;">No matching State or UT found</div>';
         return;
       }
-
       filtered.forEach(function(item){
         var row = document.createElement("div");
         row.className = "state-item" + (item.name === selectedState ? " selected" : "");
         row.innerHTML = '<span>' + item.name + '</span><span class="state-type-tag">' + item.type + '</span>';
-
         row.addEventListener("click", function(e){
           e.stopPropagation();
           selectState(item.name);
           closeDropdown();
         });
-
         listContainer.appendChild(row);
       });
     }
@@ -252,10 +186,7 @@
       dropdown.style.display = "block";
       btn.setAttribute("aria-expanded", "true");
       renderList("");
-      if(searchInput){
-        searchInput.value = "";
-        setTimeout(function(){ searchInput.focus(); }, 50);
-      }
+      if(searchInput){ searchInput.value = ""; setTimeout(function(){ searchInput.focus(); }, 50); }
     }
 
     function closeDropdown(){
@@ -265,98 +196,117 @@
 
     btn.addEventListener("click", function(e){
       e.stopPropagation();
-      var isOpen = dropdown.style.display === "block";
-      if(isOpen) closeDropdown();
-      else openDropdown();
+      if(dropdown.style.display === "block") closeDropdown(); else openDropdown();
     });
-
     if(searchInput){
-      searchInput.addEventListener("input", function(){
-        renderList(this.value);
-      });
-      searchInput.addEventListener("click", function(e){
-        e.stopPropagation();
-      });
+      searchInput.addEventListener("input", function(){ renderList(this.value); });
+      searchInput.addEventListener("click", function(e){ e.stopPropagation(); });
     }
-
     document.addEventListener("click", function(e){
-      if(!dropdown.contains(e.target) && e.target !== btn){
-        closeDropdown();
-      }
+      if(!dropdown.contains(e.target) && e.target !== btn) closeDropdown();
     });
 
     window.__selectState = selectState;
   }
 
   /* ============================================================
-     5. SEARCH DISPATCH & PARCEL SELECTION
+     5. SEARCH FEEDBACK UI
+  ============================================================ */
+  var feedbackEl = null;
+  var feedbackInner = null;
+
+  function showFeedback(text, type){
+    if(!feedbackEl) return;
+    feedbackEl.style.display = "block";
+    feedbackInner.className = "search-feedback-inner" + (type ? " search-feedback--" + type : "");
+    feedbackInner.innerHTML = (type === "loading" ? '<span class="search-spinner"></span>' : '') +
+      '<span class="search-feedback-text">' + text + '</span>';
+  }
+
+  function hideFeedback(){
+    if(feedbackEl) feedbackEl.style.display = "none";
+  }
+
+  /* ============================================================
+     6. SEARCH DISPATCH
   ============================================================ */
   function findParcelKey(query, state){
     var q = (query || "").toLowerCase();
     var s = (state || selectedState || "").toLowerCase();
-
-    // Direct ULPIN / Khasra matching
-    if(q.indexOf("412") !== -1 || q.indexOf("up") !== -1 || s.indexOf("uttar") !== -1){
-      return "UP";
-    }
-    if(q.indexOf("88") !== -1 || q.indexOf("ka") !== -1 || s.indexOf("karnataka") !== -1){
-      return "KA";
-    }
-    if(q.indexOf("1042") !== -1 || q.indexOf("187") !== -1 || q.indexOf("tn") !== -1 || s.indexOf("tamil") !== -1){
-      return "TN";
-    }
-
-    // Fallback: cycle gracefully between UP, KA, TN
+    if(q.indexOf("412") !== -1 || q.indexOf("up-demo") !== -1 || (s.indexOf("uttar") !== -1 && q)) return "UP";
+    if(q.indexOf("88") !== -1 || q.indexOf("ka-demo") !== -1 || (s.indexOf("karnataka") !== -1 && q)) return "KA";
+    if(q.indexOf("1042") !== -1 || q.indexOf("187") !== -1 || q.indexOf("tn-demo") !== -1 || (s.indexOf("tamil") !== -1 && q)) return "TN";
     return "UP";
+  }
+
+  function showResultSections(){
+    ["gis-view","parcel-details","intelligence","passport","report"].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){
+        el.style.display = "";
+        el.classList.add("section-reveal");
+      }
+    });
   }
 
   function doSearch(query){
     var key = findParcelKey(query, selectedState);
     var p = PARCELS[key] || PARCELS["UP"];
 
-    // 1. Update PARCEL FOUND banner
-    var bannerDesc = document.getElementById("pf-banner-text");
-    if(bannerDesc){
-      bannerDesc.innerHTML = "Showing surveyed boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.state;
-    }
+    // Show loading
+    showFeedback("Searching for your parcel...", "loading");
 
-    // 2. Update Compact Parcel Info Card
-    var picUlpin = document.getElementById("pic-ulpin");
-    var picArea = document.getElementById("pic-area");
-    var picState = document.getElementById("pic-state");
-    var picDistrict = document.getElementById("pic-district");
-    var picSurvey = document.getElementById("pic-survey");
+    // Simulate brief network delay for polish
+    setTimeout(function(){
+      // Show success
+      showFeedback("✓ Parcel Found — " + p.ulpin, "success");
 
-    if(picUlpin) picUlpin.textContent = p.ulpin;
-    if(picArea) picArea.textContent = p.area;
-    if(picState) picState.textContent = p.state;
-    if(picDistrict) picDistrict.textContent = p.district;
-    if(picSurvey) picSurvey.textContent = p.survey;
+      // Reveal result sections
+      showResultSections();
 
-    // 3. Trigger Map Zoom & Boundary Highlight
-    if(window.LandMap && window.LandMap.selectParcel){
-      window.LandMap.selectParcel(key);
-    }
+      // Update banner
+      var bannerDesc = document.getElementById("pf-banner-text");
+      if(bannerDesc) bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.state;
 
-    // 4. Update the deep inspection card & passport below
-    renderParcelCard(p);
-    renderChecks(key);
-    renderAssessment(key, false);
-    renderPassport(p);
-    window.__currentParcel = p;
+      // Update compact card
+      setText("pic-ulpin", p.ulpin);
+      setText("pic-area", p.area);
+      setText("pic-state", p.state);
+      setText("pic-district", p.district);
+      setText("pic-survey", p.survey);
+      setText("pic-status", "✓ Presumptive Title Clear");
 
-    // 5. Smoothly transition / scroll down to the GIS Map
-    var gisView = document.getElementById("gis-view");
-    if(gisView){
-      gisView.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-    }
+      // Map
+      if(window.LandMap && window.LandMap.selectParcel) window.LandMap.selectParcel(key);
+
+      // Deep cards
+      renderParcelCard(p);
+      renderChecks(key);
+      renderAssessment(key, false);
+      renderPassport(p);
+      window.__currentParcel = p;
+
+      // Scroll to results after a beat
+      setTimeout(function(){
+        var gisView = document.getElementById("gis-view");
+        if(gisView) gisView.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+      }, 200);
+
+      // Hide feedback after scroll
+      setTimeout(hideFeedback, 2000);
+    }, 600);
+  }
+
+  function setText(id, val){
+    var el = document.getElementById(id);
+    if(el) el.textContent = val;
   }
 
   /* ============================================================
-     6. DETAILED RECORD CARDS & VERIFICATION
+     7. DETAILED RECORD CARDS
   ============================================================ */
   function renderParcelCard(p){
-    var section = document.getElementById("search");
+    var section = document.getElementById("parcel-details");
     var card = document.getElementById("parcel-card");
     if(!section || !card) return;
 
@@ -378,43 +328,29 @@
         '<div class="gis-swatch">' + gisSwatch() + '</div>' +
         '<span class="gis-crumb">Cadastral boundary view — <b>parcel ' + p.survey + '</b> highlighted in ' + p.village + '</span>' +
       '</div>';
-
     section.style.display = "block";
   }
 
-  function field(label, value, mono){
-    return '<div class="pc-field' + (mono?' mono':'') + '"><dt>' + label + '</dt><dd>' + value + '</dd></div>';
-  }
+  function field(l,v,m){ return '<div class="pc-field'+(m?' mono':'')+'"><dt>'+l+'</dt><dd>'+v+'</dd></div>'; }
 
   function gisSwatch(){
-    return '<svg viewBox="0 0 80 56">' +
-      '<rect width="80" height="56" fill="#F3F1FB"/>' +
-      '<g stroke="#DCD6F5" stroke-width="0.6" fill="none">' +
-      '<line x1="0" y1="14" x2="80" y2="14"/><line x1="0" y1="28" x2="80" y2="28"/><line x1="0" y1="42" x2="80" y2="42"/>' +
-      '<line x1="20" y1="0" x2="20" y2="56"/><line x1="40" y1="0" x2="40" y2="56"/><line x1="60" y1="0" x2="60" y2="56"/>' +
-      '</g>' +
-      '<rect x="40" y="14" width="20" height="14" fill="rgba(231,174,89,0.38)" stroke="#e7ae59" stroke-width="1.5"/>' +
-      '</svg>';
+    return '<svg viewBox="0 0 80 56"><rect width="80" height="56" fill="#F3F1FB"/>' +
+      '<g stroke="#DCD6F5" stroke-width="0.6" fill="none"><line x1="0" y1="14" x2="80" y2="14"/><line x1="0" y1="28" x2="80" y2="28"/><line x1="0" y1="42" x2="80" y2="42"/>' +
+      '<line x1="20" y1="0" x2="20" y2="56"/><line x1="40" y1="0" x2="40" y2="56"/><line x1="60" y1="0" x2="60" y2="56"/></g>' +
+      '<rect x="40" y="14" width="20" height="14" fill="rgba(231,174,89,0.38)" stroke="#e7ae59" stroke-width="1.5"/></svg>';
   }
 
   function renderChecks(abbr){
     var grid = document.getElementById("stamp-grid");
     if(!grid) return;
     grid.innerHTML = "";
-
-    CHECKS.forEach(function(c, i){
+    CHECKS.forEach(function(c,i){
       var verdict = c.ok[abbr] || "ok";
       var el = document.createElement("div");
       el.className = "stamp-item";
-      el.innerHTML =
-        '<div class="stamp-mark ' + verdict + '">' +
-          '<span>●</span>' + STAMP_LABEL[verdict] +
-        '</div>' +
-        '<h4>' + c.name + '</h4>' +
-        '<p>' + c.desc + '</p>';
+      el.innerHTML = '<div class="stamp-mark '+verdict+'"><span>●</span>'+STAMP_LABEL[verdict]+'</div><h4>'+c.name+'</h4><p>'+c.desc+'</p>';
       grid.appendChild(el);
-
-      setTimeout(function(){ el.classList.add("in"); }, i * 45);
+      setTimeout(function(){ el.classList.add("in"); }, i * 60);
     });
   }
 
@@ -423,15 +359,13 @@
     var list = document.getElementById("assessment-list");
     var seal = document.querySelector(".seal-box");
     if(!scoreNum || !list) return;
-
     var score = flagged ? 78 : 96;
     scoreNum.textContent = score;
     if(seal) seal.style.setProperty("--pct", score);
-
     list.innerHTML = "";
     ASSESSMENT_ROWS.forEach(function(name){
       var li = document.createElement("li");
-      li.innerHTML = "<b>" + name + "</b><span>Verified ✓</span>";
+      li.innerHTML = "<b>"+name+"</b><span>Verified ✓</span>";
       list.appendChild(li);
     });
   }
@@ -439,60 +373,35 @@
   function renderPassport(p){
     var book = document.getElementById("passport-book");
     if(!book) return;
-
-    var timelineHtml = "";
+    var tl = "";
     (p.history || []).forEach(function(h){
-      timelineHtml +=
-        '<div class="tl-item">' +
-          '<span class="tl-date">' + h.date + '</span>' +
-          '<h5 class="tl-title">' + h.title + '</h5>' +
-          '<p class="tl-desc">' + h.desc + '</p>' +
-        '</div>';
+      tl += '<div class="tl-item"><span class="tl-date">'+h.date+'</span><h5 class="tl-title">'+h.title+'</h5><p class="tl-desc">'+h.desc+'</p></div>';
     });
-
     book.innerHTML =
-      '<div class="passport-id">' +
-        '<div>' +
-          '<h4>Digital Land Passport</h4>' +
-          '<div class="pid-code">' + p.ulpin + '</div>' +
-        '</div>' +
-        '<div class="pid-seal">Presumptive Title Record</div>' +
-      '</div>' +
-      '<div class="passport-timeline">' +
-        timelineHtml +
-      '</div>';
+      '<div class="passport-id"><div><h4>Digital Land Passport</h4><div class="pid-code">'+p.ulpin+'</div></div><div class="pid-seal">Presumptive Title Record</div></div>' +
+      '<div class="passport-timeline">'+tl+'</div>';
   }
 
   /* ============================================================
-     7. REPORT MODAL
+     8. REPORT MODAL
   ============================================================ */
   function openReport(){
     var p = window.__currentParcel || PARCELS["UP"];
     var sheet = document.getElementById("report-sheet");
     var overlay = document.getElementById("report-overlay");
     if(!sheet || !overlay) return;
-
     var today = new Date().toISOString().slice(0,10);
     sheet.innerHTML =
-      '<button type="button" class="report-close" id="report-close-btn" aria-label="Close report">&times;</button>' +
-      '<div class="report-head">' +
-        '<div><h3>Bhu-InterOp Verification Snapshot</h3><p style="margin:4px 0 0;font-size:0.82rem;color:#777;">Prototype Demonstration Record</p></div>' +
-        '<div class="report-meta"><b>' + p.ulpin + '</b><br>Generated: ' + today + '</div>' +
-      '</div>' +
-      '<div class="report-body">' +
-        '<dl>' +
-          field("State", p.state) + field("District", p.district) +
-          field("Survey / Khasra", p.survey) + field("Area", p.area) +
-          field("Recorded Holder", p.holder) + field("Status", p.status) +
-          field("Coordinates", p.coords) + field("Record of Rights", p.ror) +
-        '</dl>' +
-      '</div>' +
-      '<div class="report-foot">' +
-        '<div class="report-disclaimer">Presumptive record snapshot for demonstration purposes. Verified against state cadastral layers.</div>' +
-        '<div class="qr-box"><canvas id="qr-canvas" width="64" height="64"></canvas></div>' +
-      '</div>' +
+      '<button type="button" class="report-close" id="report-close-btn" aria-label="Close">&times;</button>' +
+      '<div class="report-head"><div><h3>NLIP Verification Snapshot</h3><p style="margin:4px 0 0;font-size:0.82rem;color:#777;">Prototype Demonstration Record</p></div>' +
+        '<div class="report-meta"><b>'+p.ulpin+'</b><br>'+today+'</div></div>' +
+      '<div class="report-body"><dl>'+
+        field("State",p.state)+field("District",p.district)+field("Survey / Khasra",p.survey)+field("Area",p.area)+
+        field("Recorded Holder",p.holder)+field("Status",p.status)+field("Coordinates",p.coords)+field("Record of Rights",p.ror)+
+      '</dl></div>' +
+      '<div class="report-foot"><div class="report-disclaimer">Presumptive record snapshot for demonstration purposes.</div>' +
+        '<div class="qr-box"><canvas id="qr-canvas" width="64" height="64"></canvas></div></div>' +
       '<button type="button" class="print-btn" onclick="window.print()">Print / Save PDF</button>';
-
     overlay.classList.add("show");
     document.getElementById("report-close-btn").addEventListener("click", closeReport);
     drawQr("qr-canvas");
@@ -506,95 +415,83 @@
   function drawQr(id){
     var canvas = document.getElementById(id);
     if(!canvas) return;
-    var ctx = canvas.getContext("2d");
-    var size = 16, px = 4;
-    var seed = 42;
-    function rand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
-
-    ctx.fillStyle = "#FBF8EF"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#232019";
-    for(var r=0;r<size;r++){
-      for(var c=0;c<size;c++){
-        var isCorner = (r<3 && c<3) || (r<3 && c>size-4) || (r>size-4 && c<3);
-        if(isCorner){
-          if(r===0||r===2||c===0||c===2||(r<3&&c<3)) {
-            if((r===0||r===2||c===0||c===2)) ctx.fillRect(c*px, r*px, px, px);
-          }
-          continue;
-        }
-        if(rand() > 0.55) ctx.fillRect(c*px, r*px, px, px);
-      }
+    var ctx = canvas.getContext("2d"), size=16, px=4, seed=42;
+    function rand(){ seed=(seed*9301+49297)%233280; return seed/233280; }
+    ctx.fillStyle="#FBF8EF"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#232019";
+    for(var r=0;r<size;r++) for(var c=0;c<size;c++){
+      var corner=(r<3&&c<3)||(r<3&&c>size-4)||(r>size-4&&c<3);
+      if(corner){ if(r===0||r===2||c===0||c===2) ctx.fillRect(c*px,r*px,px,px); continue; }
+      if(rand()>0.55) ctx.fillRect(c*px,r*px,px,px);
     }
   }
 
   /* ============================================================
-     8. WIRING & INITIALIZATION
+     9. URL PARAMS
+  ============================================================ */
+  function handleUrlParams(){
+    var params = new URLSearchParams(window.location.search);
+    var stateParam = params.get("state");
+    var queryParam = params.get("query");
+    if(stateParam && window.__selectState) window.__selectState(stateParam);
+    if(queryParam){
+      var input = document.getElementById("ulpin-input");
+      if(input) input.value = queryParam;
+      setTimeout(function(){ doSearch(queryParam); }, 300);
+    }
+  }
+
+  /* ============================================================
+     10. INIT
   ============================================================ */
   document.addEventListener("DOMContentLoaded", function(){
     initLandBackground();
     initStateDropdown();
 
-    // Initial default render with UP demo parcel
-    renderParcelCard(PARCELS["UP"]);
-    renderChecks("UP");
-    renderAssessment("UP", false);
-    renderPassport(PARCELS["UP"]);
-    window.__currentParcel = PARCELS["UP"];
+    feedbackEl = document.getElementById("search-feedback");
+    feedbackInner = document.getElementById("search-feedback-inner");
 
-    // Main search form submission
+    // Search form
     var searchForm = document.getElementById("search-form");
     if(searchForm){
       searchForm.addEventListener("submit", function(e){
         e.preventDefault();
         var val = document.getElementById("ulpin-input").value.trim();
+        if(!val){ document.getElementById("ulpin-input").focus(); return; }
         doSearch(val);
       });
     }
 
-    // Quick sample chips
+    // Sample chips
     document.querySelectorAll(".sample-chip").forEach(function(chip){
       chip.addEventListener("click", function(){
         document.querySelectorAll(".sample-chip").forEach(function(c){ c.classList.remove("active"); });
         this.classList.add("active");
-
-        var st = this.dataset.state;
-        var q = this.dataset.query;
-
-        if(st && window.__selectState){
-          window.__selectState(st);
-        }
-
+        var st = this.dataset.state, q = this.dataset.query;
+        if(st && window.__selectState) window.__selectState(st);
         var input = document.getElementById("ulpin-input");
-        if(input){
-          input.value = q;
-        }
-
+        if(input) input.value = q;
         doSearch(q);
       });
     });
 
-    // View Land Details button on Compact Parcel Card
+    // View details
     var detailsBtn = document.getElementById("pic-details-btn");
     if(detailsBtn){
       detailsBtn.addEventListener("click", function(){
-        var targetSection = document.getElementById("search") || document.getElementById("passport");
-        if(targetSection){
-          targetSection.style.display = "block";
-          targetSection.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-        }
+        var t = document.getElementById("parcel-details") || document.getElementById("passport");
+        if(t){ t.style.display = "block"; t.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"}); }
       });
     }
 
-    // Report modal trigger & backdrop close
+    // Report
     var reportBtn = document.getElementById("report-btn");
     if(reportBtn) reportBtn.addEventListener("click", openReport);
-
     var reportOverlay = document.getElementById("report-overlay");
-    if(reportOverlay){
-      reportOverlay.addEventListener("click", function(e){
-        if(e.target === this) closeReport();
-      });
-    }
+    if(reportOverlay) reportOverlay.addEventListener("click", function(e){ if(e.target === this) closeReport(); });
+
+    // URL params
+    handleUrlParams();
   });
 
 })();
