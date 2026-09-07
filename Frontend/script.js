@@ -348,10 +348,10 @@
   }
 
   function showResultSections(){
-    ["gis-view","parcel-details","intelligence","passport","report"].forEach(function(id){
+    ["dashboard","gis-view","passport","intelligence","history","integration","report-section"].forEach(function(id){
       var el = document.getElementById(id);
       if(el){
-        el.style.display = "";
+        el.style.display = "block";
         el.classList.add("section-reveal");
       }
     });
@@ -437,11 +437,11 @@
         window.LandMap.selectParcel(key, mapLabel);
       }
 
-      // Deep cards
-      renderParcelCard(p);
-      renderChecks(key);
-      renderAssessment(key, p);
+      // Render SIH Modules
+      renderDashboard(p);
       renderPassport(p);
+      renderLandIntelligence(p, key);
+      renderLandHistory(p);
       window.__currentParcel = p;
 
       // Scroll to results after a beat
@@ -461,43 +461,182 @@
   }
 
   /* ============================================================
-     7. DETAILED RECORD CARDS
+     1. DASHBOARD
   ============================================================ */
-  function renderParcelCard(p){
-    var section = document.getElementById("parcel-details");
-    var card = document.getElementById("parcel-card");
-    if(!section || !card) return;
+  function renderDashboard(p){
+    var pillState = document.getElementById("dash-p-state");
+    var pillStatus = document.getElementById("dash-p-status");
+    var pillUlpin = document.getElementById("dash-p-ulpin");
+    var pillLoc = document.getElementById("dash-p-loc");
 
     var isWarn = (p.score && p.score < 90);
-
-    card.innerHTML =
-      '<div class="pc-top">' +
-        '<div><div class="pc-ulpin">' + p.ulpin + ' &middot; Survey / Khasra ' + p.survey + '</div>' +
-          '<h3 class="pc-title">' + p.village + ', ' + p.district + '</h3></div>' +
-        '<span class="pc-status' + (isWarn ? ' warn' : '') + '">' + p.status + '</span>' +
-      '</div>' +
-      '<p class="pc-breadcrumb"><b>India</b><span>&rsaquo;</span><b>' + p.state + '</b><span>&rsaquo;</span><b>' + p.district + '</b><span>&rsaquo;</span><b>' + p.village + '</b><span>&rsaquo;</span>Plot ' + p.survey + '</p>' +
-      '<dl class="pc-grid">' +
-        field("State", p.state) + field("District", p.district) + field("Mandal / Taluk", p.mandal) +
-        field("Village", p.village) + field("Area", p.area) + field("Land type", p.type) +
-        field("Zoning", p.zoning) + field("Coordinates", p.coords, true) + field("Recorded holder", p.holder) +
-        field("Ownership status", p.ownership) + field("Record of rights", p.ror) + field("Mutation status", p.mutation) +
-        field("Encumbrance", p.encumbrance) + field("Property tax", p.tax) + field("Land valuation", p.valuation) +
-      '</dl>' +
-      '<div class="gis-strip">' +
-        '<div class="gis-swatch">' + gisSwatch() + '</div>' +
-        '<span class="gis-crumb">Cadastral boundary view — <b>parcel ' + p.survey + '</b> highlighted in ' + p.village + '</span>' +
-      '</div>';
-    section.style.display = "block";
+    if(pillState) pillState.textContent = p.state || "State / UT";
+    if(pillStatus){
+      pillStatus.textContent = isWarn ? "⚠️ " + (p.statusText || "Attention Required") : "✓ Verified Title";
+      pillStatus.className = "dpp-status-tag" + (isWarn ? " warn" : "");
+    }
+    if(pillUlpin) pillUlpin.textContent = p.ulpin || "ULPIN not assigned";
+    if(pillLoc) pillLoc.textContent = (p.village || "") + ", " + (p.district || "") + " · Plot " + (p.survey || "—");
   }
 
-  function field(l,v,m){ return '<div class="pc-field'+(m?' mono':'')+'"><dt>'+l+'</dt><dd>'+v+'</dd></div>'; }
+  /* ============================================================
+     2. DIGITAL LAND PASSPORT
+  ============================================================ */
+  function renderPassport(p){
+    var sheet = document.getElementById("passport-sheet");
+    if(!sheet) return;
 
-  function gisSwatch(){
-    return '<svg viewBox="0 0 80 56"><rect width="80" height="56" fill="#F3F1FB"/>' +
-      '<g stroke="#DCD6F5" stroke-width="0.6" fill="none"><line x1="0" y1="14" x2="80" y2="14"/><line x1="0" y1="28" x2="80" y2="28"/><line x1="0" y1="42" x2="80" y2="42"/>' +
-      '<line x1="20" y1="0" x2="20" y2="56"/><line x1="40" y1="0" x2="40" y2="56"/><line x1="60" y1="0" x2="60" y2="56"/></g>' +
-      '<rect x="40" y="14" width="20" height="14" fill="rgba(231,174,89,0.38)" stroke="#e7ae59" stroke-width="1.5"/></svg>';
+    var isWarn = (p.score && p.score < 90);
+    var ulpin = p.ulpin || "Data not available";
+    var survey = p.survey || "Data not available";
+    var area = p.area || "Data not available";
+    var state = p.state || "Data not available";
+    var district = p.district || "Data not available";
+    var location = (p.village ? (p.village + ", " + (p.mandal || "") + (p.coords ? " (" + p.coords + ")" : "")) : "Data not available");
+    var status = p.status || "Data not available";
+    var holder = p.holder || "Data not available";
+    var ror = p.ror || "Data not available";
+
+    sheet.innerHTML =
+      '<div class="passport-sheet-head">' +
+        '<div class="ps-brand">' +
+          '<div class="ps-emblem">🏛️</div>' +
+          '<div class="ps-title">' +
+            '<h3>National Land Intelligence Platform</h3>' +
+            '<p>Digital Land Certificate &middot; Government of India / ' + state + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ps-qr-meta">' +
+          '<div>' +
+            '<div class="ps-ulpin-box">' + ulpin + '</div>' +
+            '<div style="font-size:0.7rem;color:#786c5a;margin-top:3px;">Unique Land Parcel Identifier</div>' +
+          '</div>' +
+          '<canvas id="passport-qr-canvas" width="56" height="56"></canvas>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="passport-fields-grid">' +
+        '<div class="pf-item mono"><dt>1. ULPIN / Parcel ID</dt><dd>' + ulpin + '</dd></div>' +
+        '<div class="pf-item"><dt>2. Survey / Khasra / Patta</dt><dd>' + survey + '</dd></div>' +
+        '<div class="pf-item"><dt>3. Area</dt><dd>' + area + '</dd></div>' +
+        '<div class="pf-item"><dt>4. State</dt><dd>' + state + '</dd></div>' +
+        '<div class="pf-item"><dt>5. District</dt><dd>' + district + '</dd></div>' +
+        '<div class="pf-item"><dt>6. Location</dt><dd>' + location + '</dd></div>' +
+        '<div class="pf-item"><dt>7. Status</dt><dd>' + status + '</dd></div>' +
+        '<div class="pf-item"><dt>Recorded Holder</dt><dd>' + holder + '</dd></div>' +
+        '<div class="pf-item"><dt>Record of Rights (RoR)</dt><dd>' + ror + '</dd></div>' +
+      '</div>' +
+
+      '<div class="passport-sheet-foot">' +
+        '<div class="ps-seal-mark' + (isWarn ? ' warn' : '') + '">' +
+          '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED' : '✓ OFFICIAL DIGITAL RECORD') + '</span>' +
+          '<span>&middot;</span>' +
+          '<span>Presumptive Title Standard</span>' +
+        '</div>' +
+        '<div class="ps-legal-note">' +
+          'Consolidated digital certificate issued for administrative reference under National Land Intelligence Platform standard.' +
+        '</div>' +
+      '</div>';
+
+    drawQr("passport-qr-canvas");
+  }
+
+  /* ============================================================
+     3. LAND INTELLIGENCE
+  ============================================================ */
+  function renderLandIntelligence(p, key){
+    // 1. Parcel Overview
+    var overviewList = document.getElementById("intel-overview-list");
+    if(overviewList){
+      overviewList.innerHTML =
+        '<div class="ic-row"><span class="ic-k">ULPIN ID</span><span class="ic-v mono">' + (p.ulpin || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Recorded Holder</span><span class="ic-v">' + (p.holder || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Land Classification</span><span class="ic-v">' + (p.type || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Zoning</span><span class="ic-v">' + (p.zoning || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Presumptive Title</span><span class="ic-v">' + (p.ownership || "Data not available") + '</span></div>';
+    }
+
+    // 2. Spatial Information
+    var spatialList = document.getElementById("intel-spatial-list");
+    if(spatialList){
+      spatialList.innerHTML =
+        '<div class="ic-row"><span class="ic-k">Centroid Coords</span><span class="ic-v mono">' + (p.coords || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Cadastral Area</span><span class="ic-v">' + (p.area || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Survey / Plot No.</span><span class="ic-v mono">' + (p.survey || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Village & Taluk</span><span class="ic-v">' + (p.village || "") + ", " + (p.mandal || "") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Boundary Type</span><span class="ic-v">Polygon Layered Cadastral Map</span></div>';
+    }
+
+    // 3. Land Records
+    var recordsList = document.getElementById("intel-records-list");
+    if(recordsList){
+      recordsList.innerHTML =
+        '<div class="ic-row"><span class="ic-k">Record of Rights</span><span class="ic-v">' + (p.ror || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Mutation Status</span><span class="ic-v">' + (p.mutation || "Data not available") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Encumbrance / Bojha</span><span class="ic-v">' + (p.encumbrance || "Clean Title") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Revenue Tax Status</span><span class="ic-v">' + (p.tax || "Paid to date") + '</span></div>' +
+        '<div class="ic-row"><span class="ic-k">Guideline Valuation</span><span class="ic-v">' + (p.valuation || "Data not available") + '</span></div>';
+    }
+
+    // 4. Available Alerts
+    var alertsBody = document.getElementById("intel-alerts-body");
+    if(alertsBody){
+      var isWarn = (p.score && p.score < 90);
+      if(isWarn){
+        if(key === "BR"){
+          alertsBody.innerHTML =
+            '<div class="alert-banner warn"><span>⚠️</span><div><b>Spatial Discrepancy:</b> Mapped GIS polygon measures 1.74 Acres vs. 1.82 Acres recorded in Jamabandi (4.6% variance).</div></div>' +
+            '<div class="alert-banner warn"><span>⚠️</span><div><b>Pending Hearing:</b> Succession partition dispute Case No. 142/2024 active at Phulwari Anchal office.</div></div>';
+        } else if(key === "MH"){
+          alertsBody.innerHTML =
+            '<div class="alert-banner warn"><span>⚠️</span><div><b>Active Encumbrance (Bojha):</b> State Bank of India agricultural charge of ₹6,20,000 registered on 7/12 other rights.</div></div>' +
+            '<div class="alert-banner warn"><span>⚠️</span><div><b>Land Use Conversion:</b> Application for non-agricultural (NA) regularization pending scrutiny.</div></div>';
+        } else {
+          alertsBody.innerHTML =
+            '<div class="alert-banner warn"><span>⚠️</span><div><b>Review Note:</b> ' + (p.statusText || "Parcel flagged for manual revenue review.") + '</div></div>';
+        }
+      } else {
+        alertsBody.innerHTML =
+          '<div class="alert-banner ok"><span>✓</span><div><b>Clean Cadastral Title:</b> No boundary disputes, overlap claims or encumbrance charges on file.</div></div>' +
+          '<div class="alert-banner ok"><span>✓</span><div><b>Revenue Clearance:</b> Annual land revenue cleared. Mutation cleared with zero pending objections.</div></div>';
+      }
+    }
+
+    // 5. Verification
+    renderChecks(key);
+    renderAssessment(key, p);
+  }
+
+  /* ============================================================
+     4. LAND HISTORY
+  ============================================================ */
+  function renderLandHistory(p){
+    var metaEl = document.getElementById("history-parcel-meta");
+    var timelineEl = document.getElementById("history-timeline");
+    if(!timelineEl) return;
+
+    if(metaEl){
+      metaEl.innerHTML =
+        '<span class="hpm-tag">' + (p.ulpin || "Parcel Record") + ' &middot; Plot ' + (p.survey || "—") + '</span>' +
+        '<span class="hpm-loc">' + (p.village || "") + ', ' + (p.district || "") + ', ' + (p.state || "") + '</span>';
+    }
+
+    var items = (p.history && p.history.length > 0) ? p.history : [
+      { date: "2024-06-15", title: "Annual Revenue Tax Cleared", desc: "Demo Data: Electronic challan cleared via state treasury portal." },
+      { date: "2021-09-10", title: "Cadastral Digital Resurvey", desc: "Demo Data: Spatial boundary verified under DILRMP GIS modernisation." },
+      { date: "2016-04-20", title: "Record Digitisation", desc: "Demo Data: Legacy paper revenue record migrated to central portal." }
+    ];
+
+    var html = "";
+    items.forEach(function(h){
+      html +=
+        '<div class="ht-item">' +
+          '<div class="ht-date">' + h.date + '</div>' +
+          '<h5 class="ht-title">' + h.title + '</h5>' +
+          '<p class="ht-desc">' + h.desc + '</p>' +
+        '</div>';
+    });
+    timelineEl.innerHTML = html;
   }
 
   function renderChecks(abbr){
@@ -537,18 +676,6 @@
       li.innerHTML = "<b>" + name + "</b><span class=\"" + item.status + "\">" + item.label + "</span>";
       list.appendChild(li);
     });
-  }
-
-  function renderPassport(p){
-    var book = document.getElementById("passport-book");
-    if(!book) return;
-    var tl = "";
-    (p.history || []).forEach(function(h){
-      tl += '<div class="tl-item"><span class="tl-date">'+h.date+'</span><h5 class="tl-title">'+h.title+'</h5><p class="tl-desc">'+h.desc+'</p></div>';
-    });
-    book.innerHTML =
-      '<div class="passport-id"><div><h4>Digital Land Passport</h4><div class="pid-code">'+p.ulpin+'</div></div><div class="pid-seal">Presumptive Title Record</div></div>' +
-      '<div class="passport-timeline">'+tl+'</div>';
   }
 
   /* ============================================================
@@ -644,11 +771,11 @@
       });
     });
 
-    // View details
+    // View details / Open Dashboard
     var detailsBtn = document.getElementById("pic-details-btn");
     if(detailsBtn){
       detailsBtn.addEventListener("click", function(){
-        var t = document.getElementById("parcel-details") || document.getElementById("passport");
+        var t = document.getElementById("dashboard") || document.getElementById("passport");
         if(t){ t.style.display = "block"; t.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"}); }
       });
     }
