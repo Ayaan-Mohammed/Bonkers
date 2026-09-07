@@ -109,9 +109,14 @@ button{font-family:var(--font-body);cursor:pointer;}
 }
 .mark-icon{color:var(--amber);font-size:0.9rem;}
 .head-nav{display:flex;gap:28px;font-size:0.86rem;}
-.head-nav a{text-decoration:none;color:var(--text-soft);padding-bottom:2px;transition:color 0.15s;border-bottom:1px solid transparent;}
+.head-nav a{text-decoration:none;color:var(--text-soft);padding-bottom:2px;transition:color 0.15s;border-bottom:1px solid transparent;cursor:pointer;}
 .head-nav a:hover{color:var(--text);}
 .head-nav a.active{color:#f7eedf;border-bottom-color:var(--amber);}
+
+/* Section scroll offsets for sticky header */
+.search-hero, .dashboard-section, .gis-section, .passport-section, .intel-section, .history-section, .integration-section {
+  scroll-margin-top: 70px;
+}
 
 /* ===== Landing Page ===== */
 

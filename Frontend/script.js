@@ -734,6 +734,19 @@
       var input = document.getElementById("ulpin-input");
       if(input) input.value = queryParam;
       setTimeout(function(){ doSearch(queryParam); }, 300);
+    } else {
+      var hash = window.location.hash;
+      if(hash && hash.length > 1 && hash !== "#search-top"){
+        var targetId = hash.substring(1);
+        setTimeout(function(){
+          if(!window.__currentParcel) doSearch("Khasra 412/1");
+          var targetEl = document.getElementById(targetId);
+          if(targetEl){
+            targetEl.style.display = "block";
+            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          }
+        }, 300);
+      }
     }
   }
 
@@ -786,7 +799,63 @@
     var reportOverlay = document.getElementById("report-overlay");
     if(reportOverlay) reportOverlay.addEventListener("click", function(e){ if(e.target === this) closeReport(); });
 
-    // URL params
+    // Top Navigation Links (Dashboard, GIS Map, Passport, Intelligence, History, Integration)
+    document.querySelectorAll(".head-nav a").forEach(function(link){
+      link.addEventListener("click", function(e){
+        var href = this.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        var targetId = href.substring(1);
+        var targetEl = document.getElementById(targetId);
+
+        // Update active class on nav
+        document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
+        this.classList.add("active");
+
+        if(targetId === "search-top"){
+          if(targetEl){
+            e.preventDefault();
+            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          }
+          return;
+        }
+
+        // If touching a module before searching, initialize default demo parcel immediately
+        if(!window.__currentParcel || (targetEl && (targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none"))){
+          var inputVal = document.getElementById("ulpin-input") ? document.getElementById("ulpin-input").value.trim() : "";
+          var query = inputVal || (selectedState === "Telangana" ? "Rangareddy: Survey 245/A" : (selectedState === "Bihar" ? "Patna: Jamabandi 418" : (selectedState === "Maharashtra" ? "Pune: 7/12 Gat 88/1A" : "Khasra 412/1")));
+          doSearch(query);
+        }
+
+        if(targetEl){
+          e.preventDefault();
+          targetEl.style.display = "block";
+          setTimeout(function(){
+            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          }, 100);
+        }
+      });
+    });
+
+    // Dashboard navigation cards click handler
+    document.querySelectorAll(".dash-nav-card").forEach(function(card){
+      card.addEventListener("click", function(e){
+        var href = this.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        var targetEl = document.getElementById(href.substring(1));
+        if(targetEl){
+          e.preventDefault();
+          targetEl.style.display = "block";
+          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          // Sync header nav active link
+          document.querySelectorAll(".head-nav a").forEach(function(a){
+            if(a.getAttribute("href") === href) a.classList.add("active");
+            else a.classList.remove("active");
+          });
+        }
+      });
+    });
+
+    // URL params & hash handling
     handleUrlParams();
   });
 
