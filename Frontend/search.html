@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=nlip_dark2">
+<link rel="stylesheet" href="style.css?v=nlip_dark3">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
@@ -418,20 +418,171 @@
   </div>
 </section>
 
-<!-- ============ REPORT GENERATOR ============ -->
-<section class="doc-section alt" id="report" style="display:none;">
-  <div class="wrap report-cta-wrap">
-    <div>
-      <h3 class="report-cta-head">Need this on record?</h3>
-      <p class="report-cta-sub">Generate a dated snapshot with a verification code.</p>
+<!-- ============ 6. VERIFICATION & REPORT EXPORT HUB ============ -->
+<section class="dark-section report-action-section" id="report" style="display:none;">
+  <div class="wrap">
+    <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 6</div>
+    <div class="history-title-row">
+      <div>
+        <h2 class="section-head">Verification Dossier &amp; Data Export Hub</h2>
+        <p class="section-lede">Generate certified snapshots, export cadastral GeoJSON coordinates, or share tamper-evident audit records.</p>
+      </div>
+      <span class="demo-data-pill">Export Center</span>
     </div>
-    <button class="report-btn" id="report-btn">Generate parcel report</button>
+
+    <div class="export-hub-grid">
+      <!-- 1. Official Report -->
+      <div class="export-card">
+        <div class="ec-top">
+          <span class="ec-icon">📄</span>
+          <span class="ec-badge certified">Official Snapshot</span>
+        </div>
+        <h3>Certified Parcel Dossier</h3>
+        <p>Comprehensive report with QR verification hash, revenue RoR summary, GIS boundary tally, and ownership breakdown.</p>
+        <button type="button" class="action-btn-gold" id="report-btn">
+          <span>Generate Dossier</span>
+          <span class="btn-arrow">↗</span>
+        </button>
+      </div>
+
+      <!-- 2. GeoJSON Spatial Export -->
+      <div class="export-card">
+        <div class="ec-top">
+          <span class="ec-icon">🗺️</span>
+          <span class="ec-badge spatial">OGC Standard</span>
+        </div>
+        <h3>Cadastral GIS GeoJSON</h3>
+        <p>Download the geo-referenced polygon coordinates and spatial metadata formatted for QGIS, ArcGIS, and CAD applications.</p>
+        <button type="button" class="action-btn-secondary" id="export-geojson-btn">
+          <span>Export GeoJSON</span>
+          <span class="btn-arrow">⤓</span>
+        </button>
+      </div>
+
+      <!-- 3. Share Deep Link -->
+      <div class="export-card">
+        <div class="ec-top">
+          <span class="ec-icon">🔗</span>
+          <span class="ec-badge link">Deep Link</span>
+        </div>
+        <h3>Direct Parcel Link</h3>
+        <p>Generate a shareable, verifiable URL directly linked to this parcel's digital passport, spatial layer, and history trail.</p>
+        <button type="button" class="action-btn-secondary" id="copy-link-btn">
+          <span id="copy-btn-text">Copy Share Link</span>
+          <span class="btn-arrow">📋</span>
+        </button>
+      </div>
+
+      <!-- 4. Query Another Land -->
+      <div class="export-card">
+        <div class="ec-top">
+          <span class="ec-icon">🔍</span>
+          <span class="ec-badge search">Pan-India</span>
+        </div>
+        <h3>Search Another Parcel</h3>
+        <p>Query across 28 States &amp; 8 UTs using ULPIN, Survey Number, Khasra, Gata, Patta, or 7/12 land identifiers.</p>
+        <button type="button" class="action-btn-secondary" id="new-search-btn">
+          <span>Search Another</span>
+          <span class="btn-arrow">↑</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Interoperability & Trust Badges -->
+    <div class="standards-bar">
+      <div class="std-item">
+        <span class="std-icon">🛡️</span>
+        <div>
+          <strong>ULPIN / Bhu-Aadhaar</strong>
+          <span>14-digit geo-coded national standard</span>
+        </div>
+      </div>
+      <div class="std-item">
+        <span class="std-icon">🏛️</span>
+        <div>
+          <strong>DILRMP Aligned</strong>
+          <span>Digital India Land Records compliance</span>
+        </div>
+      </div>
+      <div class="std-item">
+        <span class="std-icon">🛰️</span>
+        <div>
+          <strong>ISRO / Survey of India</strong>
+          <span>Cadastral ortho-imagery verification</span>
+        </div>
+      </div>
+      <div class="std-item">
+        <span class="std-icon">⚖️</span>
+        <div>
+          <strong>IT Act 2000 &amp; Sec 65B</strong>
+          <span>Digital certificate admissibility</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <footer class="site-foot">
   <div class="wrap">
-    <p>NLIP prototype. Data shown is illustrative and does not represent actual government records.</p>
+    <div class="foot-main">
+      <div class="foot-brand-col">
+        <div class="foot-logo">
+          <span class="mark-icon">◈</span>
+          <span class="foot-title">NLIP</span>
+        </div>
+        <p class="foot-desc">National Land Intelligence Platform — unifying India's 36 state and UT land registries through connected records, cadastral GIS verification, and verifiable digital land passports.</p>
+        <div class="system-status-pill">
+          <span class="status-pulse-dot"></span>
+          <span>All 36 State &amp; UT Registries Synchronized (SIH Sandbox)</span>
+        </div>
+      </div>
+
+      <div class="foot-links-group">
+        <div class="foot-col">
+          <h4>Platform Modules</h4>
+          <ul>
+            <li><a href="#search-top">Search Parcel</a></li>
+            <li><a href="#dashboard">Central Dashboard</a></li>
+            <li><a href="#gis-view">GIS Cadastral Map</a></li>
+            <li><a href="#passport">Digital Land Passport</a></li>
+            <li><a href="#intelligence">Land Intelligence Audit</a></li>
+            <li><a href="#history">Mutation Chronology</a></li>
+            <li><a href="#integration">Officer Integration Hub</a></li>
+          </ul>
+        </div>
+
+        <div class="foot-col">
+          <h4>Integrated Registries</h4>
+          <ul>
+            <li><span>Uttar Pradesh: Bhulekh</span></li>
+            <li><span>Telangana: Dharani</span></li>
+            <li><span>Maharashtra: Mahabhulekh</span></li>
+            <li><span>Karnataka: Bhoomi</span></li>
+            <li><span>Gujarat: AnyRoR</span></li>
+            <li><span>Tamil Nadu: e-Services</span></li>
+          </ul>
+        </div>
+
+        <div class="foot-col">
+          <h4>Security &amp; Standards</h4>
+          <ul>
+            <li><span>ULPIN Bhu-Aadhaar 14-digit</span></li>
+            <li><span>OGC WFS / GeoJSON Spatial</span></li>
+            <li><span>AES-256 Ledger Hashing</span></li>
+            <li><span>Indian Evidence Act Sec 65B</span></li>
+            <li><span>DoLR Framework Standards</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <p class="foot-disclaimer">Smart India Hackathon (SIH) Prototype Demonstration. Data, boundaries, and ownership records shown are simulated for illustrative evaluation purposes.</p>
+      <button type="button" class="back-to-top-btn" id="back-to-top-btn">
+        <span>Back to Top</span>
+        <span aria-hidden="true">↑</span>
+      </button>
+    </div>
   </div>
 </footer>
 
@@ -440,6 +591,6 @@
 </div>
 
 <script src="map.js?v=nlip_dark1"></script>
-<script src="script.js?v=nlip_dark2"></script>
+<script src="script.js?v=nlip_dark3"></script>
 </body>
 </html>

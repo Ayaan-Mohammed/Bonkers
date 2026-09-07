@@ -348,7 +348,7 @@
   }
 
   function showResultSections(){
-    ["dashboard","gis-view","passport","intelligence","history","integration","report-section"].forEach(function(id){
+    ["dashboard","gis-view","passport","intelligence","history","integration","report"].forEach(function(id){
       var el = document.getElementById(id);
       if(el){
         el.style.display = "block";
@@ -795,11 +795,108 @@
       });
     }
 
-    // Report
+    // Report & Export Actions
     var reportBtn = document.getElementById("report-btn");
     if(reportBtn) reportBtn.addEventListener("click", openReport);
     var reportOverlay = document.getElementById("report-overlay");
     if(reportOverlay) reportOverlay.addEventListener("click", function(e){ if(e.target === this) closeReport(); });
+
+    // Export Cadastral GeoJSON
+    var exportBtn = document.getElementById("export-geojson-btn");
+    if(exportBtn){
+      exportBtn.addEventListener("click", function(){
+        var p = window.__currentParcel || PARCELS["UP"];
+        var coordsStr = p.coords || "26.85,80.94";
+        var parts = coordsStr.split(",");
+        var lat = parseFloat(parts[0]) || 26.85;
+        var lng = parseFloat(parts[1]) || 80.94;
+        var d = 0.0015;
+        var polygon = [
+          [+(lng - d).toFixed(6), +(lat - d).toFixed(6)],
+          [+(lng + d).toFixed(6), +(lat - d).toFixed(6)],
+          [+(lng + d).toFixed(6), +(lat + d).toFixed(6)],
+          [+(lng - d).toFixed(6), +(lat + d).toFixed(6)],
+          [+(lng - d).toFixed(6), +(lat - d).toFixed(6)]
+        ];
+        var geojson = {
+          type: "FeatureCollection",
+          name: "NLIP_Cadastral_" + (p.ulpin || "Parcel"),
+          crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+          features: [
+            {
+              type: "Feature",
+              properties: {
+                ULPIN: p.ulpin,
+                State: p.state,
+                District: p.district,
+                Survey_Khasra: p.survey,
+                Area: p.area,
+                Recorded_Holder: p.holder,
+                Assessment_Score: p.score,
+                Status: p.statusText || p.status,
+                Generated_By: "NLIP - National Land Intelligence Platform",
+                Timestamp: new Date().toISOString()
+              },
+              geometry: {
+                type: "Polygon",
+                coordinates: [polygon]
+              }
+            }
+          ]
+        };
+        var blob = new Blob([JSON.stringify(geojson, null, 2)], { type: "application/geo+json" });
+        var blobUrl = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "NLIP-" + (p.ulpin || "cadastral-parcel") + ".geojson";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      });
+    }
+
+    // Copy Deep Share Link
+    var copyBtn = document.getElementById("copy-link-btn");
+    if(copyBtn){
+      copyBtn.addEventListener("click", function(){
+        var p = window.__currentParcel || PARCELS["UP"];
+        var shareUrl = window.location.origin + window.location.pathname + "?state=" + encodeURIComponent(p.state || selectedState) + "&query=" + encodeURIComponent(p.ulpin || p.survey);
+        var btnText = document.getElementById("copy-btn-text");
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(shareUrl).then(function(){
+            if(btnText){
+              var prev = btnText.textContent;
+              btnText.textContent = "✓ Link Copied!";
+              setTimeout(function(){ btnText.textContent = prev; }, 2400);
+            }
+          });
+        } else {
+          prompt("Copy direct parcel link:", shareUrl);
+        }
+      });
+    }
+
+    // Search Another Land (scrolls back to search input)
+    var newSearchBtn = document.getElementById("new-search-btn");
+    if(newSearchBtn){
+      newSearchBtn.addEventListener("click", function(){
+        var searchTop = document.getElementById("search-top");
+        if(searchTop){
+          searchTop.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          var inp = document.getElementById("ulpin-input");
+          if(inp){ setTimeout(function(){ inp.focus(); inp.select(); }, 400); }
+        }
+      });
+    }
+
+    // Back to Top button in footer
+    var backToTop = document.getElementById("back-to-top-btn");
+    if(backToTop){
+      backToTop.addEventListener("click", function(){
+        window.scrollTo({top: 0, behavior: reduceMotion ? "auto" : "smooth"});
+      });
+    }
 
     // Top Navigation Links (Dashboard, GIS Map, Passport, Intelligence, History, Integration)
     var isClickScrolling = false;
