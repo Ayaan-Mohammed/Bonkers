@@ -1,7 +1,10 @@
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.0
-pydantic>=2.9.0
-pydantic-settings>=2.5.0
-SQLAlchemy>=2.0.36
-GeoAlchemy2>=0.15.2
-psycopg[binary]>=3.2.3
+fastapi
+uvicorn
+sqlalchemy
+geoalchemy2
+psycopg2-binary
+shapely
+geopandas
+pandas
+python-dotenv
+pydantic
