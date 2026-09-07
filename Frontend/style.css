@@ -114,7 +114,8 @@ button{font-family:var(--font-body);cursor:pointer;}
 .head-nav a.active{color:#f7eedf;border-bottom-color:var(--amber);}
 
 /* Section scroll offsets for sticky header */
-.search-hero, .dashboard-section, .gis-section, .passport-section, .intel-section, .history-section, .integration-section {
+.search-hero, .dashboard-section, .gis-section, .passport-section, .intel-section, .intelligence-section, .history-section, .integration-section,
+#search-top, #dashboard, #gis-view, #passport, #intelligence, #history, #integration {
   scroll-margin-top: 70px;
 }
 

@@ -357,7 +357,7 @@
     });
   }
 
-  function doSearch(query){
+  function doSearch(query, targetSectionId){
     var key = findParcelKey(query, selectedState);
     var p = PARCELS[key] || PARCELS["UP"];
 
@@ -444,10 +444,12 @@
       renderLandHistory(p);
       window.__currentParcel = p;
 
-      // Scroll to results (Dashboard) after a beat
+      // Scroll to target section or Dashboard after a beat
       setTimeout(function(){
-        var dashView = document.getElementById("dashboard") || document.getElementById("gis-view");
-        if(dashView) dashView.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        var targetSection = targetSectionId ? document.getElementById(targetSectionId) : null;
+        var viewToScroll = targetSection || document.getElementById("dashboard") || document.getElementById("gis-view");
+        if(viewToScroll) viewToScroll.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        setTimeout(updateActiveNavOnScroll, 350);
       }, 200);
 
       // Hide feedback after scroll
@@ -800,6 +802,87 @@
     if(reportOverlay) reportOverlay.addEventListener("click", function(e){ if(e.target === this) closeReport(); });
 
     // Top Navigation Links (Dashboard, GIS Map, Passport, Intelligence, History, Integration)
+    var isClickScrolling = false;
+    var clickScrollTimer = null;
+
+    function resetClickScrolling(){
+      isClickScrolling = false;
+      if(clickScrollTimer) clearTimeout(clickScrollTimer);
+    }
+
+    window.addEventListener("wheel", resetClickScrolling, { passive: true });
+    window.addEventListener("touchmove", resetClickScrolling, { passive: true });
+
+    function updateActiveNavOnScroll(){
+      if(isClickScrolling) return;
+
+      var navLinks = Array.from(document.querySelectorAll(".head-nav a")).filter(function(a){
+        var href = a.getAttribute("href");
+        return href && href.startsWith("#");
+      });
+      if(!navLinks.length) return;
+
+      var visibleSections = [];
+      navLinks.forEach(function(link){
+        var id = link.getAttribute("href").substring(1);
+        var el = document.getElementById(id);
+        if(el && (el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0) && getComputedStyle(el).display !== "none"){
+          visibleSections.push({ id: id, el: el, link: link });
+        }
+      });
+
+      if(!visibleSections.length) return;
+
+      var scrollPos = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      var windowHeight = window.innerHeight;
+      var docHeight = document.documentElement.scrollHeight;
+
+      var searchSec = document.getElementById("search-top");
+      var searchBottom = searchSec ? searchSec.getBoundingClientRect().bottom : 0;
+
+      var activeSection = null;
+
+      // When on the search page or viewing the search section, Search is always active
+      if(scrollPos < 100 || searchBottom > 220){
+        activeSection = visibleSections[0];
+      } else if(scrollPos + windowHeight >= docHeight - 40){
+        activeSection = visibleSections[visibleSections.length - 1];
+      } else {
+        var headerOffset = 110;
+        for(var i = 0; i < visibleSections.length; i++){
+          var rect = visibleSections[i].el.getBoundingClientRect();
+          if(rect.top <= headerOffset && rect.bottom > headerOffset){
+            activeSection = visibleSections[i];
+            break;
+          }
+        }
+        if(!activeSection){
+          for(var j = visibleSections.length - 1; j >= 0; j--){
+            if(visibleSections[j].el.getBoundingClientRect().top <= headerOffset){
+              activeSection = visibleSections[j];
+              break;
+            }
+          }
+        }
+      }
+
+      if(!activeSection) activeSection = visibleSections[0];
+
+      navLinks.forEach(function(a){ a.classList.remove("active"); });
+      activeSection.link.classList.add("active");
+    }
+
+    var scrollTicking = false;
+    window.addEventListener("scroll", function(){
+      if(!scrollTicking){
+        requestAnimationFrame(function(){
+          updateActiveNavOnScroll();
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
+
     document.querySelectorAll(".head-nav a").forEach(function(link){
       link.addEventListener("click", function(e){
         var href = this.getAttribute("href");
@@ -807,31 +890,40 @@
         var targetId = href.substring(1);
         var targetEl = document.getElementById(targetId);
 
-        // Update active class on nav
-        document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
-        this.classList.add("active");
+        e.preventDefault();
 
+        // If clicking search, scroll to search top immediately
         if(targetId === "search-top"){
+          document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
+          this.classList.add("active");
           if(targetEl){
-            e.preventDefault();
             targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
           }
           return;
         }
 
         // If touching a module before searching, initialize default demo parcel immediately
-        if(!window.__currentParcel || (targetEl && (targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none"))){
+        var isHidden = !targetEl || targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none";
+        if(!window.__currentParcel || isHidden){
           var inputVal = document.getElementById("ulpin-input") ? document.getElementById("ulpin-input").value.trim() : "";
           var query = inputVal || (selectedState === "Telangana" ? "Rangareddy: Survey 245/A" : (selectedState === "Bihar" ? "Patna: Jamabandi 418" : (selectedState === "Maharashtra" ? "Pune: 7/12 Gat 88/1A" : "Khasra 412/1")));
-          doSearch(query);
+          doSearch(query, targetId);
+          return;
         }
 
+        // Target section is already visible
+        document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
+        this.classList.add("active");
+
+        isClickScrolling = true;
+        clearTimeout(clickScrollTimer);
+        clickScrollTimer = setTimeout(function(){
+          isClickScrolling = false;
+          updateActiveNavOnScroll();
+        }, 900);
+
         if(targetEl){
-          e.preventDefault();
-          targetEl.style.display = "block";
-          setTimeout(function(){
-            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-          }, 100);
+          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
         }
       });
     });
@@ -845,6 +937,14 @@
         if(targetEl){
           e.preventDefault();
           targetEl.style.display = "block";
+
+          isClickScrolling = true;
+          clearTimeout(clickScrollTimer);
+          clickScrollTimer = setTimeout(function(){
+            isClickScrolling = false;
+            updateActiveNavOnScroll();
+          }, 900);
+
           targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
           // Sync header nav active link
           document.querySelectorAll(".head-nav a").forEach(function(a){
@@ -854,6 +954,9 @@
         }
       });
     });
+
+    // Run initial check
+    setTimeout(updateActiveNavOnScroll, 300);
 
     // URL params & hash handling
     handleUrlParams();
