@@ -252,6 +252,100 @@
           }
         ]
       }
+    },
+    BR: {
+      label: "Khasra 512/3 — Walmi, Phulwari Sharif, Patna, Bihar (⚠️ Discrepancy Flagged)",
+      center: [85.0741, 25.5682],
+      zoom: 17.2,
+      pitch: 30,
+      bearing: 12,
+      parcel: {
+        type: "Feature",
+        properties: { id: "BR-DEMO-512-004", survey: "512/3", label: "Khasra 512/3 (Jamabandi 418)" },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [85.0728, 25.5673],
+            [85.0754, 25.5677],
+            [85.0759, 25.5691],
+            [85.0736, 25.5694],
+            [85.0725, 25.5684],
+            [85.0728, 25.5673]
+          ]]
+        }
+      },
+      neighbors: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: { id: "511/1" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [85.0728, 25.5673], [85.0712, 25.5668], [85.0708, 25.5682], [85.0725, 25.5684], [85.0728, 25.5673]
+              ]]
+            }
+          },
+          {
+            type: "Feature",
+            properties: { id: "512/4" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [85.0754, 25.5677], [85.0772, 25.5680], [85.0768, 25.5697], [85.0759, 25.5691], [85.0754, 25.5677]
+              ]]
+            }
+          }
+        ]
+      }
+    },
+    MH: {
+      label: "Gat No. 88/1A — Wagholi, Haveli Taluka, Pune, Maharashtra (⚠️ Active Bojha)",
+      center: [73.9812, 18.5793],
+      zoom: 17.3,
+      pitch: 35,
+      bearing: -5,
+      parcel: {
+        type: "Feature",
+        properties: { id: "MH-DEMO-712-088", survey: "88/1A", label: "7/12 Gat 88/1A" },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [73.9798, 18.5784],
+            [73.9824, 18.5788],
+            [73.9828, 18.5803],
+            [73.9806, 18.5806],
+            [73.9795, 18.5795],
+            [73.9798, 18.5784]
+          ]]
+        }
+      },
+      neighbors: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: { id: "88/1B" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [73.9798, 18.5784], [73.9782, 18.5779], [73.9778, 18.5793], [73.9795, 18.5795], [73.9798, 18.5784]
+              ]]
+            }
+          },
+          {
+            type: "Feature",
+            properties: { id: "89" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [73.9824, 18.5788], [73.9842, 18.5791], [73.9839, 18.5808], [73.9828, 18.5803], [73.9824, 18.5788]
+              ]]
+            }
+          }
+        ]
+      }
     }
   };
 

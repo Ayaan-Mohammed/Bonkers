@@ -135,10 +135,47 @@
       mutation: "Cleared — Dharani digital registration & mutation (Order 2023-11-18)",
       encumbrance: "None recorded (Dharani EC verification cleared)", tax: "Paid to date (FY 2025–26)",
       valuation: "Guideline value ₹24.5L / acre", status: "✓ Verified — Consistent",
+      score: 96,
       history: [
         {date:"2025-02-10", title:"Rythu Bandhu & revenue audit", desc:"Annual cadastral audit synced with Dharani integrated land portal."},
         {date:"2023-11-18", title:"Dharani digital mutation completed", desc:"Instant digital mutation executed post-registration at Moinabad sub-registrar office."},
         {date:"2019-06-25", title:"Pattadar passbook issued", desc:"Title deed & digital passbook generated under Telangana Land Records Updation Programme (LRUP)."}
+      ]
+    },
+    "BR": {
+      ulpin: "BR-DEMO-512-004", survey: "512/3", state: "Bihar",
+      district: "Patna", mandal: "Phulwari Sharif", village: "Walmi",
+      area: "1.82 Acres (0.74 ha)", type: "Agricultural — Irrigated (Riverine)",
+      zoning: "Rural / Peri-Urban Zone", coords: "25.5682° N, 85.0741° E",
+      holder: "Ramashish Prasad & Co-Sharers", ownership: "Presumptive title (Partition suit active)",
+      ror: "Jamabandi No. 418 (Bhu-Abhilekh Bihar)",
+      mutation: "⚠️ Objection filed (Dakhil-Kharij Case 142/2024)",
+      encumbrance: "⚠️ Undivided ancestral claim noted", tax: "Lagann paid (FY 2024–25)",
+      valuation: "Guideline value ₹19.5L / acre", status: "⚠️ Attention Required — Score: 74/100",
+      statusText: "Attention — Area Variance 4.6%",
+      score: 74,
+      history: [
+        {date:"2024-10-18", title:"Mutation objection registered", desc:"Co-sharer objection filed under Bihar Land Disputes Resolution Act at Anchal revenue office."},
+        {date:"2022-04-12", title:"Special Survey DILRMP drone scan", desc:"Spatial boundary overlay measured 1.74 Acres vs. 1.82 Acres in Jamabandi (4.6% variance flagged)."},
+        {date:"2015-08-04", title:"Jamabandi digitised", desc:"Legacy record entered on Bihar Bhu-Abhilekh portal under legacy khatauni."}
+      ]
+    },
+    "MH": {
+      ulpin: "MH-DEMO-712-088", survey: "88/1A", state: "Maharashtra",
+      district: "Pune", mandal: "Haveli Taluka", village: "Wagholi",
+      area: "2.10 Acres (0.85 ha)", type: "Agricultural — Dry crop (Gunthewari belt)",
+      zoning: "Semi-Urban Agricultural Zone", coords: "18.5793° N, 73.9812° E",
+      holder: "Suresh Dattatraya Patil", ownership: "Pattadar (7/12 Saat-Baara verified)",
+      ror: "e-Mahabhulekh 7/12 Extract (Gat 88/1A)",
+      mutation: "Ferfar No. 1204 sanctioned",
+      encumbrance: "⚠️ Active Bank Bojha — SBI Loan ₹6.2L", tax: "Panchayat tax paid (FY 2024–25)",
+      valuation: "Guideline value ₹42.0L / acre", status: "⚠️ Active Encumbrance — Score: 82/100",
+      statusText: "Active Bank Bojha (₹6.2L)",
+      score: 82,
+      history: [
+        {date:"2024-05-19", title:"Encumbrance registered (Bojha)", desc:"Institutional agricultural charge of ₹6,20,000 endorsed on 7/12 by State Bank of India."},
+        {date:"2021-12-08", title:"Mutation (Ferfar) cleared", desc:"Partition succession updated under Haveli revenue circle."},
+        {date:"2017-03-14", title:"Digital 7/12 issued", desc:"Record digitally signed under Mahabhumi modernisation program."}
       ]
     }
   };
@@ -159,14 +196,35 @@
   };
 
   var CHECKS = [
-    {name:"Boundary verification", desc:"Cadastral boundary matched against latest survey.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Record vs. map", desc:"Record of rights area compared against mapped parcel area.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Land-use consistency", desc:"Recorded land use checked against zoning classification.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Ownership verification", desc:"Recorded holder cross-checked against registration filings.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Duplicate record check", desc:"Parcel checked against neighbouring ULPINs for overlap.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Land-change detection", desc:"Compared against the last two available survey cycles.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}},
-    {name:"Encumbrance check", desc:"Cross-checked against registered charges and mortgages.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok"}}
+    {name:"Boundary verification", desc:"Cadastral boundary matched against latest survey.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
+    {name:"Record vs. map", desc:"Record of rights area compared against mapped parcel area.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
+    {name:"Land-use consistency", desc:"Recorded land use checked against zoning classification.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"ok",MH:"warn"}},
+    {name:"Ownership verification", desc:"Recorded holder cross-checked against registration filings.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
+    {name:"Duplicate record check", desc:"Parcel checked against neighbouring ULPINs for overlap.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"ok",MH:"ok"}},
+    {name:"Land-change detection", desc:"Compared against the last two available survey cycles.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
+    {name:"Encumbrance check", desc:"Cross-checked against registered charges and mortgages.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"warn"}}
   ];
+
+  var DEFAULT_ASSESSMENTS = {
+    "BR": {
+      "Ownership": { label: "Disputed ⚠️", status: "warn" },
+      "GIS boundary": { label: "Variance (4.6%) ⚠️", status: "warn" },
+      "Registration": { label: "Verified ✓", status: "ok" },
+      "Tax": { label: "Verified ✓", status: "ok" },
+      "Encumbrance": { label: "Claim Recorded ⚠️", status: "warn" },
+      "Mutation": { label: "Objection Pending ⚠️", status: "warn" },
+      "Record consistency": { label: "Area Mismatch ⚠️", status: "warn" }
+    },
+    "MH": {
+      "Ownership": { label: "Verified ✓", status: "ok" },
+      "GIS boundary": { label: "Verified ✓", status: "ok" },
+      "Registration": { label: "Verified ✓", status: "ok" },
+      "Tax": { label: "Verified ✓", status: "ok" },
+      "Encumbrance": { label: "Active Bojha ₹6.2L ⚠️", status: "warn" },
+      "Mutation": { label: "Verified ✓", status: "ok" },
+      "Record consistency": { label: "NA Review ⚠️", status: "warn" }
+    }
+  };
 
   var STAMP_LABEL = {ok:"Verified", warn:"Attention", crit:"Critical"};
   var ASSESSMENT_ROWS = ["Ownership","GIS boundary","Registration","Tax","Encumbrance","Mutation","Record consistency"];
@@ -265,6 +323,16 @@
     var q = (query || "").toLowerCase();
     var s = (state || selectedState || "").toLowerCase();
 
+    // Check Bihar (Score 74 - Discrepancy demo)
+    if(s.indexOf("bihar") !== -1 || q.indexOf("bihar") !== -1 || q.indexOf("br-demo") !== -1 || q.indexOf("jamabandi") !== -1 || q.indexOf("512") !== -1 || q.indexOf("patna") !== -1 || q.indexOf("walmi") !== -1){
+      return "BR";
+    }
+
+    // Check Maharashtra (Score 82 - Encumbrance demo)
+    if(s.indexOf("maharashtra") !== -1 || q.indexOf("maharashtra") !== -1 || q.indexOf("mh-demo") !== -1 || q.indexOf("7/12") !== -1 || q.indexOf("saat-baara") !== -1 || q.indexOf("pune") !== -1 || q.indexOf("wagholi") !== -1 || q.indexOf("haveli") !== -1){
+      return "MH";
+    }
+
     // Check Telangana first if state or query contains TS keywords or any TS district
     if(s.indexOf("telangana") !== -1 || q.indexOf("ts-demo") !== -1 || q.indexOf("tg-demo") !== -1 || q.indexOf("dharani") !== -1 || q.indexOf("245") !== -1){
       return "TS";
@@ -317,20 +385,30 @@
       }
     }
 
+    var isWarn = (p.score && p.score < 90);
+
     // Show loading
     showFeedback("Searching for your parcel...", "loading");
 
     // Simulate brief network delay for polish
     setTimeout(function(){
       // Show success
-      showFeedback("✓ Parcel Found — " + p.ulpin, "success");
+      showFeedback((isWarn ? "⚠️ Parcel Located with Flags — " : "✓ Parcel Found — ") + p.ulpin, isWarn ? "warn" : "success");
 
       // Reveal result sections
       showResultSections();
 
       // Update banner
+      var banner = document.getElementById("parcel-found-banner");
       var bannerDesc = document.getElementById("pf-banner-text");
-      if(bannerDesc) bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.district + ", " + p.state;
+      if(banner){
+        if(isWarn) banner.classList.add("banner--warn");
+        else banner.classList.remove("banner--warn");
+      }
+      if(bannerDesc){
+        var flagNotice = isWarn ? " <span style=\"color:#f59e0b;font-weight:700;\">— ⚠️ Assessment Score: " + p.score + "/100 (Attention Required)</span>" : "";
+        bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.district + ", " + p.state + flagNotice;
+      }
 
       // Update compact card
       setText("pic-ulpin", p.ulpin);
@@ -338,18 +416,31 @@
       setText("pic-state", p.state);
       setText("pic-district", p.district);
       setText("pic-survey", p.survey);
-      setText("pic-status", "✓ Presumptive Title Clear");
+
+      var statusPill = document.getElementById("pic-status");
+      var verifiedTag = document.querySelector(".pic-verified-tag");
+      if(statusPill){
+        statusPill.textContent = isWarn ? "⚠️ " + (p.statusText || "Discrepancy Flagged") : "✓ Presumptive Title Clear";
+        statusPill.className = "pic-status-pill" + (isWarn ? " warn" : "");
+      }
+      if(verifiedTag){
+        verifiedTag.textContent = isWarn ? "⚠️ Score: " + p.score + "/100" : "✓ Verified";
+        verifiedTag.className = "pic-verified-tag" + (isWarn ? " warn" : "");
+      }
 
       // Map
       if(window.LandMap && window.LandMap.selectParcel){
-        var mapLabel = p.state === "Telangana" ? ("Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana") : null;
+        var mapLabel = null;
+        if(p.state === "Telangana") mapLabel = "Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana";
+        else if(p.state === "Bihar") mapLabel = "Khasra " + p.survey + " — Walmi, Patna, Bihar (⚠️ Score: 74/100)";
+        else if(p.state === "Maharashtra") mapLabel = "7/12 Gat " + p.survey + " — Wagholi, Pune, Maharashtra (⚠️ Score: 82/100)";
         window.LandMap.selectParcel(key, mapLabel);
       }
 
       // Deep cards
       renderParcelCard(p);
       renderChecks(key);
-      renderAssessment(key, false);
+      renderAssessment(key, p);
       renderPassport(p);
       window.__currentParcel = p;
 
@@ -377,11 +468,13 @@
     var card = document.getElementById("parcel-card");
     if(!section || !card) return;
 
+    var isWarn = (p.score && p.score < 90);
+
     card.innerHTML =
       '<div class="pc-top">' +
         '<div><div class="pc-ulpin">' + p.ulpin + ' &middot; Survey / Khasra ' + p.survey + '</div>' +
           '<h3 class="pc-title">' + p.village + ', ' + p.district + '</h3></div>' +
-        '<span class="pc-status">' + p.status + '</span>' +
+        '<span class="pc-status' + (isWarn ? ' warn' : '') + '">' + p.status + '</span>' +
       '</div>' +
       '<p class="pc-breadcrumb"><b>India</b><span>&rsaquo;</span><b>' + p.state + '</b><span>&rsaquo;</span><b>' + p.district + '</b><span>&rsaquo;</span><b>' + p.village + '</b><span>&rsaquo;</span>Plot ' + p.survey + '</p>' +
       '<dl class="pc-grid">' +
@@ -421,18 +514,27 @@
     });
   }
 
-  function renderAssessment(abbr, flagged){
+  function renderAssessment(abbr, p){
     var scoreNum = document.getElementById("score-num");
     var list = document.getElementById("assessment-list");
     var seal = document.querySelector(".seal-box");
     if(!scoreNum || !list) return;
-    var score = flagged ? 78 : 96;
+
+    var score = (p && p.score) ? p.score : (abbr === "BR" ? 74 : (abbr === "MH" ? 82 : 96));
     scoreNum.textContent = score;
-    if(seal) seal.style.setProperty("--pct", score);
+
+    if(seal){
+      seal.style.setProperty("--pct", score);
+      var ringColor = score < 80 ? "#f59e0b" : (score < 90 ? "#eab308" : "#48d28a");
+      seal.style.setProperty("--ring-color", ringColor);
+    }
+
     list.innerHTML = "";
+    var customAssessments = DEFAULT_ASSESSMENTS[abbr] || {};
     ASSESSMENT_ROWS.forEach(function(name){
+      var item = customAssessments[name] || { label: "Verified ✓", status: "ok" };
       var li = document.createElement("li");
-      li.innerHTML = "<b>"+name+"</b><span>Verified ✓</span>";
+      li.innerHTML = "<b>" + name + "</b><span class=\"" + item.status + "\">" + item.label + "</span>";
       list.appendChild(li);
     });
   }
