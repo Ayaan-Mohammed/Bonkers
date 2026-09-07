@@ -29,8 +29,8 @@
     </a>
     <nav class="head-nav">
       <a href="#search-top" class="active">Search</a>
-      <a href="#gis-view">Map</a>
       <a href="#dashboard">Dashboard</a>
+      <a href="#gis-view">GIS Map</a>
       <a href="#passport">Passport</a>
       <a href="#intelligence">Intelligence</a>
       <a href="#history">History</a>
@@ -107,6 +107,80 @@
   </div>
 </section>
 
+<!-- ============ 1. DASHBOARD ============ -->
+<section class="dark-section dashboard-section" id="dashboard" style="display:none;">
+  <div class="wrap">
+    <div class="dashboard-header">
+      <div>
+        <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 1</div>
+        <h2 class="section-head">NLIP Land Dashboard</h2>
+        <p class="section-lede">Centralized command view for the selected parcel. Navigate through the core modules below.</p>
+      </div>
+      <div class="dash-parcel-pill" id="dash-parcel-pill">
+        <div class="dpp-head">
+          <span class="dpp-state-tag" id="dash-p-state">—</span>
+          <span class="dpp-status-tag" id="dash-p-status">—</span>
+        </div>
+        <div class="dpp-ulpin mono" id="dash-p-ulpin">—</div>
+        <div class="dpp-loc" id="dash-p-loc">—</div>
+      </div>
+    </div>
+
+    <!-- 5 Module Navigation Cards -->
+    <div class="dash-nav-grid">
+      <a href="#gis-view" class="dash-nav-card" id="dash-card-map">
+        <div class="dnc-icon">🗺️</div>
+        <div class="dnc-body">
+          <div class="dnc-tag">GIS MAP</div>
+          <h3>GIS Cadastral Map</h3>
+          <p>Cadastral boundary, spatial coordinates, and neighboring survey plots.</p>
+        </div>
+        <span class="dnc-arrow">↓</span>
+      </a>
+
+      <a href="#passport" class="dash-nav-card" id="dash-card-passport">
+        <div class="dnc-icon">📘</div>
+        <div class="dnc-body">
+          <div class="dnc-tag">MODULE 2</div>
+          <h3>Digital Land Passport</h3>
+          <p>Consolidated identity certificate with presumptive title &amp; clean ownership record.</p>
+        </div>
+        <span class="dnc-arrow">→</span>
+      </a>
+
+      <a href="#intelligence" class="dash-nav-card" id="dash-card-intelligence">
+        <div class="dnc-icon">🧠</div>
+        <div class="dnc-body">
+          <div class="dnc-tag">MODULE 3</div>
+          <h3>Land Intelligence</h3>
+          <p>5-pillar verification audit: Overview, Spatial, Records, Checks &amp; Alerts.</p>
+        </div>
+        <span class="dnc-arrow">→</span>
+      </a>
+
+      <a href="#history" class="dash-nav-card" id="dash-card-history">
+        <div class="dnc-icon">⏳</div>
+        <div class="dnc-body">
+          <div class="dnc-tag">MODULE 4</div>
+          <h3>Land History</h3>
+          <p>Chronological timeline of mutations, title updates, and drone re-surveys.</p>
+        </div>
+        <span class="dnc-arrow">→</span>
+      </a>
+
+      <a href="#integration" class="dash-nav-card" id="dash-card-integration">
+        <div class="dnc-icon">🔗</div>
+        <div class="dnc-body">
+          <div class="dnc-tag">MODULE 5</div>
+          <h3>Officer / Data Integration</h3>
+          <p>Multi-registry connectivity: GIS, RoR, Registration &amp; Survey data streams.</p>
+        </div>
+        <span class="dnc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ GIS PARCEL VIEW & RESULT ============ -->
 <section class="dark-section gis-section" id="gis-view" style="display:none;">
   <div class="wrap">
@@ -151,85 +225,11 @@
         </div>
         <div class="pic-footer">
           <button type="button" class="pic-details-btn" id="pic-details-btn">
-            <span>Open Dashboard</span>
+            <span>Next: Land Passport</span>
             <span aria-hidden="true">↓</span>
           </button>
         </div>
       </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 1. DASHBOARD ============ -->
-<section class="dark-section dashboard-section" id="dashboard" style="display:none;">
-  <div class="wrap">
-    <div class="dashboard-header">
-      <div>
-        <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 1</div>
-        <h2 class="section-head">NLIP Land Dashboard</h2>
-        <p class="section-lede">Centralized command view for the selected parcel. Navigate through the core modules below.</p>
-      </div>
-      <div class="dash-parcel-pill" id="dash-parcel-pill">
-        <div class="dpp-head">
-          <span class="dpp-state-tag" id="dash-p-state">—</span>
-          <span class="dpp-status-tag" id="dash-p-status">—</span>
-        </div>
-        <div class="dpp-ulpin mono" id="dash-p-ulpin">—</div>
-        <div class="dpp-loc" id="dash-p-loc">—</div>
-      </div>
-    </div>
-
-    <!-- 5 Module Navigation Cards -->
-    <div class="dash-nav-grid">
-      <a href="#gis-view" class="dash-nav-card" id="dash-card-map">
-        <div class="dnc-icon">🗺️</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 1A</div>
-          <h3>GIS Cadastral Map</h3>
-          <p>Cadastral boundary, spatial coordinates, and neighboring survey plots.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#passport" class="dash-nav-card" id="dash-card-passport">
-        <div class="dnc-icon">📘</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 2</div>
-          <h3>Digital Land Passport</h3>
-          <p>Consolidated identity certificate with presumptive title &amp; clean ownership record.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#intelligence" class="dash-nav-card" id="dash-card-intelligence">
-        <div class="dnc-icon">🧠</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 3</div>
-          <h3>Land Intelligence</h3>
-          <p>5-pillar verification audit: Overview, Spatial, Records, Checks &amp; Alerts.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#history" class="dash-nav-card" id="dash-card-history">
-        <div class="dnc-icon">⏳</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 4</div>
-          <h3>Land History</h3>
-          <p>Chronological timeline of mutations, title updates, and drone re-surveys.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#integration" class="dash-nav-card" id="dash-card-integration">
-        <div class="dnc-icon">🔗</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 5</div>
-          <h3>Officer / Data Integration</h3>
-          <p>Multi-registry connectivity: GIS, RoR, Registration &amp; Survey data streams.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
     </div>
   </div>
 </section>

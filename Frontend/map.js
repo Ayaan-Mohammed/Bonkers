@@ -478,6 +478,7 @@
     var site = SITES[currentKey];
 
     if(ready && map){
+      map.resize();
       updateLayerVisibilities();
       if(customLabel){
         var labelEl = document.getElementById("map-label");

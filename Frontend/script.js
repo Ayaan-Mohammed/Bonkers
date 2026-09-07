@@ -444,10 +444,10 @@
       renderLandHistory(p);
       window.__currentParcel = p;
 
-      // Scroll to results after a beat
+      // Scroll to results (Dashboard) after a beat
       setTimeout(function(){
-        var gisView = document.getElementById("gis-view");
-        if(gisView) gisView.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        var dashView = document.getElementById("dashboard") || document.getElementById("gis-view");
+        if(dashView) dashView.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
       }, 200);
 
       // Hide feedback after scroll
@@ -771,11 +771,11 @@
       });
     });
 
-    // View details / Open Dashboard
+    // View details / Next: Land Passport
     var detailsBtn = document.getElementById("pic-details-btn");
     if(detailsBtn){
       detailsBtn.addEventListener("click", function(){
-        var t = document.getElementById("dashboard") || document.getElementById("passport");
+        var t = document.getElementById("passport") || document.getElementById("dashboard");
         if(t){ t.style.display = "block"; t.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"}); }
       });
     }
