@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
 
@@ -42,6 +44,29 @@
 </section>
 
 <!-- ============ PARCEL RESULT ============ -->
+<!-- ============ GIS PARCEL VIEW ============ -->
+<section class="dark-section" id="gis-view">
+  <div class="wrap">
+    <h2 class="section-head">GIS parcel view</h2>
+    <p class="section-lede">The same parcel, on the map. Drill in from the country down to the individual boundary — the highlighted shape is what the record above describes.</p>
+
+    <nav class="crumb-nav" id="crumb-nav" aria-label="Zoom to level">
+      <button data-level="india">India</button>
+      <button data-level="state">State</button>
+      <button data-level="district">District</button>
+      <button data-level="village">Village</button>
+      <button data-level="parcel" class="active">Parcel</button>
+    </nav>
+
+    <div class="map-frame">
+      <div id="gis-map"></div>
+      <div class="map-label" id="map-label">Vellalore, Coimbatore — Survey No. 187/2A</div>
+    </div>
+
+    <p class="map-note">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, tiles via <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>. Parcel boundaries shown are illustrative, not surveyed geometry.</p>
+  </div>
+</section>
+
 <section class="doc-section" id="search" style="display:none;" >
   <div class="wrap">
     <div class="paper-card" id="parcel-card">
@@ -145,6 +170,7 @@
   </div>
 </div>
 
+<script src="map.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

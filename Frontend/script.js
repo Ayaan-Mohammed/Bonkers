@@ -45,7 +45,7 @@
     var outlineStroke = document.createElementNS(svgNS, "path");
     outlineStroke.setAttribute("d", outline);
     outlineStroke.setAttribute("fill", "none");
-    outlineStroke.setAttribute("stroke", "rgba(242,236,224,0.18)");
+    outlineStroke.setAttribute("stroke", "rgba(242,230,208,0.22)");
     outlineStroke.setAttribute("stroke-width", "1");
     svg.appendChild(outlineStroke);
 
@@ -69,8 +69,8 @@
         rect.setAttribute("width", Math.max(6,jw));
         rect.setAttribute("height", Math.max(6,jh));
         var isSurvey = rand() > 0.86;
-        rect.setAttribute("fill", isSurvey ? "rgba(44,110,115,0.35)" : "rgba(242,236,224,0.045)");
-        rect.setAttribute("stroke", "rgba(242,236,224,0.14)");
+        rect.setAttribute("fill", isSurvey ? "rgba(184,155,114,0.30)" : "rgba(242,230,208,0.055)");
+        rect.setAttribute("stroke", "rgba(242,230,208,0.16)");
         rect.setAttribute("stroke-width", "0.6");
         group.appendChild(rect);
 
@@ -84,7 +84,7 @@
       var nx = 320 + rand()*300, ny = 100 + rand()*430;
       var node = document.createElementNS(svgNS, "circle");
       node.setAttribute("cx", nx); node.setAttribute("cy", ny); node.setAttribute("r", 2.4);
-      node.setAttribute("fill", "#A8462F");
+      node.setAttribute("fill", "#B89B72");
       node.setAttribute("opacity", "0.85");
       group.appendChild(node);
     }
@@ -201,6 +201,7 @@
     renderAssessment(abbr, flagged);
     renderPassport(p);
     window.__currentParcel = p;
+    if(window.LandMap) window.LandMap.selectParcel(abbr);
   }
 
   function field(label, value, mono){
@@ -209,12 +210,12 @@
 
   function gisSwatch(){
     return '<svg viewBox="0 0 80 56">' +
-      '<rect width="80" height="56" fill="#F4EEDF"/>' +
-      '<g stroke="#D9CFB2" stroke-width="0.6" fill="none">' +
+      '<rect width="80" height="56" fill="#F2E6D0"/>' +
+      '<g stroke="#D8C3A5" stroke-width="0.6" fill="none">' +
       '<line x1="0" y1="14" x2="80" y2="14"/><line x1="0" y1="28" x2="80" y2="28"/><line x1="0" y1="42" x2="80" y2="42"/>' +
       '<line x1="20" y1="0" x2="20" y2="56"/><line x1="40" y1="0" x2="40" y2="56"/><line x1="60" y1="0" x2="60" y2="56"/>' +
       '</g>' +
-      '<rect x="40" y="14" width="20" height="14" fill="rgba(168,70,47,0.35)" stroke="#A8462F" stroke-width="1"/>' +
+      '<rect x="40" y="14" width="20" height="14" fill="rgba(165,92,58,0.35)" stroke="#A55C3A" stroke-width="1"/>' +
       '</svg>';
   }
 
@@ -344,8 +345,8 @@
     for(var i=0;i<text.length;i++){ seed = (seed * 31 + text.charCodeAt(i)) % 100000; }
     function rand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
 
-    ctx.fillStyle = "#FBF8EF"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#232019";
+    ctx.fillStyle = "#FAF1E2"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#30271F";
     for(var r=0;r<size;r++){
       for(var c=0;c<size;c++){
         var isCorner = (r<3 && c<3) || (r<3 && c>size-4) || (r>size-4 && c<3);
