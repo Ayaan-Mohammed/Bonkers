@@ -68,15 +68,15 @@
     var degLat = 1.0 / 110.574;
     var degLng = 1.0 / (111.320 * Math.cos(lat * (Math.PI / 180)));
 
-    // 3 x 3 agricultural compartment: ~85m x ~92m per field (~1.9 acres each)
-    // Total footprint: ~255m x ~276m, neatly fitting inside farmland without crossing roads
+    // 3 x 3 agricultural compartment: ~55m x ~58m per field (~0.8-1.0 acres each)
+    // Total footprint: ~165m x ~174m, compact enough to fit cleanly inside a single farm block
     var M_COLS = 3;
     var M_ROWS = 3;
     var targetC = 1;
     var targetR = 1;
 
-    var stepX = 0.088 * degLng; // ~88 meters width
-    var stepY = 0.092 * degLat; // ~92 meters height
+    var stepX = 0.055 * degLng; // ~55 meters width
+    var stepY = 0.058 * degLat; // ~58 meters height
     var startLng = lng - (targetC + 0.5) * stepX;
     var startLat = lat - (targetR + 0.5) * stepY;
 
@@ -88,13 +88,13 @@
         var baseLat = startLat + r * stepY;
         var jx = 0;
         var jy = 0;
-        // Organic, subtle cadastral field bund variation on interior vertices (~4-7m)
+        // Organic, subtle cadastral field bund variation on interior vertices (~3-5m)
         if(c > 0 && c < M_COLS && r > 0 && r < M_ROWS) {
           var seed = c * 19.31 + r * 37.19 + (baseNum % 97);
           var r1 = Math.abs(Math.sin(seed) * 10000) % 1;
           var r2 = Math.abs(Math.cos(seed) * 10000) % 1;
-          jx = (r1 - 0.5) * stepX * 0.16;
-          jy = (r2 - 0.5) * stepY * 0.16;
+          jx = (r1 - 0.5) * stepX * 0.14;
+          jy = (r2 - 0.5) * stepY * 0.14;
         }
         nodes[c + "_" + r] = [+(baseLng + jx).toFixed(6), +(baseLat + jy).toFixed(6)];
       }
@@ -158,63 +158,63 @@
   var SITES_CONFIG = {
     UP: {
       label: "Khasra 412/1 — Mahona, Bakshi Ka Talab, Lucknow, Uttar Pradesh",
-      center: [80.9180, 27.0950],
+      center: [80.9055, 27.1015],
       baseNum: 412,
       targetSurvey: "412/1",
       targetId: "UP-DEMO-412-001"
     },
     KA: {
-      label: "Survey No. 88/2 — Kundana, Bengaluru Rural, Karnataka",
-      center: [77.7120, 13.2410],
+      label: "Survey No. 88/2 — Kundana, Devanahalli Taluk, Bengaluru Rural, Karnataka",
+      center: [77.7005, 13.2485],
       baseNum: 88,
       targetSurvey: "88/2",
       targetId: "KA-DEMO-088-002"
     },
     TN: {
-      label: "Patta 1042 (Survey 187/2A) — Vellalore, Coimbatore, Tamil Nadu",
-      center: [77.0480, 11.0040],
+      label: "Patta 1042 (Survey 187/2A) — Sulur Taluk, Coimbatore, Tamil Nadu",
+      center: [77.0150, 10.9550],
       baseNum: 187,
       targetSurvey: "187/2A",
       targetId: "TN-DEMO-104-042"
     },
     TS: {
       label: "Survey No. 245/A — Kanakamamidi, Rangareddy, Telangana",
-      center: [78.2660, 17.3180],
+      center: [78.2560, 17.3275],
       baseNum: 245,
       targetSurvey: "245/A",
       targetId: "TS-DEMO-245-018"
     },
     TS2: {
       label: "Survey No. 520/B — Madikonda, Khazipet, Warangal, Telangana",
-      center: [79.5240, 17.9780],
+      center: [79.5150, 17.9680],
       baseNum: 520,
       targetSurvey: "520/B",
       targetId: "TS-DEMO-520-044"
     },
     TS3: {
       label: "Survey No. 165/A — Perkit, Armoor, Nizamabad, Telangana",
-      center: [78.2830, 18.7910],
+      center: [78.2695, 18.7845],
       baseNum: 165,
       targetSurvey: "165/A",
       targetId: "TS-DEMO-165-007"
     },
     PY: {
       label: "Survey No. 42/1 — Ariyankuppam, Puducherry (UT)",
-      center: [79.8130, 11.9015],
+      center: [79.8050, 11.8880],
       baseNum: 42,
       targetSurvey: "42/1",
       targetId: "PY-DEMO-042-005"
     },
     BR: {
       label: "Khasra 512/3 — Walmi, Phulwari Sharif, Patna, Bihar (⚠️ Discrepancy Flagged)",
-      center: [85.0680, 25.5600],
+      center: [85.0545, 25.5565],
       baseNum: 512,
       targetSurvey: "512/3",
       targetId: "BR-DEMO-512-004"
     },
     MH: {
       label: "Gat No. 88/1A — Wagholi, Haveli Taluka, Pune, Maharashtra (⚠️ Active Bojha)",
-      center: [74.0050, 18.5720],
+      center: [73.9890, 18.5675],
       baseNum: 88,
       targetSurvey: "88/1A",
       targetId: "MH-DEMO-712-088"
