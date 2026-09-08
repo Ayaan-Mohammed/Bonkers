@@ -1,656 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Search Your Land — NLIP</title>
-<meta name="description" content="Find your land parcel using ULPIN, Survey Number, Khasra, Gata, Patta or another supported identifier.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=nlip_dark4">
-<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Your Land — NLIP</title>
+  <meta name="description"
+    content="Find your land parcel using ULPIN, Survey Number, Khasra, Gata, Patta or another supported identifier.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=nlip_final4">
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
+
 <body>
 
-<!-- ============ FULL-SCREEN LAND BACKGROUND ============ -->
-<div class="land-bg-canvas" id="land-bg" aria-hidden="true">
-  <div class="land-bg-image" id="land-bg-image"></div>
-  <div class="land-bg-overlay"></div>
-</div>
-
-<header class="site-head">
-  <div class="wrap head-row">
-    <a href="index.html" class="mark search-back-link" title="Back to NLIP Home">
-      <span class="search-back-arrow">←</span>
-      <span class="mark-icon">◈</span>
-      <span>NLIP</span>
-    </a>
-    <nav class="head-nav">
-      <a href="#search-top" class="active">Search</a>
-      <a href="#dashboard">Dashboard</a>
-      <a href="#gis-view">GIS Map</a>
-      <a href="#passport">Passport</a>
-      <a href="#intelligence">Intelligence</a>
-      <a href="#history">History</a>
-      <a href="#integration">Integration</a>
-    </nav>
+  <!-- ============ FULL-SCREEN LAND BACKGROUND ============ -->
+  <div class="land-bg-canvas" id="land-bg" aria-hidden="true">
+    <div class="land-bg-image" id="land-bg-image"></div>
+    <div class="land-bg-overlay"></div>
   </div>
-</header>
 
-<!-- ============ CADASTRAL SCROLL SCANNER & HUD ============ -->
-<div class="scroll-laser-bar" id="scroll-laser-bar">
-  <div class="laser-sparkle"></div>
-</div>
+  <header class="site-head">
+    <div class="wrap head-row">
+      <a href="index.html" class="mark search-back-link" title="Back to NLIP Home">
+        <span class="search-back-arrow">←</span>
+        <span class="mark-icon">◈</span>
+        <span>NLIP</span>
+      </a>
+      <nav class="head-nav" id="main-nav">
+        <a href="index.html">Home</a>
+        <a href="#search-top" class="active">Search Land</a>
+      </nav>
+    </div>
+  </header>
 
-<div class="scroll-telemetry-hud" id="scroll-telemetry-hud">
-  <span class="tele-dot"></span>
-  <span class="tele-text" id="tele-readout">CADASTRE SCAN · 0%</span>
-</div>
-
-<nav class="cadastral-hud-nav" id="cadastral-hud-nav" aria-label="Cadastral Waypoint HUD">
-  <div class="chn-header">
-    <span class="chn-radar-ping"></span>
-    <span class="chn-title">SURVEY HUD</span>
-  </div>
-  <div class="chn-track">
-    <div class="chn-fill-line" id="chn-fill-line"></div>
-    <a href="#search-top" class="chn-node active" data-target="search-top" title="01 Search">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">01 Search</span>
-    </a>
-    <a href="#dashboard" class="chn-node" data-target="dashboard" title="02 Dashboard">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">02 Dashboard</span>
-    </a>
-    <a href="#gis-view" class="chn-node" data-target="gis-view" title="03 GIS Cadastre">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">03 GIS Map</span>
-    </a>
-    <a href="#passport" class="chn-node" data-target="passport" title="04 Land Passport">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">04 Passport</span>
-    </a>
-    <a href="#intelligence" class="chn-node" data-target="intelligence" title="05 Intelligence">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">05 Intelligence</span>
-    </a>
-    <a href="#history" class="chn-node" data-target="history" title="06 History">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">06 History</span>
-    </a>
-    <a href="#integration" class="chn-node" data-target="integration" title="07 Integration">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">07 Integration</span>
-    </a>
-    <a href="#ledger" class="chn-node" data-target="ledger" title="08 Global Ledger">
-      <span class="chn-dot"></span>
-      <span class="chn-tooltip">08 Ledger</span>
-    </a>
-  </div>
-  <div class="chn-footer">
-    <span id="chn-altitude">ELEV 120m</span>
-  </div>
-</nav>
-
-<!-- ============ SEARCH SECTION ============ -->
-<section class="search-hero" id="search-top">
-  <div class="wrap search-hero-wrap">
-
-    <div class="search-panel" id="search-panel">
-      <div class="search-panel-head">
-        <h1 class="search-page-title">Search Your Land</h1>
-        <p class="search-page-subtitle">Find your land parcel using ULPIN, Survey Number, Khasra, Gata or Patta.</p>
+  <!-- ============ CONTEXTUAL PARCEL NAVIGATION SUB-BAR (Accessible after parcel selection) ============ -->
+  <nav class="parcel-context-nav" id="parcel-context-nav" style="display:none;" aria-label="Selected Parcel Navigation">
+    <div class="wrap pcn-inner">
+      <div class="pcn-parcel-info">
+        <span class="pcn-dot"></span>
+        <span class="pcn-tag">ACTIVE PARCEL:</span>
+        <span class="pcn-ulpin mono" id="pcn-ulpin">—</span>
+        <span class="pcn-loc" id="pcn-loc">—</span>
       </div>
+      <div class="pcn-links">
+        <a href="#dashboard" class="pcn-link active" data-target="dashboard">Parcel Overview</a>
+        <a href="#gis-view" class="pcn-link" data-target="gis-view">GIS</a>
+        <a href="#passport" class="pcn-link" data-target="passport">Passport</a>
+        <a href="#intelligence" class="pcn-link" data-target="intelligence">Intelligence</a>
+        <a href="#history" class="pcn-link" data-target="history">History</a>
+        <a href="#integration" class="pcn-link" data-target="integration">Data Sources</a>
+        <a href="#search-top" class="pcn-change-btn" id="pcn-change-btn">Change Parcel ↺</a>
+      </div>
+    </div>
+  </nav>
 
-      <form class="search-form" id="search-form">
-        <div class="form-group">
-          <label class="field-label" for="state-selector-btn">State / Union Territory</label>
-          <div class="state-select-wrapper">
-            <button type="button" class="state-select-btn" id="state-selector-btn" aria-haspopup="listbox" aria-expanded="false">
-              <span class="state-pin-icon">📍</span>
-              <span class="selected-state-name" id="selected-state-name">Uttar Pradesh</span>
-              <span class="chevron-icon">⌄</span>
-            </button>
-            <div class="state-dropdown" id="state-dropdown" role="listbox" style="display:none;">
-              <div class="state-search-box">
-                <input type="text" id="state-search-input" placeholder="Search state or UT..." autocomplete="off">
+  <!-- ============ SEARCH SECTION ============ -->
+  <section class="search-hero" id="search-top">
+    <div class="wrap search-hero-wrap">
+
+      <div class="search-panel" id="search-panel">
+        <div class="search-panel-head">
+          <h1 class="search-page-title">Search Your Land</h1>
+          <p class="search-page-subtitle">Unified search across 36 State &amp; UT registries using ULPIN, Survey Number,
+            Khasra, Gata or Patta.</p>
+        </div>
+
+        <!-- Search Mode Switcher Tabs -->
+        <div class="search-mode-tabs" role="tablist" aria-label="Search Mode">
+          <button type="button" class="sm-tab active" id="tab-quick-search" role="tab" aria-selected="true"
+            aria-controls="search-form">
+            <span class="sm-icon">⚡</span>
+            <span>Quick Search / ULPIN</span>
+          </button>
+          <button type="button" class="sm-tab" id="tab-hier-search" role="tab" aria-selected="false"
+            aria-controls="hierarchical-form">
+            <span class="sm-icon">🏛️</span>
+            <span>Hierarchical Search (State → Village)</span>
+          </button>
+          <button type="button" class="locate-gps-btn" id="locate-gps-btn"
+            title="Detect nearby parcel using your device GPS location">
+            <span class="gps-dot"></span>
+            <span>Locate My Land</span>
+          </button>
+        </div>
+
+        <!-- 1. Quick Search Form -->
+        <form class="search-form" id="search-form">
+          <div class="form-group">
+            <label class="field-label" for="state-selector-btn">State / Union Territory</label>
+            <div class="state-select-wrapper">
+              <button type="button" class="state-select-btn" id="state-selector-btn" aria-haspopup="listbox"
+                aria-expanded="false">
+                <span class="state-pin-icon">📍</span>
+                <span class="selected-state-name" id="selected-state-name">Uttar Pradesh</span>
+                <span class="chevron-icon">⌄</span>
+              </button>
+              <div class="state-dropdown" id="state-dropdown" role="listbox" style="display:none;">
+                <div class="state-search-box">
+                  <input type="text" id="state-search-input" placeholder="Search state or UT..." autocomplete="off">
+                </div>
+                <div class="state-list" id="state-list"></div>
               </div>
-              <div class="state-list" id="state-list"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label" for="ulpin-input">Land Identifier (ULPIN, Survey No, Khasra, Gat, Patta)</label>
+            <div class="input-with-action">
+              <input type="text" id="ulpin-input"
+                placeholder="e.g. Khasra 412/1, Survey 245/A, Jamabandi 418, 7/12 Gat 88/1A..." autocomplete="off">
+              <button type="submit" class="search-submit-btn" id="search-submit-btn">
+                <span>Search</span>
+                <span class="arrow-icon">→</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="quick-samples">
+            <span class="samples-label">Indexed Demo Parcels:</span>
+            <div class="sample-chips">
+              <button type="button" class="sample-chip" data-state="Telangana" data-query="Rangareddy: Survey 245/A">TS:
+                Rangareddy 245/A (Clear 96)</button>
+              <button type="button" class="sample-chip" data-state="Bihar" data-query="Patna: Jamabandi 418">BR:
+                Jamabandi 418 (⚠️ Score 74)</button>
+              <button type="button" class="sample-chip" data-state="Maharashtra" data-query="Pune: 7/12 Gat 88/1A">MH:
+                7/12 Pune (⚠️ Score 82)</button>
+              <button type="button" class="sample-chip" data-state="Uttar Pradesh" data-query="Khasra: 412/1">UP: Khasra
+                412/1</button>
+              <button type="button" class="sample-chip" data-state="Karnataka" data-query="Survey: 88/2">KA: Survey
+                88/2</button>
+              <button type="button" class="sample-chip" data-state="Tamil Nadu" data-query="Patta: 1042">TN: Patta
+                1042</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- 2. Hierarchical Search Form (District → Tehsil → Village → Plot) -->
+        <form class="hierarchical-form" id="hierarchical-form" style="display:none;">
+          <div class="hier-grid">
+            <div class="hier-col">
+              <label class="field-label" for="hier-state-btn">State / UT</label>
+              <div class="hier-field-static" id="hier-state-display">
+                <span class="state-pin-icon">📍</span>
+                <span id="hier-selected-state-name">Uttar Pradesh</span>
+              </div>
+            </div>
+            <div class="hier-col">
+              <label class="field-label" for="hier-district-select">District</label>
+              <select class="hier-select" id="hier-district-select">
+                <option value="">Select District...</option>
+              </select>
+            </div>
+            <div class="hier-col">
+              <label class="field-label" for="hier-mandal-select">Mandal / Tehsil</label>
+              <select class="hier-select" id="hier-mandal-select" disabled>
+                <option value="">Select Mandal/Tehsil...</option>
+              </select>
+            </div>
+            <div class="hier-col">
+              <label class="field-label" for="hier-village-select">Village / Gram</label>
+              <select class="hier-select" id="hier-village-select" disabled>
+                <option value="">Select Village...</option>
+              </select>
+            </div>
+            <div class="hier-col hier-col--wide">
+              <label class="field-label" for="hier-survey-input">Survey / Plot / Khasra No.</label>
+              <div class="input-with-action">
+                <input type="text" id="hier-survey-input" placeholder="e.g. 245/A or 412/1..." autocomplete="off">
+                <button type="submit" class="search-submit-btn" id="hier-submit-btn">
+                  <span>Find Plot</span>
+                  <span class="arrow-icon">→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Loading feedback -->
+        <div class="search-feedback" id="search-feedback" style="display:none;">
+          <div class="search-feedback-inner" id="search-feedback-inner">
+            <span class="search-spinner"></span>
+            <span class="search-feedback-text">Searching for your parcel...</span>
+          </div>
+        </div>
+
+        <!-- Parcel Not Found State (Fixes the silent fallback trap) -->
+        <div class="search-not-found" id="search-not-found" style="display:none;">
+          <div class="snf-header">
+            <span class="snf-icon">🔍</span>
+            <div>
+              <h3 class="snf-title">Parcel Record Not Found</h3>
+              <p class="snf-msg" id="snf-message">No parcel found matching your query in the selected state registry.
+              </p>
+            </div>
+          </div>
+          <div class="snf-body">
+            <div class="snf-tip-box">
+              <strong>💡 Suggestions for successful search:</strong>
+              <ul>
+                <li>Check your identifier format (e.g., <code>Khasra 412/1</code>, <code>Survey 88/2</code>, or 14-digit
+                  ULPIN).</li>
+                <li>Ensure the correct <strong>State / UT</strong> is selected in the dropdown.</li>
+                <li>Or click on any of our <strong>pre-indexed sandbox parcels</strong> below to explore:</li>
+              </ul>
+            </div>
+            <div class="snf-actions">
+              <button type="button" class="snf-pill-btn" data-state="Telangana" data-query="Rangareddy: Survey 245/A">📍
+                TS: Survey 245/A</button>
+              <button type="button" class="snf-pill-btn" data-state="Bihar" data-query="Patna: Jamabandi 418">⚠️ BR:
+                Jamabandi 418</button>
+              <button type="button" class="snf-pill-btn" data-state="Maharashtra" data-query="Pune: 7/12 Gat 88/1A">⚠️
+                MH: 7/12 Gat 88/1A</button>
+              <button type="button" class="snf-pill-btn" data-state="Uttar Pradesh" data-query="Khasra: 412/1">📍 UP:
+                Khasra 412/1</button>
+              <button type="button" class="snf-pill-btn" data-state="Karnataka" data-query="Survey: 88/2">📍 KA: Survey
+                88/2</button>
             </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="field-label" for="ulpin-input">Land Identifier</label>
-          <div class="input-with-action">
-            <input type="text" id="ulpin-input" placeholder="e.g. Khasra 412/1, Survey 88/2, Patta 1042..." autocomplete="off">
-            <button type="submit" class="search-submit-btn" id="search-submit-btn">
-              <span>Search</span>
-              <span class="arrow-icon">→</span>
+        <div class="search-panel-foot">
+          <span class="demo-tag">SIH Demo · National Land Intelligence Platform</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 1. PARCEL OVERVIEW ============ -->
+  <section class="dark-section dashboard-section" id="dashboard">
+    <div class="wrap">
+      <!-- Clean Empty State when no parcel has been selected -->
+      <div class="no-parcel-card" id="no-parcel-state">
+        <div class="npc-icon">📋</div>
+        <h2 class="npc-title">No Parcel Selected</h2>
+        <p class="npc-text">Search for a land parcel to view its information.</p>
+        <a href="#search-top" class="action-btn-gold npc-cta" id="empty-search-land-btn">
+          <span>Search Land</span>
+          <span class="btn-arrow">→</span>
+        </a>
+      </div>
+
+      <!-- Active Parcel Overview Content -->
+      <div class="parcel-overview-content" id="parcel-overview-content" style="display:none;">
+        <div class="dashboard-header">
+          <div>
+            <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · PARCEL OVERVIEW</div>
+            <h2 class="section-head">Parcel Overview</h2>
+            <p class="section-lede">Centralized command view for the selected parcel. Navigate through the contextual
+              modules below.</p>
+          </div>
+          <div class="dash-parcel-pill" id="dash-parcel-pill">
+            <div class="dpp-head">
+              <span class="dpp-state-tag" id="dash-p-state">—</span>
+              <span class="dpp-status-tag" id="dash-p-status">—</span>
+            </div>
+            <div class="dpp-ulpin mono" id="dash-p-ulpin">—</div>
+            <div class="dpp-loc" id="dash-p-loc">—</div>
+          </div>
+        </div>
+
+        <!-- 5 Contextual Navigation Cards (GIS, Passport, Intelligence, History, Data Sources) -->
+        <div class="dash-nav-grid">
+          <a href="#gis-view" class="dash-nav-card" id="dash-card-map">
+            <div class="dnc-icon">🗺️</div>
+            <div class="dnc-body">
+              <div class="dnc-tag">MODULE 1</div>
+              <h3>GIS Cadastral Map</h3>
+              <p>Cadastral boundary, spatial coordinates, and neighboring survey plots.</p>
+            </div>
+            <span class="dnc-arrow">↓</span>
+          </a>
+
+          <a href="#passport" class="dash-nav-card" id="dash-card-passport">
+            <div class="dnc-icon">📜</div>
+            <div class="dnc-body">
+              <div class="dnc-tag">MODULE 2</div>
+              <h3>Digital Land Passport</h3>
+              <p>One verifiable digital certificate consolidating identity, RoR, and area.</p>
+            </div>
+            <span class="dnc-arrow">→</span>
+          </a>
+
+          <a href="#intelligence" class="dash-nav-card" id="dash-card-intelligence">
+            <div class="dnc-icon">🧠</div>
+            <div class="dnc-body">
+              <div class="dnc-tag">MODULE 3</div>
+              <h3>Land Intelligence</h3>
+              <p>5-pillar verification audit: Overview, Spatial, Records, Checks &amp; Alerts.</p>
+            </div>
+            <span class="dnc-arrow">→</span>
+          </a>
+
+          <a href="#history" class="dash-nav-card" id="dash-card-history">
+            <div class="dnc-icon">⏳</div>
+            <div class="dnc-body">
+              <div class="dnc-tag">MODULE 4</div>
+              <h3>Land History</h3>
+              <p>Chronological timeline of mutations, title updates, and drone re-surveys.</p>
+            </div>
+            <span class="dnc-arrow">→</span>
+          </a>
+
+          <a href="#integration" class="dash-nav-card" id="dash-card-integration">
+            <div class="dnc-icon">🔗</div>
+            <div class="dnc-body">
+              <div class="dnc-tag">MODULE 5</div>
+              <h3>Data Sources</h3>
+              <p>Multi-registry connectivity: GIS, RoR, Registration &amp; Survey data streams.</p>
+            </div>
+            <span class="dnc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GIS PARCEL VIEW & RESULT ============ -->
+  <section class="dark-section gis-section" id="gis-view" style="display:none;">
+    <div class="wrap">
+      <div class="parcel-found-banner" id="parcel-found-banner">
+        <div class="pf-pill"><span class="pf-check">✓</span> PARCEL FOUND</div>
+        <span class="pf-divider">|</span>
+        <span class="pf-desc" id="pf-banner-text">—</span>
+        <span class="pf-proto-badge">SIH Prototype</span>
+      </div>
+
+      <div class="gis-layout">
+        <div class="map-container">
+          <div class="map-frame" id="map-frame">
+            <div id="gis-map"></div>
+            <div class="map-label" id="map-label">—</div>
+            <div class="map-layer-switch" role="group" aria-label="Map Base Layer">
+              <button type="button" class="layer-btn active" id="layer-btn-vector" data-layer="vector">🗺️ Vector
+                Cadastre</button>
+              <button type="button" class="layer-btn" id="layer-btn-satellite" data-layer="satellite">🛰️ Satellite
+                View</button>
+            </div>
+            <div class="map-gis-controls" aria-label="Map navigation controls">
+              <button type="button" id="map-zoom-in" title="Zoom In">+</button>
+              <button type="button" id="map-zoom-out" title="Zoom Out">−</button>
+              <button type="button" id="map-fit-parcel" title="Fit 1 km Neighboring Radius">⛶</button>
+              <button type="button" id="map-reset-view" title="Reset View">↺</button>
+            </div>
+            <div class="map-legend">
+              <span class="legend-item"><span class="legend-swatch golden"></span> Selected Parcel</span>
+              <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring Plots (Click to
+                inspect)</span>
+              <span class="legend-item"><span class="legend-swatch radius-ring"></span> 1 km Radius</span>
+            </div>
+
+            <!-- Neighbor Plot Inspector Popover -->
+            <div class="neighbor-inspect-card" id="neighbor-inspect-card" style="display:none;">
+              <div class="nic-header">
+                <span class="nic-title"><span class="nic-pin">📍</span> <span id="nic-survey-title">Adjacent
+                    Plot</span></span>
+                <button type="button" class="nic-close" id="nic-close-btn"
+                  aria-label="Close inspection">&times;</button>
+              </div>
+              <div class="nic-body">
+                <div class="nic-row"><span class="nic-k">Cadastral Area</span><span class="nic-v" id="nic-area">—</span>
+                </div>
+                <div class="nic-row"><span class="nic-k">Boundary Type</span><span class="nic-v">Contiguous Cadastral
+                    Border</span></div>
+                <div class="nic-row"><span class="nic-k">Overlap Risk</span><span class="nic-tag-low">Verified Clean
+                    (0.0% variance)</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="map-note">Cadastral GIS parcel boundaries matched against open spatial layers for SIH demonstration.
+          </p>
+        </div>
+
+        <aside class="parcel-info-card" id="parcel-info-card" aria-label="Found Parcel Summary">
+          <div class="pic-header">
+            <span class="pic-badge">PARCEL FOUND ✓</span>
+            <span class="pic-verified-tag">✓ Verified</span>
+          </div>
+          <div class="pic-body">
+            <div class="pic-row"><span class="pic-label">ULPIN / Parcel ID</span><span class="pic-val mono"
+                id="pic-ulpin">—</span></div>
+            <div class="pic-row"><span class="pic-label">Survey / Khasra</span><span class="pic-val mono"
+                id="pic-survey">—</span></div>
+            <div class="pic-row"><span class="pic-label">Area</span><span class="pic-val" id="pic-area">—</span></div>
+            <div class="pic-row"><span class="pic-label">State</span><span class="pic-val" id="pic-state">—</span></div>
+            <div class="pic-row"><span class="pic-label">District</span><span class="pic-val" id="pic-district">—</span>
+            </div>
+            <div class="pic-row"><span class="pic-label">Status</span><span class="pic-status-pill"
+                id="pic-status">—</span></div>
+          </div>
+          <div class="pic-footer">
+            <button type="button" class="pic-details-btn" id="pic-details-btn">
+              <span>Next: Land Passport</span>
+              <span aria-hidden="true">↓</span>
             </button>
           </div>
-        </div>
+        </aside>
+      </div>
+    </div>
+  </section>
 
-        <div class="quick-samples">
-          <span class="samples-label">Try an example:</span>
-          <div class="sample-chips">
-            <button type="button" class="sample-chip" data-state="Bihar" data-query="Patna: Jamabandi 418">BR: Jamabandi 418 (⚠️ Score 74)</button>
-            <button type="button" class="sample-chip" data-state="Maharashtra" data-query="Pune: 7/12 Gat 88/1A">MH: 7/12 Pune (⚠️ Score 82)</button>
-            <button type="button" class="sample-chip" data-state="Telangana" data-query="Rangareddy: Survey 245/A">TS: Rangareddy 245/A</button>
-            <button type="button" class="sample-chip" data-state="Uttar Pradesh" data-query="Khasra: 412/1">UP: Khasra 412/1</button>
-            <button type="button" class="sample-chip" data-state="Karnataka" data-query="Survey: 88/2">KA: Survey 88/2</button>
-            <button type="button" class="sample-chip" data-state="Tamil Nadu" data-query="Patta: 1042">TN: Patta 1042</button>
+  <!-- ============ 2. DIGITAL LAND PASSPORT ============ -->
+  <section class="dark-section passport-section" id="passport" style="display:none;">
+    <div class="wrap">
+      <div class="passport-intro">
+        <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 2</div>
+        <h2 class="section-head">Digital Land Passport</h2>
+        <p class="section-lede">A single verifiable digital land certificate — consolidating parcel identity, ownership, area, and cadastral status.</p>
+      </div>
+
+      <div class="passport-action-bar">
+        <div class="pab-status">
+          <span class="pab-dot"></span> Official Verifiable Digital Certificate
+        </div>
+        <button type="button" class="passport-print-btn" id="passport-print-btn" onclick="printPassport()">
+          <span>Print Passport</span> 🖨️
+        </button>
+      </div>
+
+      <div class="passport-sheet" id="passport-sheet">
+        <!-- Populated dynamically by script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. LAND INTELLIGENCE ============ -->
+  <section class="dark-section intelligence-section" id="intelligence" style="display:none;">
+    <div class="wrap">
+      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 3</div>
+      <h2 class="section-head">Land Intelligence</h2>
+      <p class="section-lede">Comprehensive intelligence organized across 5 core dimensions: Overview, Spatial, Records,
+        Verification, and Alerts.</p>
+
+      <!-- 5 Clean Intelligence Panels -->
+      <div class="intel-grid">
+        <!-- 1. Parcel Overview -->
+        <div class="intel-card" id="intel-overview-card">
+          <div class="ic-head">
+            <span class="ic-icon">📋</span>
+            <h4>1. Parcel Overview</h4>
           </div>
+          <dl class="ic-list" id="intel-overview-list"></dl>
         </div>
-      </form>
 
-      <!-- Loading feedback -->
-      <div class="search-feedback" id="search-feedback" style="display:none;">
-        <div class="search-feedback-inner" id="search-feedback-inner">
-          <span class="search-spinner"></span>
-          <span class="search-feedback-text">Searching for your parcel...</span>
-        </div>
-      </div>
-
-      <div class="search-panel-foot">
-        <span class="demo-tag">SIH Demo · National Land Intelligence Platform</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ============ 1. DASHBOARD ============ -->
-<section class="dark-section dashboard-section" id="dashboard" style="display:none;">
-  <div class="wrap">
-    <div class="dashboard-header">
-      <div>
-        <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 1</div>
-        <h2 class="section-head">NLIP Land Dashboard</h2>
-        <p class="section-lede">Centralized command view for the selected parcel. Navigate through the core modules below.</p>
-      </div>
-      <div class="dash-parcel-pill" id="dash-parcel-pill">
-        <div class="dpp-head">
-          <span class="dpp-state-tag" id="dash-p-state">—</span>
-          <span class="dpp-status-tag" id="dash-p-status">—</span>
-        </div>
-        <div class="dpp-ulpin mono" id="dash-p-ulpin">—</div>
-        <div class="dpp-loc" id="dash-p-loc">—</div>
-      </div>
-    </div>
-
-    <!-- 5 Module Navigation Cards -->
-    <div class="dash-nav-grid">
-      <a href="#gis-view" class="dash-nav-card" id="dash-card-map">
-        <div class="dnc-icon">🗺️</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">GIS MAP</div>
-          <h3>GIS Cadastral Map</h3>
-          <p>Cadastral boundary, spatial coordinates, and neighboring survey plots.</p>
-        </div>
-        <span class="dnc-arrow">↓</span>
-      </a>
-
-      <a href="#passport" class="dash-nav-card" id="dash-card-passport">
-        <div class="dnc-icon">📘</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 2</div>
-          <h3>Digital Land Passport</h3>
-          <p>Consolidated identity certificate with presumptive title &amp; clean ownership record.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#intelligence" class="dash-nav-card" id="dash-card-intelligence">
-        <div class="dnc-icon">🧠</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 3</div>
-          <h3>Land Intelligence</h3>
-          <p>5-pillar verification audit: Overview, Spatial, Records, Checks &amp; Alerts.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#history" class="dash-nav-card" id="dash-card-history">
-        <div class="dnc-icon">⏳</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 4</div>
-          <h3>Land History</h3>
-          <p>Chronological timeline of mutations, title updates, and drone re-surveys.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-
-      <a href="#integration" class="dash-nav-card" id="dash-card-integration">
-        <div class="dnc-icon">🔗</div>
-        <div class="dnc-body">
-          <div class="dnc-tag">MODULE 5</div>
-          <h3>Officer / Data Integration</h3>
-          <p>Multi-registry connectivity: GIS, RoR, Registration &amp; Survey data streams.</p>
-        </div>
-        <span class="dnc-arrow">→</span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ GIS PARCEL VIEW & RESULT ============ -->
-<section class="dark-section gis-section" id="gis-view" style="display:none;">
-  <div class="wrap">
-    <div class="parcel-found-banner" id="parcel-found-banner">
-      <div class="pf-pill"><span class="pf-check">✓</span> PARCEL FOUND</div>
-      <span class="pf-divider">|</span>
-      <span class="pf-desc" id="pf-banner-text">—</span>
-      <span class="pf-proto-badge">SIH Prototype</span>
-    </div>
-
-    <div class="gis-layout">
-      <div class="map-container">
-        <div class="map-frame" id="map-frame">
-          <div id="gis-map"></div>
-          <div class="map-label" id="map-label">—</div>
-          <div class="map-gis-controls" aria-label="Map navigation controls">
-            <button type="button" id="map-zoom-in" title="Zoom In">+</button>
-            <button type="button" id="map-zoom-out" title="Zoom Out">−</button>
-            <button type="button" id="map-fit-parcel" title="Fit 1 km Neighboring Radius">⛶</button>
-            <button type="button" id="map-reset-view" title="Reset View">↺</button>
+        <!-- 2. Spatial Information -->
+        <div class="intel-card" id="intel-spatial-card">
+          <div class="ic-head">
+            <span class="ic-icon">🌐</span>
+            <h4>2. Spatial Information</h4>
           </div>
-          <div class="map-legend">
-            <span class="legend-item"><span class="legend-swatch golden"></span> Selected Parcel</span>
-            <span class="legend-item"><span class="legend-swatch neighbor"></span> Neighboring Plots</span>
-            <span class="legend-item"><span class="legend-swatch radius-ring"></span> 1 km Radius</span>
-          </div>
+          <dl class="ic-list" id="intel-spatial-list"></dl>
         </div>
-        <p class="map-note">Cadastral GIS parcel boundaries matched against open spatial layers for SIH demonstration.</p>
+
+        <!-- 3. Land Records -->
+        <div class="intel-card" id="intel-records-card">
+          <div class="ic-head">
+            <span class="ic-icon">📂</span>
+            <h4>3. Land Records</h4>
+          </div>
+          <dl class="ic-list" id="intel-records-list"></dl>
+        </div>
+
+        <!-- 4. Available Alerts -->
+        <div class="intel-card" id="intel-alerts-card">
+          <div class="ic-head">
+            <span class="ic-icon">🔔</span>
+            <h4>4. Available Alerts</h4>
+          </div>
+          <div class="ic-alerts-body" id="intel-alerts-body"></div>
+        </div>
       </div>
 
-      <aside class="parcel-info-card" id="parcel-info-card" aria-label="Found Parcel Summary">
-        <div class="pic-header">
-          <span class="pic-badge">PARCEL FOUND ✓</span>
-          <span class="pic-verified-tag">✓ Verified</span>
+      <!-- 5. Verification Section -->
+      <div class="intel-verification-box">
+        <div class="iv-head">
+          <h4>5. Automated Consistency Verification</h4>
+          <span class="iv-badge">7-Point Cadastral &amp; Revenue Audit</span>
         </div>
-        <div class="pic-body">
-          <div class="pic-row"><span class="pic-label">ULPIN / Parcel ID</span><span class="pic-val mono" id="pic-ulpin">—</span></div>
-          <div class="pic-row"><span class="pic-label">Survey / Khasra</span><span class="pic-val mono" id="pic-survey">—</span></div>
-          <div class="pic-row"><span class="pic-label">Area</span><span class="pic-val" id="pic-area">—</span></div>
-          <div class="pic-row"><span class="pic-label">State</span><span class="pic-val" id="pic-state">—</span></div>
-          <div class="pic-row"><span class="pic-label">District</span><span class="pic-val" id="pic-district">—</span></div>
-          <div class="pic-row"><span class="pic-label">Status</span><span class="pic-status-pill" id="pic-status">—</span></div>
+        <div class="stamp-grid" id="stamp-grid"></div>
+        <div class="assessment">
+          <div class="assessment-seal">
+            <div class="seal-box">
+              <span class="seal-num" id="score-num">—</span>
+              <span class="seal-den">/ 100</span>
+            </div>
+            <p class="seal-cap">Parcel assessment tally</p>
+          </div>
+          <ul class="assessment-list" id="assessment-list"></ul>
         </div>
-        <div class="pic-footer">
-          <button type="button" class="pic-details-btn" id="pic-details-btn">
-            <span>Next: Land Passport</span>
-            <span aria-hidden="true">↓</span>
+      </div>
+
+      <!-- Citizen Action & Grievance Bar -->
+      <div class="citizen-action-bar" id="citizen-action-bar">
+        <div class="cab-text">
+          <h4>Need Administrative Action on this Parcel?</h4>
+          <p>File a formal cadastral re-survey request, generate a certified Encumbrance Certificate (EC), or raise a
+            discrepancy alert with the State Revenue Directorate.</p>
+        </div>
+        <div class="cab-buttons">
+          <button type="button" class="cab-btn cab-btn--primary" id="btn-file-dispute">
+            <span>⚖️ File Grievance / Demarcation</span>
+          </button>
+          <button type="button" class="cab-btn cab-btn--secondary" id="btn-request-ec">
+            <span>📜 Request Encumbrance Certificate</span>
           </button>
         </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 2. DIGITAL LAND PASSPORT ============ -->
-<section class="dark-section passport-section" id="passport" style="display:none;">
-  <div class="wrap">
-    <div class="passport-intro">
-      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 2</div>
-      <h2 class="section-head">Digital Land Passport</h2>
-      <p class="section-lede">A single verifiable digital land certificate — consolidating parcel identity, ownership, area, and cadastral status.</p>
-    </div>
-
-    <div class="passport-action-bar">
-      <div class="pab-status">
-        <span class="pab-dot"></span> Official Verifiable Digital Certificate
       </div>
-      <button type="button" class="passport-print-btn" id="passport-print-btn" onclick="printPassport()">
-        <span>Print Passport</span> 🖨️
-      </button>
     </div>
+  </section>
 
-    <div class="passport-sheet" id="passport-sheet">
-      <!-- Populated dynamically by script.js -->
-    </div>
-  </div>
-</section>
-
-<!-- ============ 3. LAND INTELLIGENCE ============ -->
-<section class="dark-section intelligence-section" id="intelligence" style="display:none;">
-  <div class="wrap">
-    <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 3</div>
-    <h2 class="section-head">Land Intelligence</h2>
-    <p class="section-lede">Comprehensive intelligence organized across 5 core dimensions: Overview, Spatial, Records, Verification, and Alerts.</p>
-
-    <!-- 5 Clean Intelligence Panels -->
-    <div class="intel-grid">
-      <!-- 1. Parcel Overview -->
-      <div class="intel-card" id="intel-overview-card">
-        <div class="ic-head">
-          <span class="ic-icon">📋</span>
-          <h4>1. Parcel Overview</h4>
+  <!-- ============ 4. LAND HISTORY ============ -->
+  <section class="dark-section history-section" id="history" style="display:none;">
+    <div class="wrap">
+      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 4</div>
+      <div class="history-title-row">
+        <div>
+          <h2 class="section-head">Land History &amp; Chronology</h2>
+          <p class="section-lede">Chronological audit trail of registered transfers, inheritance mutations, tax
+            receipts, and cadastral re-surveys.</p>
         </div>
-        <dl class="ic-list" id="intel-overview-list"></dl>
+        <span class="demo-data-pill">Demo Data</span>
       </div>
 
-      <!-- 2. Spatial Information -->
-      <div class="intel-card" id="intel-spatial-card">
-        <div class="ic-head">
-          <span class="ic-icon">🌐</span>
-          <h4>2. Spatial Information</h4>
+      <div class="history-card">
+        <div class="history-parcel-meta" id="history-parcel-meta"></div>
+        <div class="history-timeline" id="history-timeline">
+          <!-- Rendered by script.js -->
         </div>
-        <dl class="ic-list" id="intel-spatial-list"></dl>
-      </div>
-
-      <!-- 3. Land Records -->
-      <div class="intel-card" id="intel-records-card">
-        <div class="ic-head">
-          <span class="ic-icon">📂</span>
-          <h4>3. Land Records</h4>
-        </div>
-        <dl class="ic-list" id="intel-records-list"></dl>
-      </div>
-
-      <!-- 4. Available Alerts -->
-      <div class="intel-card" id="intel-alerts-card">
-        <div class="ic-head">
-          <span class="ic-icon">🔔</span>
-          <h4>4. Available Alerts</h4>
-        </div>
-        <div class="ic-alerts-body" id="intel-alerts-body"></div>
       </div>
     </div>
+  </section>
 
-    <!-- 5. Verification Section -->
-    <div class="intel-verification-box">
-      <div class="iv-head">
-        <h4>5. Automated Consistency Verification</h4>
-        <span class="iv-badge">7-Point Cadastral &amp; Revenue Audit</span>
-      </div>
-      <div class="stamp-grid" id="stamp-grid"></div>
-      <div class="assessment">
-        <div class="assessment-seal">
-          <div class="seal-box">
-            <span class="seal-num" id="score-num">—</span>
-            <span class="seal-den">/ 100</span>
+  <!-- ============ 5. DATA SOURCES ============ -->
+  <section class="dark-section integration-section" id="integration" style="display:none;">
+    <div class="wrap">
+      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 5</div>
+      <h2 class="section-head">Data Sources &amp; Registry Integration Hub</h2>
+      <p class="section-lede">Demonstration of how NLIP unifies disparate state and national land data streams into one
+        seamless platform.</p>
+
+      <div class="integration-grid" id="integration-grid">
+        <!-- 4 Connected Registries -->
+        <div class="integ-card">
+          <div class="integ-top">
+            <span class="integ-icon">🗺️</span>
+            <span class="integ-status connected"><span class="integ-dot"></span> Connected</span>
           </div>
-          <p class="seal-cap">Parcel assessment tally</p>
+          <h3>Cadastral / GIS</h3>
+          <p class="integ-desc">Geo-referenced village cadastral boundaries, shapefile polygons and survey
+            sub-divisions.</p>
+          <div class="integ-meta">
+            <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">State Cadastral Survey
+                Agency</span></div>
+            <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">OGC WFS / GeoJSON</span>
+            </div>
+            <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-ok">Real-time
+                Verified</span></div>
+          </div>
         </div>
-        <ul class="assessment-list" id="assessment-list"></ul>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ============ 4. LAND HISTORY ============ -->
-<section class="dark-section history-section" id="history" style="display:none;">
-  <div class="wrap">
-    <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 4</div>
-    <div class="history-title-row">
-      <div>
-        <h2 class="section-head">Land History &amp; Chronology</h2>
-        <p class="section-lede">Chronological audit trail of registered transfers, inheritance mutations, tax receipts, and cadastral re-surveys.</p>
-      </div>
-      <span class="demo-data-pill">Demo Data</span>
-    </div>
-
-    <div class="history-card">
-      <div class="history-parcel-meta" id="history-parcel-meta"></div>
-      <div class="history-timeline" id="history-timeline">
-        <!-- Rendered by script.js -->
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 5. OFFICER / DATA INTEGRATION ============ -->
-<section class="dark-section integration-section" id="integration" style="display:none;">
-  <div class="wrap">
-    <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 5</div>
-    <h2 class="section-head">Officer &amp; Registry Integration Hub</h2>
-    <p class="section-lede">Demonstration of how NLIP unifies disparate state and national land data streams into one seamless platform.</p>
-
-    <div class="integration-grid" id="integration-grid">
-      <!-- 4 Connected Registries -->
-      <div class="integ-card">
-        <div class="integ-top">
-          <span class="integ-icon">🗺️</span>
-          <span class="integ-status connected"><span class="integ-dot"></span> Connected</span>
+        <div class="integ-card">
+          <div class="integ-top">
+            <span class="integ-icon">📜</span>
+            <span class="integ-status connected"><span class="integ-dot"></span> Connected</span>
+          </div>
+          <h3>Land Records</h3>
+          <p class="integ-desc">Record of Rights (Khatauni, RTC, Jamabandi, Dharani, 7/12) and mutation records.</p>
+          <div class="integ-meta">
+            <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">State Revenue
+                Department</span></div>
+            <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">REST / DILRMP
+                Gateway</span></div>
+            <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-ok">Authoritative
+                Feed</span></div>
+          </div>
         </div>
-        <h3>Cadastral / GIS</h3>
-        <p class="integ-desc">Geo-referenced village cadastral boundaries, shapefile polygons and survey sub-divisions.</p>
-        <div class="integ-meta">
-          <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">State Cadastral Survey Agency</span></div>
-          <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">OGC WFS / GeoJSON</span></div>
-          <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-ok">Real-time Verified</span></div>
-        </div>
-      </div>
 
-      <div class="integ-card">
-        <div class="integ-top">
-          <span class="integ-icon">📜</span>
-          <span class="integ-status connected"><span class="integ-dot"></span> Connected</span>
+        <div class="integ-card">
+          <div class="integ-top">
+            <span class="integ-icon">🏛️</span>
+            <span class="integ-status available"><span class="integ-dot"></span> Available</span>
+          </div>
+          <h3>Registration Records</h3>
+          <p class="integ-desc">Sub-Registrar deed registrations, registered mortgages, sales, charges and encumbrances.
+          </p>
+          <div class="integ-meta">
+            <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">Department of
+                Registrations</span></div>
+            <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">NGDRS /
+                e-Registration</span></div>
+            <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-warn">Query Synced (EC
+                Available)</span></div>
+          </div>
         </div>
-        <h3>Land Records</h3>
-        <p class="integ-desc">Record of Rights (Khatauni, RTC, Jamabandi, Dharani, 7/12) and mutation records.</p>
-        <div class="integ-meta">
-          <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">State Revenue Department</span></div>
-          <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">REST / DILRMP Gateway</span></div>
-          <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-ok">Authoritative Feed</span></div>
-        </div>
-      </div>
 
-      <div class="integ-card">
-        <div class="integ-top">
-          <span class="integ-icon">🏛️</span>
-          <span class="integ-status available"><span class="integ-dot"></span> Available</span>
-        </div>
-        <h3>Registration Records</h3>
-        <p class="integ-desc">Sub-Registrar deed registrations, registered mortgages, sales, charges and encumbrances.</p>
-        <div class="integ-meta">
-          <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">Department of Registrations</span></div>
-          <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">NGDRS / e-Registration</span></div>
-          <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-warn">Query Synced (EC Available)</span></div>
+        <div class="integ-card">
+          <div class="integ-top">
+            <span class="integ-icon">🛸</span>
+            <span class="integ-status demo"><span class="integ-dot"></span> Demo</span>
+          </div>
+          <h3>Survey Data</h3>
+          <p class="integ-desc">High-resolution drone ortho-mosaic photography, ground control markers &amp; SVAMITVA
+            survey data.</p>
+          <div class="integ-meta">
+            <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">Survey of India /
+                DILRMP</span></div>
+            <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">Spatial Drone Raster
+                Stream</span></div>
+            <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-neutral">Illustrative
+                Dataset</span></div>
+          </div>
         </div>
       </div>
 
-      <div class="integ-card">
-        <div class="integ-top">
-          <span class="integ-icon">🛸</span>
-          <span class="integ-status demo"><span class="integ-dot"></span> Demo</span>
-        </div>
-        <h3>Survey Data</h3>
-        <p class="integ-desc">High-resolution drone ortho-mosaic photography, ground control markers &amp; SVAMITVA survey data.</p>
-        <div class="integ-meta">
-          <div class="im-row"><span class="im-k">Registry Source</span><span class="im-v">Survey of India / DILRMP</span></div>
-          <div class="im-row"><span class="im-k">API Protocol</span><span class="im-v mono">Spatial Drone Raster Stream</span></div>
-          <div class="im-row"><span class="im-k">Sync Status</span><span class="im-v status-neutral">Illustrative Dataset</span></div>
+      <div class="integ-banner">
+        <div class="ib-icon">◈</div>
+        <div class="ib-text">
+          <h4>One Nation, One Land Intelligence Architecture</h4>
+          <p>NLIP operates as an interoperability layer across all 36 States and UTs. When citizens, revenue officers or
+            financial institutions query a parcel, data is harmonized on-the-fly without requiring duplicate entries.
+          </p>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="integ-banner">
-      <div class="ib-icon">◈</div>
-      <div class="ib-text">
-        <h4>One Nation, One Land Intelligence Architecture</h4>
-        <p>NLIP operates as an interoperability layer across all 36 States and UTs. When citizens, revenue officers or financial institutions query a parcel, data is harmonized on-the-fly without requiring duplicate entries.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 6. VERIFICATION & REPORT EXPORT HUB ============ -->
-<section class="dark-section report-action-section" id="report" style="display:none;">
-  <div class="wrap">
-    <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 6</div>
-    <div class="history-title-row">
-      <div>
-        <h2 class="section-head">Verification Dossier &amp; Data Export Hub</h2>
-        <p class="section-lede">Generate certified snapshots, export cadastral GeoJSON coordinates, or share tamper-evident audit records.</p>
-      </div>
-      <span class="demo-data-pill">Export Center</span>
-    </div>
-
-    <div class="export-hub-grid">
-      <!-- 1. Official Report -->
-      <div class="export-card">
-        <div class="ec-top">
-          <span class="ec-icon">📄</span>
-          <span class="ec-badge certified">Official Snapshot</span>
+  <!-- ============ 6. VERIFICATION & REPORT EXPORT HUB ============ -->
+  <section class="dark-section report-action-section" id="report" style="display:none;">
+    <div class="wrap">
+      <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 6</div>
+      <div class="history-title-row">
+        <div>
+          <h2 class="section-head">Verification Dossier &amp; Data Export Hub</h2>
+          <p class="section-lede">Generate certified snapshots, export cadastral GeoJSON coordinates, or share
+            tamper-evident audit records.</p>
         </div>
-        <h3>Certified Parcel Dossier</h3>
-        <p>Comprehensive report with QR verification hash, revenue RoR summary, GIS boundary tally, and ownership breakdown.</p>
-        <button type="button" class="action-btn-gold" id="report-btn">
-          <span>Generate Dossier</span>
-          <span class="btn-arrow">↗</span>
+        <span class="demo-data-pill">Export Center</span>
+      </div>
+
+      <div class="export-hub-grid">
+        <!-- 1. Official Report -->
+        <div class="export-card">
+          <div class="ec-top">
+            <span class="ec-icon">📄</span>
+            <span class="ec-badge certified">Official Snapshot</span>
+          </div>
+          <h3>Certified Parcel Dossier</h3>
+          <p>Comprehensive report with QR verification hash, revenue RoR summary, GIS boundary tally, and ownership
+            breakdown.</p>
+          <button type="button" class="action-btn-gold" id="report-btn">
+            <span>Generate Dossier</span>
+            <span class="btn-arrow">↗</span>
+          </button>
+        </div>
+
+        <!-- 2. GeoJSON Spatial Export -->
+        <div class="export-card">
+          <div class="ec-top">
+            <span class="ec-icon">🗺️</span>
+            <span class="ec-badge spatial">OGC Standard</span>
+          </div>
+          <h3>Cadastral GIS GeoJSON</h3>
+          <p>Download the geo-referenced polygon coordinates and spatial metadata formatted for QGIS, ArcGIS, and CAD
+            applications.</p>
+          <button type="button" class="action-btn-secondary" id="export-geojson-btn">
+            <span>Export GeoJSON</span>
+            <span class="btn-arrow">⤓</span>
+          </button>
+        </div>
+
+        <!-- 3. Share Deep Link -->
+        <div class="export-card">
+          <div class="ec-top">
+            <span class="ec-icon">🔗</span>
+            <span class="ec-badge link">Deep Link</span>
+          </div>
+          <h3>Direct Parcel Link</h3>
+          <p>Generate a shareable, verifiable URL directly linked to this parcel's digital passport, spatial
+            layer, and history trail.</p>
+          <button type="button" class="action-btn-secondary" id="copy-link-btn">
+            <span id="copy-btn-text">Copy Share Link</span>
+            <span class="btn-arrow">📋</span>
+          </button>
+        </div>
+
+        <!-- 4. Query Another Land -->
+        <div class="export-card">
+          <div class="ec-top">
+            <span class="ec-icon">🔍</span>
+            <span class="ec-badge search">Pan-India</span>
+          </div>
+          <h3>Search Another Parcel</h3>
+          <p>Query across 28 States &amp; 8 UTs using ULPIN, Survey Number, Khasra, Gata, Patta, or 7/12 land
+            identifiers.</p>
+          <button type="button" class="action-btn-secondary" id="new-search-btn">
+            <span>Search Another</span>
+            <span class="btn-arrow">↑</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interoperability & Trust Badges -->
+      <div class="standards-bar">
+        <div class="std-item">
+          <span class="std-icon">🛡️</span>
+          <div>
+            <strong>ULPIN / Bhu-Aadhaar</strong>
+            <span>14-digit geo-coded national standard</span>
+          </div>
+        </div>
+        <div class="std-item">
+          <span class="std-icon">🏛️</span>
+          <div>
+            <strong>DILRMP Aligned</strong>
+            <span>Digital India Land Records compliance</span>
+          </div>
+        </div>
+        <div class="std-item">
+          <span class="std-icon">🛰️</span>
+          <div>
+            <strong>ISRO / Survey of India</strong>
+            <span>Cadastral ortho-imagery verification</span>
+          </div>
+        </div>
+        <div class="std-item">
+          <span class="std-icon">⚖️</span>
+          <div>
+            <strong>IT Act 2000 &amp; Sec 65B</strong>
+            <span>Digital certificate admissibility</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div class="foot-main">
+        <div class="foot-brand-col">
+          <div class="foot-logo">
+            <span class="mark-icon">◈</span>
+            <span class="foot-title">NLIP</span>
+          </div>
+          <p class="foot-desc">National Land Intelligence Platform — unifying India's 36 state and UT land registries
+            through connected records, cadastral GIS verification, and verifiable digital land passports.</p>
+          <div class="system-status-pill">
+            <span class="status-pulse-dot"></span>
+            <span>All 36 State &amp; UT Registries Synchronized (SIH Sandbox)</span>
+          </div>
+        </div>
+
+        <div class="foot-links-group">
+          <div class="foot-col">
+            <h4>Platform Modules</h4>
+            <ul>
+              <li><a href="#search-top">Search Parcel</a></li>
+              <li><a href="#dashboard">Parcel Overview</a></li>
+              <li><a href="#gis-view">GIS Cadastral Map</a></li>
+              <li><a href="#passport">Digital Land Passport</a></li>
+              <li><a href="#intelligence">Land Intelligence Audit</a></li>
+              <li><a href="#history">Mutation Chronology</a></li>
+              <li><a href="#integration">Data Sources</a></li>
+            </ul>
+          </div>
+
+          <div class="foot-col">
+            <h4>Integrated Registries</h4>
+            <ul>
+              <li><span>Uttar Pradesh: Bhulekh</span></li>
+              <li><span>Telangana: Dharani</span></li>
+              <li><span>Maharashtra: Mahabhulekh</span></li>
+              <li><span>Karnataka: Bhoomi</span></li>
+              <li><span>Gujarat: AnyRoR</span></li>
+              <li><span>Tamil Nadu: e-Services</span></li>
+            </ul>
+          </div>
+
+          <div class="foot-col">
+            <h4>Security &amp; Standards</h4>
+            <ul>
+              <li><span>ULPIN Bhu-Aadhaar 14-digit</span></li>
+              <li><span>OGC WFS / GeoJSON Spatial</span></li>
+              <li><span>AES-256 Ledger Hashing</span></li>
+              <li><span>Indian Evidence Act Sec 65B</span></li>
+              <li><span>DoLR Framework Standards</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot-bottom">
+        <p class="foot-disclaimer">Smart India Hackathon (SIH) Prototype Demonstration. Data, boundaries, and ownership
+          records shown are simulated for illustrative evaluation purposes.</p>
+        <button type="button" class="back-to-top-btn" id="back-to-top-btn">
+          <span>Back to Top</span>
+          <span aria-hidden="true">↑</span>
         </button>
       </div>
-
-      <!-- 2. GeoJSON Spatial Export -->
-      <div class="export-card">
-        <div class="ec-top">
-          <span class="ec-icon">🗺️</span>
-          <span class="ec-badge spatial">OGC Standard</span>
-        </div>
-        <h3>Cadastral GIS GeoJSON</h3>
-        <p>Download the geo-referenced polygon coordinates and spatial metadata formatted for QGIS, ArcGIS, and CAD applications.</p>
-        <button type="button" class="action-btn-secondary" id="export-geojson-btn">
-          <span>Export GeoJSON</span>
-          <span class="btn-arrow">⤓</span>
-        </button>
-      </div>
-
-      <!-- 3. Share Deep Link -->
-      <div class="export-card">
-        <div class="ec-top">
-          <span class="ec-icon">🔗</span>
-          <span class="ec-badge link">Deep Link</span>
-        </div>
-        <h3>Direct Parcel Link</h3>
-        <p>Generate a shareable, verifiable URL directly linked to this parcel's digital passport, spatial layer, and history trail.</p>
-        <button type="button" class="action-btn-secondary" id="copy-link-btn">
-          <span id="copy-btn-text">Copy Share Link</span>
-          <span class="btn-arrow">📋</span>
-        </button>
-      </div>
-
-      <!-- 4. Query Another Land -->
-      <div class="export-card">
-        <div class="ec-top">
-          <span class="ec-icon">🔍</span>
-          <span class="ec-badge search">Pan-India</span>
-        </div>
-        <h3>Search Another Parcel</h3>
-        <p>Query across 28 States &amp; 8 UTs using ULPIN, Survey Number, Khasra, Gata, Patta, or 7/12 land identifiers.</p>
-        <button type="button" class="action-btn-secondary" id="new-search-btn">
-          <span>Search Another</span>
-          <span class="btn-arrow">↑</span>
-        </button>
-      </div>
     </div>
+  </footer>
 
-    <!-- Interoperability & Trust Badges -->
-    <div class="standards-bar">
-      <div class="std-item">
-        <span class="std-icon">🛡️</span>
-        <div>
-          <strong>ULPIN / Bhu-Aadhaar</strong>
-          <span>14-digit geo-coded national standard</span>
+  <div class="report-overlay" id="report-overlay">
+    <div class="report-sheet" id="report-sheet"></div>
+  </div>
+
+  <!-- Citizen Action & Grievance Modal -->
+  <div class="grievance-overlay" id="grievance-overlay" style="display:none;">
+    <div class="grievance-sheet" id="grievance-sheet">
+      <div class="gs-head">
+        <div class="gs-title-box">
+          <span class="gs-badge">Revenue Department Action</span>
+          <h3 id="gs-modal-title">Administrative Action Request</h3>
         </div>
+        <button type="button" class="gs-close-btn" id="gs-close-btn" aria-label="Close modal">&times;</button>
       </div>
-      <div class="std-item">
-        <span class="std-icon">🏛️</span>
-        <div>
-          <strong>DILRMP Aligned</strong>
-          <span>Digital India Land Records compliance</span>
+      <form class="gs-form" id="gs-form">
+        <div class="gs-parcel-info">
+          <div><strong>ULPIN:</strong> <span id="gs-p-ulpin" class="mono">—</span></div>
+          <div><strong>Survey / Plot:</strong> <span id="gs-p-survey">—</span></div>
+          <div><strong>Location:</strong> <span id="gs-p-loc">—</span></div>
         </div>
-      </div>
-      <div class="std-item">
-        <span class="std-icon">🛰️</span>
-        <div>
-          <strong>ISRO / Survey of India</strong>
-          <span>Cadastral ortho-imagery verification</span>
+        <div class="form-group">
+          <label class="field-label" for="gs-action-type">Action Category</label>
+          <select class="hier-select" id="gs-action-type" required>
+            <option value="demarcation">Cadastral Boundary Demarcation / Drone Re-survey</option>
+            <option value="ec_issuance">Certified Encumbrance Certificate (EC) Issuance</option>
+            <option value="mutation_objection">Mutation Objection / Co-Sharer Dispute Filing</option>
+            <option value="area_rectification">Revenue Record Area Variance Rectification</option>
+          </select>
         </div>
-      </div>
-      <div class="std-item">
-        <span class="std-icon">⚖️</span>
-        <div>
-          <strong>IT Act 2000 &amp; Sec 65B</strong>
-          <span>Digital certificate admissibility</span>
+        <div class="form-group">
+          <label class="field-label" for="gs-applicant-name">Applicant Full Name</label>
+          <input type="text" id="gs-applicant-name" class="gs-input" placeholder="e.g. Ramesh Chandra Verma" required>
         </div>
+        <div class="form-group">
+          <label class="field-label" for="gs-applicant-contact">Mobile Number / Bhu-Aadhaar</label>
+          <input type="text" id="gs-applicant-contact" class="gs-input" placeholder="e.g. +91 98765 43210" required>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="gs-description">Grounds for Request / Objection Details</label>
+          <textarea id="gs-description" class="gs-textarea" rows="3"
+            placeholder="Provide context regarding the boundary line, bank encumbrance, or revenue record variance..."></textarea>
+        </div>
+        <div class="gs-footer">
+          <button type="button" class="action-btn-secondary" id="gs-cancel-btn">Cancel</button>
+          <button type="submit" class="action-btn-gold" id="gs-submit-btn">
+            <span>Submit Request</span>
+            <span class="btn-arrow">✓</span>
+          </button>
+        </div>
+      </form>
+      <div class="gs-success" id="gs-success" style="display:none;">
+        <div class="gs-success-icon">✓</div>
+        <h3>Request Logged Successfully</h3>
+        <p id="gs-success-msg">Your administrative request has been dispatched to the District Revenue Officer.</p>
+        <div class="gs-ack-box">
+          <div class="ack-row"><span>Acknowledgement No:</span><strong class="mono"
+              id="gs-ack-no">NLIP-REV-2026-94812</strong></div>
+          <div class="ack-row"><span>Estimated Turnaround:</span><span>7 Working Days</span></div>
+          <div class="ack-row"><span>Status:</span><span class="status-ok">Under SDO Scrutiny</span></div>
+        </div>
+        <button type="button" class="action-btn-gold" id="gs-done-btn">Done</button>
       </div>
     </div>
   </div>
-</section>
 
-<footer class="site-foot">
-  <div class="wrap">
-    <div class="foot-main">
-      <div class="foot-brand-col">
-        <div class="foot-logo">
-          <span class="mark-icon">◈</span>
-          <span class="foot-title">NLIP</span>
-        </div>
-        <p class="foot-desc">National Land Intelligence Platform — unifying India's 36 state and UT land registries through connected records, cadastral GIS verification, and verifiable digital land passports.</p>
-        <div class="system-status-pill">
-          <span class="status-pulse-dot"></span>
-          <span>All 36 State &amp; UT Registries Synchronized (SIH Sandbox)</span>
-        </div>
-      </div>
-
-      <div class="foot-links-group">
-        <div class="foot-col">
-          <h4>Platform Modules</h4>
-          <ul>
-            <li><a href="#search-top">Search Parcel</a></li>
-            <li><a href="#dashboard">Central Dashboard</a></li>
-            <li><a href="#gis-view">GIS Cadastral Map</a></li>
-            <li><a href="#passport">Digital Land Passport</a></li>
-            <li><a href="#intelligence">Land Intelligence Audit</a></li>
-            <li><a href="#history">Mutation Chronology</a></li>
-            <li><a href="#integration">Officer Integration Hub</a></li>
-          </ul>
-        </div>
-
-        <div class="foot-col">
-          <h4>Integrated Registries</h4>
-          <ul>
-            <li><span>Uttar Pradesh: Bhulekh</span></li>
-            <li><span>Telangana: Dharani</span></li>
-            <li><span>Maharashtra: Mahabhulekh</span></li>
-            <li><span>Karnataka: Bhoomi</span></li>
-            <li><span>Gujarat: AnyRoR</span></li>
-            <li><span>Tamil Nadu: e-Services</span></li>
-          </ul>
-        </div>
-
-        <div class="foot-col">
-          <h4>Security &amp; Standards</h4>
-          <ul>
-            <li><span>ULPIN Bhu-Aadhaar 14-digit</span></li>
-            <li><span>OGC WFS / GeoJSON Spatial</span></li>
-            <li><span>AES-256 Ledger Hashing</span></li>
-            <li><span>Indian Evidence Act Sec 65B</span></li>
-            <li><span>DoLR Framework Standards</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="foot-bottom">
-      <p class="foot-disclaimer">Smart India Hackathon (SIH) Prototype Demonstration. Data, boundaries, and ownership records shown are simulated for illustrative evaluation purposes.</p>
-      <button type="button" class="back-to-top-btn" id="back-to-top-btn">
-        <span>Back to Top</span>
-        <span aria-hidden="true">↑</span>
-      </button>
-    </div>
-  </div>
-</footer>
-
-<div class="report-overlay" id="report-overlay">
-  <div class="report-sheet" id="report-sheet"></div>
-</div>
-
-<script src="map.js?v=nlip_dark4"></script>
-<script src="script.js?v=nlip_dark4"></script>
+  <script src="map.js?v=nlip_final4"></script>
+  <script src="script.js?v=nlip_final4"></script>
 </body>
+
 </html>

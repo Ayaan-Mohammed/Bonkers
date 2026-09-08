@@ -32,42 +32,32 @@
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 
-/* ===== Ultra-Futuristic Cadastral Glowing Scrollbar ===== */
+/* ===== Refined Civic-Tech Cadastral Scrollbar ===== */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d0a07;
-  border-left: 1px solid rgba(231, 174, 89, 0.16);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.95);
+  background: #120e0a;
+  border-left: 1px solid rgba(231, 174, 89, 0.12);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #f59e0b 0%, #d97706 45%, #92400e 100%);
+  background: #c29e69;
   border-radius: 999px;
-  border: 2px solid #0d0a07;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.55), inset 0 0 4px rgba(255, 255, 255, 0.4);
-  transition: all 0.2s ease;
+  border: 1.5px solid #120e0a;
+  transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 45%, #b45309 100%);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.95), inset 0 0 6px #fff;
-  border-width: 1.5px;
+  background: #e7ae59;
 }
 ::-webkit-scrollbar-corner {
-  background: #0d0a07;
+  background: #120e0a;
 }
 
 /* Firefox custom scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #d97706 #0d0a07;
-}
-
-/* Dynamic scroll active glow on thumb */
-body.is-scrolling ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 35%, #b45309 100%);
-  box-shadow: 0 0 24px rgba(245, 158, 11, 1), 0 0 8px rgba(255, 255, 255, 0.8);
+  scrollbar-color: #c29e69 #120e0a;
 }
 
 body{
@@ -152,10 +142,10 @@ button{font-family:var(--font-body);cursor:pointer;}
 .head-nav a:hover{color:var(--text);}
 .head-nav a.active{color:#f7eedf;border-bottom-color:var(--amber);}
 
-/* Section scroll offsets for sticky header */
+/* Section scroll offsets for sticky header & contextual nav */
 .search-hero, .dashboard-section, .gis-section, .passport-section, .intel-section, .intelligence-section, .history-section, .integration-section,
 #search-top, #dashboard, #gis-view, #passport, #intelligence, #history, #integration {
-  scroll-margin-top: 70px;
+  scroll-margin-top: 118px;
 }
 
 /* ===== Landing Page ===== */
@@ -675,26 +665,8 @@ button{font-family:var(--font-body);cursor:pointer;}
 }
 .parcel-found-banner.banner--warn .pf-pill{background:#b45309;color:#fef3c7;}
 
-/* ===== Passport ===== */
-.passport-book{
-  position:relative;z-index:2;background:#fcfaf5;
-  border:1px solid rgba(231,174,89,0.3);border-radius:var(--radius);
-  display:grid;grid-template-columns:240px 1fr;overflow:hidden;
-  box-shadow:0 24px 60px -24px rgba(0,0,0,0.6);
-}
-.passport-id{
-  background:linear-gradient(165deg, #221d17 0%, #15120d 100%);
-  border-right:1px solid rgba(231,174,89,0.15);color:#f7eedf;padding:30px 24px;
-  display:flex;flex-direction:column;justify-content:space-between;
-}
-.passport-id h4{font-family:var(--font-display);font-weight:700;font-size:1.15rem;margin:0 0 8px;color:#fbf8f3;}
-.passport-id .pid-code{font-family:var(--font-mono);font-size:0.78rem;color:#e7ae59;word-break:break-all;font-weight:600;}
-.passport-id .pid-seal{
-  align-self:flex-start;margin-top:20px;font-family:var(--font-mono);font-size:0.68rem;
-  border:1px solid rgba(231,174,89,0.35);color:#e7ae59;padding:5px 10px;border-radius:999px;
-  background:rgba(231,174,89,0.06);
-}
-.passport-timeline{padding:30px 34px;background:#fcfaf5;}
+
+
 .tl-item{position:relative;padding-left:24px;padding-bottom:24px;border-left:2px solid rgba(200,185,160,0.35);}
 .tl-item:last-child{border-left-color:transparent;padding-bottom:0;}
 .tl-item::before{
@@ -788,7 +760,7 @@ button{font-family:var(--font-body);cursor:pointer;}
 .map-note{font-size:0.74rem;color:var(--text-faint);margin-top:14px;}
 
 /* ============================================================
-   SIH DEMO MODULES (Dashboard, Passport, Intelligence, History, Integration)
+   SIH DEMO MODULES (Parcel Overview, GIS, Intelligence, History, Integration)
 ============================================================ */
 .section-badge{
   display:inline-flex;align-items:center;gap:6px;
@@ -840,6 +812,168 @@ button{font-family:var(--font-body);cursor:pointer;}
 .dnc-body p{font-size:0.78rem;line-height:1.5;color:#a89b88;margin:0 0 16px;}
 .dnc-arrow{font-size:1.1rem;color:var(--amber);align-self:flex-end;transition:transform 0.15s;}
 .dash-nav-card:hover .dnc-arrow{transform:translateX(3px);}
+
+/* ===== Clean Empty State: No Parcel Selected ===== */
+.no-parcel-card {
+  text-align:center;
+  padding:64px 32px;
+  background:rgba(26,21,15,0.72);
+  border:1px dashed rgba(241,204,137,0.28);
+  border-radius:18px;
+  max-width:560px;
+  margin:28px auto 40px;
+  box-shadow:0 16px 40px rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  transition:border-color 0.2s ease;
+}
+.no-parcel-card:hover {
+  border-color:rgba(241,204,137,0.48);
+}
+.npc-icon {
+  width:64px;
+  height:64px;
+  line-height:64px;
+  margin:0 auto 18px;
+  font-size:2rem;
+  background:rgba(231,174,89,0.12);
+  border:1px solid rgba(231,174,89,0.3);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.npc-title {
+  font-family:var(--font-display, inherit);
+  font-size:1.6rem;
+  font-weight:800;
+  color:#fbf8f3;
+  margin:0 0 10px;
+  letter-spacing:-0.02em;
+}
+.npc-text {
+  font-size:0.95rem;
+  color:#a89b88;
+  margin:0 auto 26px;
+  max-width:400px;
+  line-height:1.55;
+}
+.npc-cta {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 28px;
+  font-size:0.92rem;
+  font-weight:700;
+  text-decoration:none;
+}
+
+/* ===== Contextual Parcel Navigation (Sub-bar active after parcel selection) ===== */
+.parcel-context-nav {
+  position:sticky;
+  top:70px;
+  z-index:990;
+  background:rgba(18,14,10,0.94);
+  border-bottom:1px solid rgba(241,204,137,0.18);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  padding:10px 0;
+  animation:pcnFadeIn 0.3s ease forwards;
+}
+@keyframes pcnFadeIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.pcn-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.pcn-parcel-info {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.8rem;
+  color:#d4c5b0;
+}
+.pcn-dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 8px rgba(34,197,94,0.8);
+  display:inline-block;
+}
+.pcn-label {
+  font-family:var(--font-mono);
+  font-size:0.68rem;
+  letter-spacing:0.08em;
+  color:var(--amber);
+  font-weight:700;
+}
+.pcn-ulpin {
+  color:#fbf8f3;
+  font-weight:700;
+  background:rgba(231,174,89,0.12);
+  padding:3px 8px;
+  border-radius:4px;
+  border:1px solid rgba(231,174,89,0.25);
+}
+.pcn-sep {
+  color:#6b5a45;
+}
+.pcn-loc {
+  color:#a89b88;
+  font-size:0.78rem;
+  max-width:320px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pcn-links {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pcn-link {
+  font-size:0.82rem;
+  font-weight:600;
+  color:#c4b5a0;
+  text-decoration:none;
+  padding:6px 13px;
+  border-radius:6px;
+  transition:all 0.18s ease;
+  border:1px solid transparent;
+}
+.pcn-link:hover {
+  color:#fbf8f3;
+  background:rgba(255,255,255,0.05);
+}
+.pcn-link.active {
+  color:#1a1207;
+  background:var(--amber);
+  border-color:var(--amber);
+  font-weight:700;
+}
+.pcn-change-btn {
+  background:transparent;
+  border:1px solid rgba(231,174,89,0.35);
+  color:var(--amber);
+  font-size:0.76rem;
+  font-weight:700;
+  padding:5px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all 0.18s ease;
+  margin-left:6px;
+}
+.pcn-change-btn:hover {
+  background:rgba(231,174,89,0.15);
+  border-color:#f1cc89;
+  color:#fff;
+}
 
 /* 2. Digital Land Passport */
 .passport-intro{margin-bottom:18px;}
@@ -1369,13 +1503,487 @@ button{font-family:var(--font-body);cursor:pointer;}
   .pc-grid{grid-template-columns:1fr;}
   .assessment{flex-direction:column;}
   .assessment-list{grid-template-columns:1fr;}
-  .passport-book{grid-template-columns:1fr;}
   .report-body dl{grid-template-columns:1fr;}
   .report-cta-wrap{flex-direction:column;text-align:center;padding:28px 24px;}
   .export-hub-grid{grid-template-columns:1fr;}
   .standards-bar{grid-template-columns:1fr;}
   .foot-links-group{grid-template-columns:1fr;gap:20px;}
   .foot-bottom{flex-direction:column;align-items:flex-start;}
+}
+
+/* ============================================================
+   NEW FEATURES: Search Mode Tabs, GPS, Hierarchical Form,
+   Not Found State, Satellite Switcher, Neighbor Card, Grievance
+============================================================ */
+/* 1. Search Mode Switcher Tabs & GPS */
+.search-mode-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.sm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sm-tab:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  border-color: rgba(231, 174, 89, 0.4);
+}
+.sm-tab.active {
+  background: rgba(231, 174, 89, 0.16);
+  border-color: var(--amber);
+  color: #fce7c8;
+}
+.sm-icon {
+  font-size: 0.95rem;
+}
+.locate-gps-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(72, 210, 138, 0.1);
+  border: 1px solid rgba(72, 210, 138, 0.35);
+  color: #48d28a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.locate-gps-btn:hover {
+  background: rgba(72, 210, 138, 0.2);
+  border-color: #48d28a;
+  transform: translateY(-1px);
+}
+.gps-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48d28a;
+  box-shadow: 0 0 8px #48d28a;
+  animation: pulse-dot 1.8s infinite;
+}
+
+/* 2. Hierarchical Search Form */
+.hierarchical-form {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-bottom: 22px;
+}
+.hier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.hier-col--wide {
+  grid-column: 1 / -1;
+}
+.hier-field-static {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--text);
+  font-weight: 600;
+}
+.hier-select {
+  width: 100%;
+  background: #1f1a14;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  padding: 11px 14px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.hier-select:focus {
+  border-color: var(--amber);
+}
+.hier-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 3. Parcel Not Found Alert Card */
+.search-not-found {
+  margin-top: 20px;
+  background: rgba(245, 158, 11, 0.07);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+.snf-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.snf-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.snf-title {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #fbbf24;
+}
+.snf-msg {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+.snf-tip-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 0.84rem;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.snf-tip-box ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--text-soft);
+}
+.snf-tip-box li {
+  margin-bottom: 4px;
+}
+.snf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.snf-pill-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fce7c8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.snf-pill-btn:hover {
+  background: rgba(231, 174, 89, 0.2);
+  border-color: var(--amber);
+}
+
+/* 4. Map Satellite Switcher & Neighbor Inspection Card */
+.map-layer-switch {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  display: flex;
+  background: rgba(18, 14, 10, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+.layer-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.layer-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+.layer-btn.active {
+  background: var(--amber);
+  color: #1a1207;
+}
+
+.neighbor-inspect-card {
+  position: absolute;
+  bottom: 50px;
+  right: 14px;
+  z-index: 15;
+  width: 250px;
+  background: rgba(24, 19, 14, 0.94);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(231, 174, 89, 0.35);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.25s ease;
+}
+.nic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.nic-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nic-close {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.nic-close:hover {
+  color: #fff;
+}
+.nic-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nic-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+}
+.nic-k {
+  color: var(--text-soft);
+}
+.nic-v {
+  color: var(--text);
+  font-weight: 600;
+}
+.nic-tag-low {
+  font-size: 0.72rem;
+  color: #48d28a;
+  font-weight: 700;
+}
+
+/* 5. Citizen Action Bar */
+.citizen-action-bar {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.cab-text h4 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+.cab-text p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-soft);
+  max-width: 580px;
+}
+.cab-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cab-btn--primary {
+  background: var(--amber);
+  color: #1a1207;
+  border: none;
+}
+.cab-btn--primary:hover {
+  background: #f8c97e;
+  transform: translateY(-1px);
+}
+.cab-btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text);
+}
+.cab-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(231, 174, 89, 0.4);
+}
+
+/* 6. Grievance & Citizen Action Modal */
+.grievance-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+.grievance-sheet {
+  background: #1b1610;
+  border: 1.5px solid rgba(231, 174, 89, 0.35);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 540px;
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  position: relative;
+}
+.gs-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 14px;
+}
+.gs-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--amber);
+}
+.gs-head h3 {
+  margin: 4px 0 0;
+  font-size: 1.25rem;
+  color: #fff;
+}
+.gs-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.gs-close-btn:hover {
+  color: #fff;
+}
+.gs-parcel-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-soft);
+}
+.gs-parcel-info strong {
+  color: var(--text);
+}
+.gs-input, .gs-textarea {
+  width: 100%;
+  background: #14100c;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+}
+.gs-input:focus, .gs-textarea:focus {
+  border-color: var(--amber);
+}
+.gs-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+.gs-success {
+  text-align: center;
+  padding: 16px 8px;
+}
+.gs-success-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(72, 210, 138, 0.15);
+  color: #48d28a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.gs-success h3 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  color: #fff;
+}
+.gs-success p {
+  margin: 0 0 18px;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+.gs-ack-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  text-align: left;
+}
+.ack-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  margin-bottom: 6px;
+}
+.ack-row:last-child {
+  margin-bottom: 0;
 }
 
 @media print{

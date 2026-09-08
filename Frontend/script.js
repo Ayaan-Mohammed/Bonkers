@@ -1,35 +1,36 @@
-(function(){
+(function () {
   "use strict";
 
   var isSearchPage = !!document.getElementById("search-form");
-  if(!isSearchPage) return;
+  if (!isSearchPage) return;
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var updateActiveNavOnScroll = function () { };
 
   /* ============================================================
      1. LAND BACKGROUND PARALLAX
   ============================================================ */
-  function initLandBackground(){
+  function initLandBackground() {
     var bgImage = document.getElementById("land-bg-image");
-    if(!bgImage || reduceMotion) return;
+    if (!bgImage || reduceMotion) return;
 
-    var tX=0,tY=0,cX=0,cY=0,tick=false;
+    var tX = 0, tY = 0, cX = 0, cY = 0, tick = false;
 
-    function render(){
-      cX+=(tX-cX)*0.04; cY+=(tY-cY)*0.04;
-      bgImage.style.transform="translate3d("+(-(cX*12).toFixed(2))+"px,"+(-(cY*7).toFixed(2))+"px,0) scale(1.04)";
-      if(Math.abs(tX-cX)>0.001||Math.abs(tY-cY)>0.001) requestAnimationFrame(render);
-      else tick=false;
+    function render() {
+      cX += (tX - cX) * 0.04; cY += (tY - cY) * 0.04;
+      bgImage.style.transform = "translate3d(" + (-(cX * 12).toFixed(2)) + "px," + (-(cY * 7).toFixed(2)) + "px,0) scale(1.04)";
+      if (Math.abs(tX - cX) > 0.001 || Math.abs(tY - cY) > 0.001) requestAnimationFrame(render);
+      else tick = false;
     }
 
-    window.addEventListener("pointermove",function(e){
-      tX=Math.max(-1,Math.min(1,((e.clientX/window.innerWidth)-0.5)*2));
-      tY=Math.max(-1,Math.min(1,((e.clientY/window.innerHeight)-0.5)*2));
-      if(!tick){tick=true;requestAnimationFrame(render);}
-    },{passive:true});
-    document.addEventListener("mouseleave",function(){
-      tX=0;tY=0;if(!tick){tick=true;requestAnimationFrame(render);}
-    },{passive:true});
+    window.addEventListener("pointermove", function (e) {
+      tX = Math.max(-1, Math.min(1, ((e.clientX / window.innerWidth) - 0.5) * 2));
+      tY = Math.max(-1, Math.min(1, ((e.clientY / window.innerHeight) - 0.5) * 2));
+      if (!tick) { tick = true; requestAnimationFrame(render); }
+    }, { passive: true });
+    document.addEventListener("mouseleave", function () {
+      tX = 0; tY = 0; if (!tick) { tick = true; requestAnimationFrame(render); }
+    }, { passive: true });
   }
 
   /* ============================================================
@@ -89,9 +90,9 @@
       encumbrance: "None recorded — Clean title", tax: "Paid to date (FY 2025–26)",
       valuation: "Guideline value ₹14.5L / acre", status: "✓ Verified — Consistent",
       history: [
-        {date:"2025-01-15", title:"Annual land revenue tax paid", desc:"Electronic challan cleared via UP Bhulekh portal."},
-        {date:"2023-04-12", title:"Inheritance mutation entered", desc:"Record of rights updated following succession order at taluk revenue court."},
-        {date:"2018-11-20", title:"Digital cadastral boundary synced", desc:"Re-verified under DILRMP spatial cadastral digitisation initiative."}
+        { date: "2025-01-15", title: "Annual land revenue tax paid", desc: "Electronic challan cleared via UP Bhulekh portal." },
+        { date: "2023-04-12", title: "Inheritance mutation entered", desc: "Record of rights updated following succession order at taluk revenue court." },
+        { date: "2018-11-20", title: "Digital cadastral boundary synced", desc: "Re-verified under DILRMP spatial cadastral digitisation initiative." }
       ]
     },
     "KA": {
@@ -105,9 +106,9 @@
       encumbrance: "None recorded (NOC issued by SBI)", tax: "Paid (FY 2024–25)",
       valuation: "Guideline value ₹32L / acre", status: "✓ Verified — Consistent",
       history: [
-        {date:"2024-08-12", title:"RTC re-verification", desc:"Digital Bhoomi record cross-referenced with Kaveri registration database."},
-        {date:"2022-08-12", title:"Sale deed registered", desc:"Registered transfer of rights completed at Devanahalli sub-registrar office."},
-        {date:"2016-09-05", title:"RTC digitised", desc:"Record of rights, tenancy and crops entry digitised under DILRMP."}
+        { date: "2024-08-12", title: "RTC re-verification", desc: "Digital Bhoomi record cross-referenced with Kaveri registration database." },
+        { date: "2022-08-12", title: "Sale deed registered", desc: "Registered transfer of rights completed at Devanahalli sub-registrar office." },
+        { date: "2016-09-05", title: "RTC digitised", desc: "Record of rights, tenancy and crops entry digitised under DILRMP." }
       ]
     },
     "TN": {
@@ -120,9 +121,9 @@
       encumbrance: "None recorded", tax: "Paid to date (FY 2025–26)",
       valuation: "Guideline value ₹18.2L / acre", status: "✓ Verified — Consistent",
       history: [
-        {date:"2024-11-02", title:"Property tax paid", desc:"Annual tax cleared for FY 2024–25 at the Sulur taluk office."},
-        {date:"2022-06-14", title:"Boundary re-survey", desc:"Cadastral boundary re-verified against drone survey under SVAMITVA."},
-        {date:"2011-03-30", title:"Patta issued", desc:"Record of rights formally issued to current recorded holder."}
+        { date: "2024-11-02", title: "Property tax paid", desc: "Annual tax cleared for FY 2024–25 at the Sulur taluk office." },
+        { date: "2022-06-14", title: "Boundary re-survey", desc: "Cadastral boundary re-verified against drone survey under SVAMITVA." },
+        { date: "2011-03-30", title: "Patta issued", desc: "Record of rights formally issued to current recorded holder." }
       ]
     },
     "TS": {
@@ -137,9 +138,9 @@
       valuation: "Guideline value ₹24.5L / acre", status: "✓ Verified — Consistent",
       score: 96,
       history: [
-        {date:"2025-02-10", title:"Rythu Bandhu & revenue audit", desc:"Annual cadastral audit synced with Dharani integrated land portal."},
-        {date:"2023-11-18", title:"Dharani digital mutation completed", desc:"Instant digital mutation executed post-registration at Moinabad sub-registrar office."},
-        {date:"2019-06-25", title:"Pattadar passbook issued", desc:"Title deed & digital passbook generated under Telangana Land Records Updation Programme (LRUP)."}
+        { date: "2025-02-10", title: "Rythu Bandhu & revenue audit", desc: "Annual cadastral audit synced with Dharani integrated land portal." },
+        { date: "2023-11-18", title: "Dharani digital mutation completed", desc: "Instant digital mutation executed post-registration at Moinabad sub-registrar office." },
+        { date: "2019-06-25", title: "Pattadar passbook issued", desc: "Title deed & digital passbook generated under Telangana Land Records Updation Programme (LRUP)." }
       ]
     },
     "BR": {
@@ -155,9 +156,9 @@
       statusText: "Attention — Area Variance 4.6%",
       score: 74,
       history: [
-        {date:"2024-10-18", title:"Mutation objection registered", desc:"Co-sharer objection filed under Bihar Land Disputes Resolution Act at Anchal revenue office."},
-        {date:"2022-04-12", title:"Special Survey DILRMP drone scan", desc:"Spatial boundary overlay measured 1.74 Acres vs. 1.82 Acres in Jamabandi (4.6% variance flagged)."},
-        {date:"2015-08-04", title:"Jamabandi digitised", desc:"Legacy record entered on Bihar Bhu-Abhilekh portal under legacy khatauni."}
+        { date: "2024-10-18", title: "Mutation objection registered", desc: "Co-sharer objection filed under Bihar Land Disputes Resolution Act at Anchal revenue office." },
+        { date: "2022-04-12", title: "Special Survey DILRMP drone scan", desc: "Spatial boundary overlay measured 1.74 Acres vs. 1.82 Acres in Jamabandi (4.6% variance flagged)." },
+        { date: "2015-08-04", title: "Jamabandi digitised", desc: "Legacy record entered on Bihar Bhu-Abhilekh portal under legacy khatauni." }
       ]
     },
     "MH": {
@@ -173,9 +174,9 @@
       statusText: "Active Bank Bojha (₹6.2L)",
       score: 82,
       history: [
-        {date:"2024-05-19", title:"Encumbrance registered (Bojha)", desc:"Institutional agricultural charge of ₹6,20,000 endorsed on 7/12 by State Bank of India."},
-        {date:"2021-12-08", title:"Mutation (Ferfar) cleared", desc:"Partition succession updated under Haveli revenue circle."},
-        {date:"2017-03-14", title:"Digital 7/12 issued", desc:"Record digitally signed under Mahabhumi modernisation program."}
+        { date: "2024-05-19", title: "Encumbrance registered (Bojha)", desc: "Institutional agricultural charge of ₹6,20,000 endorsed on 7/12 by State Bank of India." },
+        { date: "2021-12-08", title: "Mutation (Ferfar) cleared", desc: "Partition succession updated under Haveli revenue circle." },
+        { date: "2017-03-14", title: "Digital 7/12 issued", desc: "Record digitally signed under Mahabhumi modernisation program." }
       ]
     }
   };
@@ -196,13 +197,13 @@
   };
 
   var CHECKS = [
-    {name:"Boundary verification", desc:"Cadastral boundary matched against latest survey.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
-    {name:"Record vs. map", desc:"Record of rights area compared against mapped parcel area.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
-    {name:"Land-use consistency", desc:"Recorded land use checked against zoning classification.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"ok",MH:"warn"}},
-    {name:"Ownership verification", desc:"Recorded holder cross-checked against registration filings.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
-    {name:"Duplicate record check", desc:"Parcel checked against neighbouring ULPINs for overlap.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"ok",MH:"ok"}},
-    {name:"Land-change detection", desc:"Compared against the last two available survey cycles.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"ok"}},
-    {name:"Encumbrance check", desc:"Cross-checked against registered charges and mortgages.", ok:{UP:"ok",TN:"ok",KA:"ok",TS:"ok",BR:"warn",MH:"warn"}}
+    { name: "Boundary verification", desc: "Cadastral boundary matched against latest survey.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
+    { name: "Record vs. map", desc: "Record of rights area compared against mapped parcel area.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
+    { name: "Land-use consistency", desc: "Recorded land use checked against zoning classification.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "ok", MH: "warn" } },
+    { name: "Ownership verification", desc: "Recorded holder cross-checked against registration filings.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
+    { name: "Duplicate record check", desc: "Parcel checked against neighbouring ULPINs for overlap.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "ok", MH: "ok" } },
+    { name: "Land-change detection", desc: "Compared against the last two available survey cycles.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
+    { name: "Encumbrance check", desc: "Cross-checked against registered charges and mortgages.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "warn" } }
   ];
 
   var DEFAULT_ASSESSMENTS = {
@@ -226,37 +227,37 @@
     }
   };
 
-  var STAMP_LABEL = {ok:"Verified", warn:"Attention", crit:"Critical"};
-  var ASSESSMENT_ROWS = ["Ownership","GIS boundary","Registration","Tax","Encumbrance","Mutation","Record consistency"];
+  var STAMP_LABEL = { ok: "Verified", warn: "Attention", crit: "Critical" };
+  var ASSESSMENT_ROWS = ["Ownership", "GIS boundary", "Registration", "Tax", "Encumbrance", "Mutation", "Record consistency"];
 
   /* ============================================================
      4. STATE SELECTOR DROPDOWN
   ============================================================ */
   var selectedState = "Uttar Pradesh";
 
-  function initStateDropdown(){
+  function initStateDropdown() {
     var btn = document.getElementById("state-selector-btn");
     var dropdown = document.getElementById("state-dropdown");
     var searchInput = document.getElementById("state-search-input");
     var listContainer = document.getElementById("state-list");
     var stateNameEl = document.getElementById("selected-state-name");
-    if(!btn || !dropdown || !listContainer) return;
+    if (!btn || !dropdown || !listContainer) return;
 
-    function renderList(filter){
+    function renderList(filter) {
       listContainer.innerHTML = "";
       var query = (filter || "").toLowerCase().trim();
-      var filtered = STATES_AND_UTS.filter(function(item){
+      var filtered = STATES_AND_UTS.filter(function (item) {
         return item.name.toLowerCase().indexOf(query) !== -1;
       });
-      if(filtered.length === 0){
+      if (filtered.length === 0) {
         listContainer.innerHTML = '<div style="padding:12px 16px;font-size:0.82rem;color:#8c8172;">No matching State or UT found</div>';
         return;
       }
-      filtered.forEach(function(item){
+      filtered.forEach(function (item) {
         var row = document.createElement("div");
         row.className = "state-item" + (item.name === selectedState ? " selected" : "");
         row.innerHTML = '<span>' + item.name + '</span><span class="state-type-tag">' + item.type + '</span>';
-        row.addEventListener("click", function(e){
+        row.addEventListener("click", function (e) {
           e.stopPropagation();
           selectState(item.name);
           closeDropdown();
@@ -265,34 +266,35 @@
       });
     }
 
-    function selectState(name){
+    function selectState(name) {
       selectedState = name;
-      if(stateNameEl) stateNameEl.textContent = name;
+      if (stateNameEl) stateNameEl.textContent = name;
       renderList(searchInput ? searchInput.value : "");
+      if (window.__updateHierState) window.__updateHierState();
     }
 
-    function openDropdown(){
+    function openDropdown() {
       dropdown.style.display = "block";
       btn.setAttribute("aria-expanded", "true");
       renderList("");
-      if(searchInput){ searchInput.value = ""; setTimeout(function(){ searchInput.focus(); }, 50); }
+      if (searchInput) { searchInput.value = ""; setTimeout(function () { searchInput.focus(); }, 50); }
     }
 
-    function closeDropdown(){
+    function closeDropdown() {
       dropdown.style.display = "none";
       btn.setAttribute("aria-expanded", "false");
     }
 
-    btn.addEventListener("click", function(e){
+    btn.addEventListener("click", function (e) {
       e.stopPropagation();
-      if(dropdown.style.display === "block") closeDropdown(); else openDropdown();
+      if (dropdown.style.display === "block") closeDropdown(); else openDropdown();
     });
-    if(searchInput){
-      searchInput.addEventListener("input", function(){ renderList(this.value); });
-      searchInput.addEventListener("click", function(e){ e.stopPropagation(); });
+    if (searchInput) {
+      searchInput.addEventListener("input", function () { renderList(this.value); });
+      searchInput.addEventListener("click", function (e) { e.stopPropagation(); });
     }
-    document.addEventListener("click", function(e){
-      if(!dropdown.contains(e.target) && e.target !== btn) closeDropdown();
+    document.addEventListener("click", function (e) {
+      if (!dropdown.contains(e.target) && e.target !== btn) closeDropdown();
     });
 
     window.__selectState = selectState;
@@ -304,74 +306,159 @@
   var feedbackEl = null;
   var feedbackInner = null;
 
-  function showFeedback(text, type){
-    if(!feedbackEl) return;
+  function showFeedback(text, type) {
+    if (!feedbackEl) return;
     feedbackEl.style.display = "block";
     feedbackInner.className = "search-feedback-inner" + (type ? " search-feedback--" + type : "");
     feedbackInner.innerHTML = (type === "loading" ? '<span class="search-spinner"></span>' : '') +
       '<span class="search-feedback-text">' + text + '</span>';
   }
 
-  function hideFeedback(){
-    if(feedbackEl) feedbackEl.style.display = "none";
+  function hideFeedback() {
+    if (feedbackEl) feedbackEl.style.display = "none";
   }
 
   /* ============================================================
-     6. SEARCH DISPATCH
+     6. SEARCH DISPATCH & ERROR HANDLING
   ============================================================ */
-  function findParcelKey(query, state){
-    var q = (query || "").toLowerCase();
-    var s = (state || selectedState || "").toLowerCase();
+  function escapeHtml(str) {
+    return (str || "").toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function findParcelKey(query, state) {
+    var q = (query || "").toLowerCase().trim();
+    var s = (state || selectedState || "").toLowerCase().trim();
+
+    // If query is empty, do not match
+    if (!q) return null;
 
     // Check Bihar (Score 74 - Discrepancy demo)
-    if(s.indexOf("bihar") !== -1 || q.indexOf("bihar") !== -1 || q.indexOf("br-demo") !== -1 || q.indexOf("jamabandi") !== -1 || q.indexOf("512") !== -1 || q.indexOf("patna") !== -1 || q.indexOf("walmi") !== -1){
+    if (q.indexOf("bihar") !== -1 || q.indexOf("br-demo") !== -1 || q.indexOf("jamabandi") !== -1 || q.indexOf("512") !== -1 || q.indexOf("patna") !== -1 || q.indexOf("walmi") !== -1 || (s.indexOf("bihar") !== -1 && (q.indexOf("512") !== -1 || q.indexOf("418") !== -1 || q.indexOf("walmi") !== -1 || q.indexOf("patna") !== -1 || q.indexOf("jamabandi") !== -1))) {
       return "BR";
     }
 
     // Check Maharashtra (Score 82 - Encumbrance demo)
-    if(s.indexOf("maharashtra") !== -1 || q.indexOf("maharashtra") !== -1 || q.indexOf("mh-demo") !== -1 || q.indexOf("7/12") !== -1 || q.indexOf("saat-baara") !== -1 || q.indexOf("pune") !== -1 || q.indexOf("wagholi") !== -1 || q.indexOf("haveli") !== -1){
+    if (q.indexOf("maharashtra") !== -1 || q.indexOf("mh-demo") !== -1 || q.indexOf("7/12") !== -1 || q.indexOf("saat-baara") !== -1 || q.indexOf("pune") !== -1 || q.indexOf("wagholi") !== -1 || q.indexOf("haveli") !== -1 || (s.indexOf("maharashtra") !== -1 && (q.indexOf("88") !== -1 || q.indexOf("gat") !== -1 || q.indexOf("pune") !== -1 || q.indexOf("wagholi") !== -1 || q.indexOf("7/12") !== -1))) {
       return "MH";
     }
 
     // Check Telangana first if state or query contains TS keywords or any TS district
-    if(s.indexOf("telangana") !== -1 || q.indexOf("ts-demo") !== -1 || q.indexOf("tg-demo") !== -1 || q.indexOf("dharani") !== -1 || q.indexOf("245") !== -1){
+    if (q.indexOf("telangana") !== -1 || q.indexOf("ts-demo") !== -1 || q.indexOf("tg-demo") !== -1 || q.indexOf("dharani") !== -1 || q.indexOf("245") !== -1 || (s.indexOf("telangana") !== -1 && (q.indexOf("245") !== -1 || q.indexOf("moinabad") !== -1 || q.indexOf("rangareddy") !== -1 || q.indexOf("kanakamamidi") !== -1))) {
       return "TS";
     }
-    for(var dist in TS_DISTRICTS){
-      if(q.indexOf(dist) !== -1 || s.indexOf(dist) !== -1) return "TS";
+    for (var dist in TS_DISTRICTS) {
+      if (q.indexOf(dist) !== -1 || (s.indexOf("telangana") !== -1 && q.indexOf(dist) !== -1)) return "TS";
     }
 
-    if(q.indexOf("412") !== -1 || q.indexOf("up-demo") !== -1 || (s.indexOf("uttar") !== -1 && q)) return "UP";
-    if(q.indexOf("88") !== -1 || q.indexOf("ka-demo") !== -1 || (s.indexOf("karnataka") !== -1 && q)) return "KA";
-    if(q.indexOf("1042") !== -1 || q.indexOf("187") !== -1 || q.indexOf("tn-demo") !== -1 || (s.indexOf("tamil") !== -1 && q)) return "TN";
-    return "UP";
+    // Check Uttar Pradesh
+    if (q.indexOf("up-demo") !== -1 || q.indexOf("412") !== -1 || (s.indexOf("uttar") !== -1 && (q.indexOf("412") !== -1 || q.indexOf("lucknow") !== -1 || q.indexOf("mahona") !== -1 || q.indexOf("bakshi") !== -1 || q.indexOf("khasra") !== -1))) {
+      return "UP";
+    }
+
+    // Check Karnataka
+    if (q.indexOf("ka-demo") !== -1 || (s.indexOf("karnataka") !== -1 && (q.indexOf("88") !== -1 || q.indexOf("bengaluru") !== -1 || q.indexOf("kundana") !== -1 || q.indexOf("devanahalli") !== -1)) || (q.indexOf("88/2") !== -1 && s.indexOf("karnataka") !== -1)) {
+      return "KA";
+    }
+
+    // Check Tamil Nadu
+    if (q.indexOf("tn-demo") !== -1 || q.indexOf("1042") !== -1 || (s.indexOf("tamil") !== -1 && (q.indexOf("1042") !== -1 || q.indexOf("187") !== -1 || q.indexOf("coimbatore") !== -1 || q.indexOf("sulur") !== -1 || q.indexOf("patta") !== -1))) {
+      return "TN";
+    }
+
+    // If query strictly matched a known demo identifier anywhere:
+    if (q.indexOf("412/1") !== -1) return "UP";
+    if (q.indexOf("88/2") !== -1) return "KA";
+    if (q.indexOf("187/2a") !== -1 || q.indexOf("patta 1042") !== -1) return "TN";
+    if (q.indexOf("245/a") !== -1) return "TS";
+    if (q.indexOf("512/3") !== -1 || q.indexOf("418") !== -1) return "BR";
+    if (q.indexOf("88/1a") !== -1) return "MH";
+
+    // No match found — do NOT silently fall back to Ramesh Chandra Verma!
+    return null;
   }
 
-  function showResultSections(){
-    ["dashboard","gis-view","passport","intelligence","history","integration","report"].forEach(function(id){
+  function hideResultSections() {
+    window.__currentParcel = null;
+    ["gis-view", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
       var el = document.getElementById(id);
-      if(el){
+      if (el) { el.style.display = "none"; }
+    });
+    var noParcel = document.getElementById("no-parcel-state");
+    if (noParcel) noParcel.style.display = "block";
+    var overviewContent = document.getElementById("parcel-overview-content");
+    if (overviewContent) overviewContent.style.display = "none";
+    var pcn = document.getElementById("parcel-context-nav");
+    if (pcn) pcn.style.display = "none";
+  }
+
+  function showResultSections(p) {
+    ["dashboard", "gis-view", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
         el.style.display = "block";
         el.classList.add("section-reveal");
       }
     });
+    var noParcel = document.getElementById("no-parcel-state");
+    if (noParcel) noParcel.style.display = "none";
+    var overviewContent = document.getElementById("parcel-overview-content");
+    if (overviewContent) overviewContent.style.display = "block";
+    var pcn = document.getElementById("parcel-context-nav");
+    if (pcn) {
+      pcn.style.display = "block";
+      if (p) {
+        var pcnUlpin = document.getElementById("pcn-ulpin");
+        var pcnLoc = document.getElementById("pcn-loc");
+        if (pcnUlpin) pcnUlpin.textContent = p.ulpin || "ULPIN ASSIGNED";
+        if (pcnLoc) pcnLoc.textContent = (p.survey ? (p.survey + " · ") : "") + (p.village ? (p.village + ", ") : "") + (p.district ? (p.district + ", ") : "") + (p.state || "");
+      }
+    }
   }
 
-  function doSearch(query, targetSectionId){
+  function showNotFound(query, state) {
+    hideFeedback();
+    hideResultSections();
+    var notFoundEl = document.getElementById("search-not-found");
+    var msgEl = document.getElementById("snf-message");
+    if (notFoundEl) {
+      notFoundEl.style.display = "block";
+      notFoundEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+    }
+    if (msgEl) {
+      var sName = state || selectedState || "the selected State";
+      msgEl.innerHTML = 'No registered land record matching "<b>' + escapeHtml(query) + '</b>" was found in ' + escapeHtml(sName) + ' registry database.';
+    }
+  }
+
+  function doSearch(query, targetSectionId) {
+    // Hide previous not found state if any
+    var notFoundEl = document.getElementById("search-not-found");
+    if (notFoundEl) notFoundEl.style.display = "none";
+
     var key = findParcelKey(query, selectedState);
+
+    // If no match found, handle transparently
+    if (!key) {
+      showFeedback("Checking central cadastre registry...", "loading");
+      setTimeout(function () {
+        showNotFound(query, selectedState);
+      }, 450);
+      return;
+    }
+
     var p = PARCELS[key] || PARCELS["UP"];
 
     // If TS, check for specific district in query
-    if(key === "TS"){
+    if (key === "TS") {
       var q = (query || "").toLowerCase();
       var matchedDist = null;
-      for(var d in TS_DISTRICTS){
-        if(q.indexOf(d) !== -1){ matchedDist = TS_DISTRICTS[d]; break; }
+      for (var d in TS_DISTRICTS) {
+        if (q.indexOf(d) !== -1) { matchedDist = TS_DISTRICTS[d]; break; }
       }
-      if(!matchedDist && (selectedState || "").toLowerCase().indexOf("telangana") !== -1){
+      if (!matchedDist && (selectedState || "").toLowerCase().indexOf("telangana") !== -1) {
         matchedDist = TS_DISTRICTS["rangareddy"];
       }
-      if(matchedDist){
+      if (matchedDist) {
         p = JSON.parse(JSON.stringify(PARCELS["TS"]));
         p.district = matchedDist.district;
         p.mandal = matchedDist.mandal;
@@ -391,21 +478,21 @@
     showFeedback("Searching for your parcel...", "loading");
 
     // Simulate brief network delay for polish
-    setTimeout(function(){
+    setTimeout(function () {
       // Show success
       showFeedback((isWarn ? "⚠️ Parcel Located with Flags — " : "✓ Parcel Found — ") + p.ulpin, isWarn ? "warn" : "success");
 
-      // Reveal result sections
-      showResultSections();
+      // Reveal result sections and populate contextual navbar
+      showResultSections(p);
 
       // Update banner
       var banner = document.getElementById("parcel-found-banner");
       var bannerDesc = document.getElementById("pf-banner-text");
-      if(banner){
-        if(isWarn) banner.classList.add("banner--warn");
+      if (banner) {
+        if (isWarn) banner.classList.add("banner--warn");
         else banner.classList.remove("banner--warn");
       }
-      if(bannerDesc){
+      if (bannerDesc) {
         var flagNotice = isWarn ? " <span style=\"color:#f59e0b;font-weight:700;\">— ⚠️ Assessment Score: " + p.score + "/100 (Attention Required)</span>" : "";
         bannerDesc.innerHTML = "Showing boundary for <b>" + p.ulpin + "</b> (" + p.survey + ") in " + p.district + ", " + p.state + flagNotice;
       }
@@ -419,67 +506,70 @@
 
       var statusPill = document.getElementById("pic-status");
       var verifiedTag = document.querySelector(".pic-verified-tag");
-      if(statusPill){
+      if (statusPill) {
         statusPill.textContent = isWarn ? "⚠️ " + (p.statusText || "Discrepancy Flagged") : "✓ Presumptive Title Clear";
         statusPill.className = "pic-status-pill" + (isWarn ? " warn" : "");
       }
-      if(verifiedTag){
+      if (verifiedTag) {
         verifiedTag.textContent = isWarn ? "⚠️ Score: " + p.score + "/100" : "✓ Verified";
         verifiedTag.className = "pic-verified-tag" + (isWarn ? " warn" : "");
       }
 
       // Map
-      if(window.LandMap && window.LandMap.selectParcel){
+      if (window.LandMap && window.LandMap.selectParcel) {
         var mapLabel = null;
-        if(p.state === "Telangana") mapLabel = "Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana";
-        else if(p.state === "Bihar") mapLabel = "Khasra " + p.survey + " — Walmi, Patna, Bihar (⚠️ Score: 74/100)";
-        else if(p.state === "Maharashtra") mapLabel = "7/12 Gat " + p.survey + " — Wagholi, Pune, Maharashtra (⚠️ Score: 82/100)";
+        if (p.state === "Telangana") mapLabel = "Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana";
+        else if (p.state === "Bihar") mapLabel = "Khasra " + p.survey + " — Walmi, Patna, Bihar (⚠️ Score: 74/100)";
+        else if (p.state === "Maharashtra") mapLabel = "7/12 Gat " + p.survey + " — Wagholi, Pune, Maharashtra (⚠️ Score: 82/100)";
         window.LandMap.selectParcel(key, mapLabel);
       }
 
       // Render SIH Modules
-      renderDashboard(p);
+      renderParcelOverview(p);
       renderPassport(p);
       renderLandIntelligence(p, key);
       renderLandHistory(p);
       window.__currentParcel = p;
 
-      // Scroll to target section or Dashboard after a beat
-      setTimeout(function(){
+      // Scroll to Parcel Overview (starting screen after parcel selection)
+      setTimeout(function () {
         var targetSection = targetSectionId ? document.getElementById(targetSectionId) : null;
-        var viewToScroll = targetSection || document.getElementById("dashboard") || document.getElementById("gis-view");
-        if(viewToScroll) viewToScroll.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-        setTimeout(updateActiveNavOnScroll, 350);
+        var viewToScroll = targetSection || document.getElementById("dashboard");
+        if (viewToScroll) viewToScroll.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        setTimeout(function () {
+          if (typeof updateActiveNavOnScroll === "function") updateActiveNavOnScroll();
+        }, 350);
       }, 200);
 
       // Hide feedback after scroll
       setTimeout(hideFeedback, 2000);
-    }, 600);
+    }, 550);
   }
 
-  function setText(id, val){
+  function setText(id, val) {
     var el = document.getElementById(id);
-    if(el) el.textContent = val;
+    if (el) el.textContent = val;
   }
 
   /* ============================================================
-     1. DASHBOARD
+     1. PARCEL OVERVIEW
   ============================================================ */
-  function renderDashboard(p){
+  function renderParcelOverview(p) {
     var pillState = document.getElementById("dash-p-state");
     var pillStatus = document.getElementById("dash-p-status");
     var pillUlpin = document.getElementById("dash-p-ulpin");
     var pillLoc = document.getElementById("dash-p-loc");
 
     var isWarn = (p.score && p.score < 90);
-    if(pillState) pillState.textContent = p.state || "State / UT";
-    if(pillStatus){
+    if (pillState) pillState.textContent = p.state || "State / UT";
+    if (pillStatus) {
       pillStatus.textContent = isWarn ? "⚠️ " + (p.statusText || "Attention Required") : "✓ Verified Title";
       pillStatus.className = "dpp-status-tag" + (isWarn ? " warn" : "");
     }
-    if(pillUlpin) pillUlpin.textContent = p.ulpin || "ULPIN not assigned";
-    if(pillLoc) pillLoc.textContent = (p.village || "") + ", " + (p.district || "") + " · Plot " + (p.survey || "—");
+    if (pillUlpin) pillUlpin.textContent = p.ulpin || "ULPIN not assigned";
+    if (pillLoc) pillLoc.textContent = (p.village || "") + ", " + (p.district || "") + " · Plot " + (p.survey || "—");
   }
+  var renderDashboard = renderParcelOverview; // Alias for safety
 
   /* ============================================================
      2. DIGITAL LAND PASSPORT
@@ -544,14 +634,10 @@
     drawQr("passport-qr-canvas");
   }
 
-  // Dedicated Print Passport function: opens ONLY the verifiable Digital Land Passport certificate
   window.printPassport = function(){
     var p = window.__currentParcel;
     var sheet = document.getElementById("passport-sheet");
-    if(!sheet){
-      window.print();
-      return;
-    }
+    if(!sheet){ window.print(); return; }
 
     var ulpin = (p && p.ulpin) || "TS-DEMO-245-018";
     var survey = (p && p.survey) || "245/A";
@@ -668,10 +754,10 @@
   /* ============================================================
      3. LAND INTELLIGENCE
   ============================================================ */
-  function renderLandIntelligence(p, key){
+  function renderLandIntelligence(p, key) {
     // 1. Parcel Overview
     var overviewList = document.getElementById("intel-overview-list");
-    if(overviewList){
+    if (overviewList) {
       overviewList.innerHTML =
         '<div class="ic-row"><span class="ic-k">ULPIN ID</span><span class="ic-v mono">' + (p.ulpin || "Data not available") + '</span></div>' +
         '<div class="ic-row"><span class="ic-k">Recorded Holder</span><span class="ic-v">' + (p.holder || "Data not available") + '</span></div>' +
@@ -682,7 +768,7 @@
 
     // 2. Spatial Information
     var spatialList = document.getElementById("intel-spatial-list");
-    if(spatialList){
+    if (spatialList) {
       spatialList.innerHTML =
         '<div class="ic-row"><span class="ic-k">Centroid Coords</span><span class="ic-v mono">' + (p.coords || "Data not available") + '</span></div>' +
         '<div class="ic-row"><span class="ic-k">Cadastral Area</span><span class="ic-v">' + (p.area || "Data not available") + '</span></div>' +
@@ -693,7 +779,7 @@
 
     // 3. Land Records
     var recordsList = document.getElementById("intel-records-list");
-    if(recordsList){
+    if (recordsList) {
       recordsList.innerHTML =
         '<div class="ic-row"><span class="ic-k">Record of Rights</span><span class="ic-v">' + (p.ror || "Data not available") + '</span></div>' +
         '<div class="ic-row"><span class="ic-k">Mutation Status</span><span class="ic-v">' + (p.mutation || "Data not available") + '</span></div>' +
@@ -704,14 +790,14 @@
 
     // 4. Available Alerts
     var alertsBody = document.getElementById("intel-alerts-body");
-    if(alertsBody){
+    if (alertsBody) {
       var isWarn = (p.score && p.score < 90);
-      if(isWarn){
-        if(key === "BR"){
+      if (isWarn) {
+        if (key === "BR") {
           alertsBody.innerHTML =
             '<div class="alert-banner warn"><span>⚠️</span><div><b>Spatial Discrepancy:</b> Mapped GIS polygon measures 1.74 Acres vs. 1.82 Acres recorded in Jamabandi (4.6% variance).</div></div>' +
             '<div class="alert-banner warn"><span>⚠️</span><div><b>Pending Hearing:</b> Succession partition dispute Case No. 142/2024 active at Phulwari Anchal office.</div></div>';
-        } else if(key === "MH"){
+        } else if (key === "MH") {
           alertsBody.innerHTML =
             '<div class="alert-banner warn"><span>⚠️</span><div><b>Active Encumbrance (Bojha):</b> State Bank of India agricultural charge of ₹6,20,000 registered on 7/12 other rights.</div></div>' +
             '<div class="alert-banner warn"><span>⚠️</span><div><b>Land Use Conversion:</b> Application for non-agricultural (NA) regularization pending scrutiny.</div></div>';
@@ -734,12 +820,12 @@
   /* ============================================================
      4. LAND HISTORY
   ============================================================ */
-  function renderLandHistory(p){
+  function renderLandHistory(p) {
     var metaEl = document.getElementById("history-parcel-meta");
     var timelineEl = document.getElementById("history-timeline");
-    if(!timelineEl) return;
+    if (!timelineEl) return;
 
-    if(metaEl){
+    if (metaEl) {
       metaEl.innerHTML =
         '<span class="hpm-tag">' + (p.ulpin || "Parcel Record") + ' &middot; Plot ' + (p.survey || "—") + '</span>' +
         '<span class="hpm-loc">' + (p.village || "") + ', ' + (p.district || "") + ', ' + (p.state || "") + '</span>';
@@ -752,41 +838,41 @@
     ];
 
     var html = "";
-    items.forEach(function(h){
+    items.forEach(function (h) {
       html +=
         '<div class="ht-item">' +
-          '<div class="ht-date">' + h.date + '</div>' +
-          '<h5 class="ht-title">' + h.title + '</h5>' +
-          '<p class="ht-desc">' + h.desc + '</p>' +
+        '<div class="ht-date">' + h.date + '</div>' +
+        '<h5 class="ht-title">' + h.title + '</h5>' +
+        '<p class="ht-desc">' + h.desc + '</p>' +
         '</div>';
     });
     timelineEl.innerHTML = html;
   }
 
-  function renderChecks(abbr){
+  function renderChecks(abbr) {
     var grid = document.getElementById("stamp-grid");
-    if(!grid) return;
+    if (!grid) return;
     grid.innerHTML = "";
-    CHECKS.forEach(function(c,i){
+    CHECKS.forEach(function (c, i) {
       var verdict = c.ok[abbr] || "ok";
       var el = document.createElement("div");
       el.className = "stamp-item";
-      el.innerHTML = '<div class="stamp-mark '+verdict+'"><span>●</span>'+STAMP_LABEL[verdict]+'</div><h4>'+c.name+'</h4><p>'+c.desc+'</p>';
+      el.innerHTML = '<div class="stamp-mark ' + verdict + '"><span>●</span>' + STAMP_LABEL[verdict] + '</div><h4>' + c.name + '</h4><p>' + c.desc + '</p>';
       grid.appendChild(el);
-      setTimeout(function(){ el.classList.add("in"); }, i * 60);
+      setTimeout(function () { el.classList.add("in"); }, i * 60);
     });
   }
 
-  function renderAssessment(abbr, p){
+  function renderAssessment(abbr, p) {
     var scoreNum = document.getElementById("score-num");
     var list = document.getElementById("assessment-list");
     var seal = document.querySelector(".seal-box");
-    if(!scoreNum || !list) return;
+    if (!scoreNum || !list) return;
 
     var score = (p && p.score) ? p.score : (abbr === "BR" ? 74 : (abbr === "MH" ? 82 : 96));
     scoreNum.textContent = score;
 
-    if(seal){
+    if (seal) {
       seal.style.setProperty("--pct", score);
       var ringColor = score < 80 ? "#f59e0b" : (score < 90 ? "#eab308" : "#48d28a");
       seal.style.setProperty("--ring-color", ringColor);
@@ -794,7 +880,7 @@
 
     list.innerHTML = "";
     var customAssessments = DEFAULT_ASSESSMENTS[abbr] || {};
-    ASSESSMENT_ROWS.forEach(function(name){
+    ASSESSMENT_ROWS.forEach(function (name) {
       var item = customAssessments[name] || { label: "Verified ✓", status: "ok" };
       var li = document.createElement("li");
       li.innerHTML = "<b>" + name + "</b><span class=\"" + item.status + "\">" + item.label + "</span>";
@@ -805,69 +891,111 @@
   /* ============================================================
      8. REPORT MODAL
   ============================================================ */
-  function openReport(){
+  function field(k, v) {
+    return '<div><dt>' + k + '</dt><dd>' + (v || "—") + '</dd></div>';
+  }
+
+  function openReport() {
     var p = window.__currentParcel || PARCELS["UP"];
     var sheet = document.getElementById("report-sheet");
     var overlay = document.getElementById("report-overlay");
-    if(!sheet || !overlay) return;
-    var today = new Date().toISOString().slice(0,10);
+    if (!sheet || !overlay) return;
+    var today = new Date().toISOString().slice(0, 10);
     sheet.innerHTML =
       '<button type="button" class="report-close" id="report-close-btn" aria-label="Close">&times;</button>' +
       '<div class="report-head"><div><h3>NLIP Verification Snapshot</h3><p style="margin:4px 0 0;font-size:0.82rem;color:#777;">Prototype Demonstration Record</p></div>' +
-        '<div class="report-meta"><b>'+p.ulpin+'</b><br>'+today+'</div></div>' +
-      '<div class="report-body"><dl>'+
-        field("State",p.state)+field("District",p.district)+field("Survey / Khasra",p.survey)+field("Area",p.area)+
-        field("Recorded Holder",p.holder)+field("Status",p.status)+field("Coordinates",p.coords)+field("Record of Rights",p.ror)+
+      '<div class="report-meta"><b>' + p.ulpin + '</b><br>' + today + '</div></div>' +
+      '<div class="report-body"><dl>' +
+      field("State", p.state) + field("District", p.district) + field("Survey / Khasra", p.survey) + field("Area", p.area) +
+      field("Recorded Holder", p.holder) + field("Status", p.status) + field("Coordinates", p.coords) + field("Record of Rights", p.ror) +
       '</dl></div>' +
       '<div class="report-foot"><div class="report-disclaimer">Presumptive record snapshot for demonstration purposes.</div>' +
-        '<div class="qr-box"><canvas id="qr-canvas" width="64" height="64"></canvas></div></div>' +
+      '<div class="qr-box"><canvas id="qr-canvas" width="64" height="64"></canvas></div></div>' +
       '<button type="button" class="print-btn" onclick="window.print()">Print / Save PDF</button>';
     overlay.classList.add("show");
     document.getElementById("report-close-btn").addEventListener("click", closeReport);
     drawQr("qr-canvas");
   }
 
-  function closeReport(){
+  function closeReport() {
     var overlay = document.getElementById("report-overlay");
-    if(overlay) overlay.classList.remove("show");
+    if (overlay) overlay.classList.remove("show");
   }
 
-  function drawQr(id){
+  function drawQr(id, customText) {
     var canvas = document.getElementById(id);
-    if(!canvas) return;
-    var ctx = canvas.getContext("2d"), size=16, px=4, seed=42;
-    function rand(){ seed=(seed*9301+49297)%233280; return seed/233280; }
-    ctx.fillStyle="#1c1813"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="#f3cf8c";
-    for(var r=0;r<size;r++) for(var c=0;c<size;c++){
-      var corner=(r<3&&c<3)||(r<3&&c>size-4)||(r>size-4&&c<3);
-      if(corner){ if(r===0||r===2||c===0||c===2) ctx.fillRect(c*px,r*px,px,px); continue; }
-      if(rand()>0.55) ctx.fillRect(c*px,r*px,px,px);
+    if (!canvas) return;
+    var p = window.__currentParcel || PARCELS["UP"];
+    var text = customText || (window.location.origin + window.location.pathname + "?state=" + encodeURIComponent(p.state || selectedState) + "&query=" + encodeURIComponent(p.ulpin || p.survey));
+
+    if (typeof QRCode !== "undefined") {
+      try {
+        var tempDiv = document.createElement("div");
+        new QRCode(tempDiv, {
+          text: text,
+          width: canvas.width || 56,
+          height: canvas.height || 56,
+          colorDark: "#1a1207",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        setTimeout(function () {
+          var img = tempDiv.querySelector("img");
+          var c = tempDiv.querySelector("canvas");
+          var ctx = canvas.getContext("2d");
+          if (img && img.src) {
+            var i = new Image();
+            i.onload = function () {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(i, 0, 0, canvas.width, canvas.height);
+            };
+            i.src = img.src;
+          } else if (c) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(c, 0, 0, canvas.width, canvas.height);
+          }
+        }, 80);
+        return;
+      } catch (err) {
+        console.warn("QRCode generation error:", err);
+      }
+    }
+
+    // High-contrast clean scannable fallback matrix
+    var ctx = canvas.getContext("2d"), size = 17, px = canvas.width / size;
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#1a1207";
+    for (var r = 0; r < size; r++) for (var c = 0; c < size; c++) {
+      var corner = (r < 4 && c < 4) || (r < 4 && c > size - 5) || (r > size - 5 && c < 4);
+      if (corner) {
+        if (r === 0 || r === 3 || c === 0 || c === 3 || (r === 1 && c === 1) || (r === 2 && c === 2)) ctx.fillRect(c * px, r * px, px, px);
+        continue;
+      }
+      var hash = (r * 31 + c * 17 + text.length * 7) % 100;
+      if (hash > 45) ctx.fillRect(c * px, r * px, px, px);
     }
   }
 
   /* ============================================================
      9. URL PARAMS
   ============================================================ */
-  function handleUrlParams(){
+  function handleUrlParams() {
     var params = new URLSearchParams(window.location.search);
     var stateParam = params.get("state");
     var queryParam = params.get("query");
-    if(stateParam && window.__selectState) window.__selectState(stateParam);
-    if(queryParam){
+    if (stateParam && window.__selectState) window.__selectState(stateParam);
+    if (queryParam) {
       var input = document.getElementById("ulpin-input");
-      if(input) input.value = queryParam;
-      setTimeout(function(){ doSearch(queryParam); }, 300);
+      if (input) input.value = queryParam;
+      setTimeout(function () { doSearch(queryParam); }, 300);
     } else {
       var hash = window.location.hash;
-      if(hash && hash.length > 1 && hash !== "#search-top"){
+      if (hash && hash.length > 1 && hash !== "#search-top") {
         var targetId = hash.substring(1);
-        setTimeout(function(){
-          if(!window.__currentParcel) doSearch("Khasra 412/1");
-          var targetEl = document.getElementById(targetId);
-          if(targetEl){
-            targetEl.style.display = "block";
-            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        setTimeout(function () {
+          var targetEl = document.getElementById(targetId === "parcel-overview" ? "dashboard" : targetId);
+          if (targetEl && (window.__currentParcel || targetId === "dashboard" || targetId === "parcel-overview")) {
+            targetEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
           }
         }, 300);
       }
@@ -875,58 +1003,446 @@
   }
 
   /* ============================================================
-     10. INIT
+     10. HIERARCHICAL SEARCH & DISTRICT CASCADING
   ============================================================ */
-  document.addEventListener("DOMContentLoaded", function(){
+  var HIERARCHY_DATA = {
+    "Uttar Pradesh": {
+      districts: {
+        "Lucknow": {
+          mandals: {
+            "Bakshi Ka Talab": {
+              villages: {
+                "Mahona": ["Khasra 412/1"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Telangana": {
+      districts: {
+        "Rangareddy": {
+          mandals: {
+            "Moinabad": {
+              villages: {
+                "Kanakamamidi": ["Survey 245/A"]
+              }
+            }
+          }
+        },
+        "Siddipet": {
+          mandals: {
+            "Gajwel": {
+              villages: {
+                "Pragnapur": ["Survey 108/AA"]
+              }
+            }
+          }
+        },
+        "Medchal-Malkajgiri": {
+          mandals: {
+            "Ghatkesar": {
+              villages: {
+                "Ankushapur": ["Survey 312/1"]
+              }
+            }
+          }
+        },
+        "Warangal": {
+          mandals: {
+            "Khazipet": {
+              villages: {
+                "Madikonda": ["Survey 520/B"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Bihar": {
+      districts: {
+        "Patna": {
+          mandals: {
+            "Phulwari Sharif": {
+              villages: {
+                "Walmi": ["Khasra 512/3 (Jamabandi 418)"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Maharashtra": {
+      districts: {
+        "Pune": {
+          mandals: {
+            "Haveli Taluka": {
+              villages: {
+                "Wagholi": ["7/12 Gat 88/1A"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Karnataka": {
+      districts: {
+        "Bengaluru Rural": {
+          mandals: {
+            "Devanahalli Taluk": {
+              villages: {
+                "Kundana": ["Survey 88/2"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Tamil Nadu": {
+      districts: {
+        "Coimbatore": {
+          mandals: {
+            "Sulur Taluk": {
+              villages: {
+                "Vellalore": ["Patta 1042"]
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  function initHierarchicalSearch() {
+    var tabQuick = document.getElementById("tab-quick-search");
+    var tabHier = document.getElementById("tab-hier-search");
+    var quickForm = document.getElementById("search-form");
+    var hierForm = document.getElementById("hierarchical-form");
+    var hierStateDisplay = document.getElementById("hier-selected-state-name");
+
+    var dSelect = document.getElementById("hier-district-select");
+    var mSelect = document.getElementById("hier-mandal-select");
+    var vSelect = document.getElementById("hier-village-select");
+    var sInput = document.getElementById("hier-survey-input");
+
+    if (!tabQuick || !tabHier || !hierForm) return;
+
+    function populateDistricts() {
+      if (!dSelect) return;
+      if (hierStateDisplay) hierStateDisplay.textContent = selectedState;
+      dSelect.innerHTML = '<option value="">Select District...</option>';
+      if (mSelect) { mSelect.innerHTML = '<option value="">Select Mandal/Tehsil...</option>'; mSelect.disabled = true; }
+      if (vSelect) { vSelect.innerHTML = '<option value="">Select Village...</option>'; vSelect.disabled = true; }
+      if (sInput) sInput.value = "";
+
+      var sData = HIERARCHY_DATA[selectedState];
+      if (!sData || !sData.districts) {
+        var opt = document.createElement("option");
+        opt.value = "Central District";
+        opt.textContent = "Central District (Demo)";
+        dSelect.appendChild(opt);
+        return;
+      }
+      Object.keys(sData.districts).forEach(function (dist) {
+        var opt = document.createElement("option");
+        opt.value = dist;
+        opt.textContent = dist;
+        dSelect.appendChild(opt);
+      });
+      dSelect.disabled = false;
+    }
+
+    if (dSelect) {
+      dSelect.addEventListener("change", function () {
+        var dist = this.value;
+        if (mSelect) {
+          mSelect.innerHTML = '<option value="">Select Mandal/Tehsil...</option>';
+          if (vSelect) { vSelect.innerHTML = '<option value="">Select Village...</option>'; vSelect.disabled = true; }
+          var sData = HIERARCHY_DATA[selectedState];
+          if (sData && sData.districts && sData.districts[dist]) {
+            var mandals = sData.districts[dist].mandals;
+            Object.keys(mandals).forEach(function (m) {
+              var opt = document.createElement("option");
+              opt.value = m;
+              opt.textContent = m;
+              mSelect.appendChild(opt);
+            });
+            mSelect.disabled = false;
+          } else {
+            mSelect.disabled = true;
+          }
+        }
+      });
+    }
+
+    if (mSelect) {
+      mSelect.addEventListener("change", function () {
+        var mandal = this.value;
+        var dist = dSelect ? dSelect.value : "";
+        if (vSelect) {
+          vSelect.innerHTML = '<option value="">Select Village...</option>';
+          var sData = HIERARCHY_DATA[selectedState];
+          if (sData && sData.districts && sData.districts[dist] && sData.districts[dist].mandals[mandal]) {
+            var villages = sData.districts[dist].mandals[mandal].villages;
+            Object.keys(villages).forEach(function (v) {
+              var opt = document.createElement("option");
+              opt.value = v;
+              opt.textContent = v;
+              vSelect.appendChild(opt);
+            });
+            vSelect.disabled = false;
+          } else {
+            vSelect.disabled = true;
+          }
+        }
+      });
+    }
+
+    if (vSelect) {
+      vSelect.addEventListener("change", function () {
+        var village = this.value;
+        var dist = dSelect ? dSelect.value : "";
+        var mandal = mSelect ? mSelect.value : "";
+        var sData = HIERARCHY_DATA[selectedState];
+        if (sData && sData.districts[dist] && sData.districts[dist].mandals[mandal] && sData.districts[dist].mandals[mandal].villages[village]) {
+          var plots = sData.districts[dist].mandals[mandal].villages[village];
+          if (plots && plots.length && sInput) {
+            sInput.value = plots[0];
+          }
+        }
+      });
+    }
+
+    tabQuick.addEventListener("click", function () {
+      tabQuick.classList.add("active");
+      tabQuick.setAttribute("aria-selected", "true");
+      tabHier.classList.remove("active");
+      tabHier.setAttribute("aria-selected", "false");
+      if (quickForm) quickForm.style.display = "block";
+      if (hierForm) hierForm.style.display = "none";
+    });
+
+    tabHier.addEventListener("click", function () {
+      tabHier.classList.add("active");
+      tabHier.setAttribute("aria-selected", "true");
+      tabQuick.classList.remove("active");
+      tabQuick.setAttribute("aria-selected", "false");
+      if (quickForm) quickForm.style.display = "none";
+      if (hierForm) hierForm.style.display = "block";
+      populateDistricts();
+    });
+
+    hierForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var sVal = sInput ? sInput.value.trim() : "";
+      var dVal = dSelect ? dSelect.value : "";
+      var vVal = vSelect ? vSelect.value : "";
+      var query = sVal || (dVal + " " + vVal);
+      if (!query) {
+        if (sInput) sInput.focus();
+        return;
+      }
+      doSearch(query);
+    });
+
+    window.__updateHierState = populateDistricts;
+  }
+
+  /* ============================================================
+     11. GPS "LOCATE MY LAND" GEOLOCATION
+  ============================================================ */
+  function initGpsLocate() {
+    var gpsBtn = document.getElementById("locate-gps-btn");
+    if (!gpsBtn) return;
+
+    gpsBtn.addEventListener("click", function () {
+      showFeedback("Acquiring GPS fix from device hardware...", "loading");
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var lat = pos.coords.latitude;
+          var lng = pos.coords.longitude;
+
+          var sites = [
+            { key: "TS", state: "Telangana", dist: "Rangareddy", query: "Rangareddy: Survey 245/A", lat: 17.3195, lng: 78.2680 },
+            { key: "UP", state: "Uttar Pradesh", dist: "Lucknow", query: "Khasra 412/1", lat: 26.8467, lng: 80.9462 },
+            { key: "KA", state: "Karnataka", dist: "Bengaluru Rural", query: "Survey: 88/2", lat: 13.2432, lng: 77.7141 },
+            { key: "TN", state: "Tamil Nadu", dist: "Coimbatore", query: "Patta 1042", lat: 11.0021, lng: 77.0432 },
+            { key: "BR", state: "Bihar", dist: "Patna", query: "Patna: Jamabandi 418", lat: 25.5682, lng: 85.0741 },
+            { key: "MH", state: "Maharashtra", dist: "Pune", query: "Pune: 7/12 Gat 88/1A", lat: 18.5793, lng: 73.9812 }
+          ];
+
+          var closest = sites[0];
+          var minDist = 999999;
+          sites.forEach(function (s) {
+            var d = Math.hypot(lat - s.lat, lng - s.lng);
+            if (d < minDist) { minDist = d; closest = s; }
+          });
+
+          setTimeout(function () {
+            if (window.__selectState) window.__selectState(closest.state);
+            var inp = document.getElementById("ulpin-input");
+            if (inp) inp.value = closest.query;
+            doSearch(closest.query);
+            showFeedback("📍 Matched closest cadastre parcel in " + closest.dist + ", " + closest.state, "success");
+          }, 350);
+        }, function (err) {
+          console.warn("GPS error:", err);
+          showFeedback("📍 Using nearest field surveyor location (Simulated GPS: Kanakamamidi, Telangana)", "warn");
+          setTimeout(function () {
+            if (window.__selectState) window.__selectState("Telangana");
+            var inp = document.getElementById("ulpin-input");
+            if (inp) inp.value = "Rangareddy: Survey 245/A";
+            doSearch("Rangareddy: Survey 245/A");
+          }, 450);
+        }, { timeout: 5000, enableHighAccuracy: true });
+      } else {
+        showFeedback("Geolocation not supported. Using standard cadastral index.", "warn");
+      }
+    });
+  }
+
+  /* ============================================================
+     12. CITIZEN ACTION & GRIEVANCE WORKFLOW
+  ============================================================ */
+  function initCitizenActions() {
+    var btnDispute = document.getElementById("btn-file-dispute");
+    var btnEc = document.getElementById("btn-request-ec");
+    var overlay = document.getElementById("grievance-overlay");
+    var closeBtn = document.getElementById("gs-close-btn");
+    var cancelBtn = document.getElementById("gs-cancel-btn");
+    var doneBtn = document.getElementById("gs-done-btn");
+    var form = document.getElementById("gs-form");
+    var successBox = document.getElementById("gs-success");
+    var actionTypeSelect = document.getElementById("gs-action-type");
+
+    var pUlpin = document.getElementById("gs-p-ulpin");
+    var pSurvey = document.getElementById("gs-p-survey");
+    var pLoc = document.getElementById("gs-p-loc");
+
+    if (!overlay) return;
+
+    function openModal(defaultType) {
+      var p = window.__currentParcel || PARCELS["UP"];
+      if (pUlpin) pUlpin.textContent = p.ulpin || "TS-DEMO-245-018";
+      if (pSurvey) pSurvey.textContent = p.survey || "245/A";
+      if (pLoc) pLoc.textContent = (p.village || "") + ", " + (p.district || "") + ", " + (p.state || "");
+      if (actionTypeSelect && defaultType) actionTypeSelect.value = defaultType;
+
+      if (form) form.style.display = "block";
+      if (successBox) successBox.style.display = "none";
+      overlay.style.display = "flex";
+    }
+
+    function closeModal() {
+      overlay.style.display = "none";
+    }
+
+    if (btnDispute) btnDispute.addEventListener("click", function () { openModal("demarcation"); });
+    if (btnEc) btnEc.addEventListener("click", function () { openModal("ec_issuance"); });
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+    if (doneBtn) doneBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var ackEl = document.getElementById("gs-ack-no");
+        var ackNum = "NLIP-REV-2026-" + Math.floor(10000 + Math.random() * 90000);
+        if (ackEl) ackEl.textContent = ackNum;
+
+        form.style.display = "none";
+        if (successBox) successBox.style.display = "block";
+      });
+    }
+  }
+
+  /* ============================================================
+     13. BACKEND API ASYNC CHECK
+  ============================================================ */
+  function initBackendCheck() {
+    fetch("http://localhost:8000/parcels")
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var pill = document.querySelector(".system-status-pill");
+        if (pill && Array.isArray(data)) {
+          pill.innerHTML = '<span class="status-pulse-dot" style="background:#48d28a;"></span><span>FastAPI Backend Connected (' + data.length + ' Parcels Synchronized)</span>';
+        }
+      })
+      .catch(function () {
+        // Standalone client mode
+      });
+  }
+
+  /* ============================================================
+     14. INIT
+  ============================================================ */
+  document.addEventListener("DOMContentLoaded", function () {
     initLandBackground();
     initStateDropdown();
+    initHierarchicalSearch();
+    initGpsLocate();
+    initCitizenActions();
+    initBackendCheck();
 
     feedbackEl = document.getElementById("search-feedback");
     feedbackInner = document.getElementById("search-feedback-inner");
 
     // Search form
     var searchForm = document.getElementById("search-form");
-    if(searchForm){
-      searchForm.addEventListener("submit", function(e){
+    if (searchForm) {
+      searchForm.addEventListener("submit", function (e) {
         e.preventDefault();
         var val = document.getElementById("ulpin-input").value.trim();
-        if(!val){ document.getElementById("ulpin-input").focus(); return; }
+        if (!val) { document.getElementById("ulpin-input").focus(); return; }
         doSearch(val);
       });
     }
 
     // Sample chips
-    document.querySelectorAll(".sample-chip").forEach(function(chip){
-      chip.addEventListener("click", function(){
-        document.querySelectorAll(".sample-chip").forEach(function(c){ c.classList.remove("active"); });
+    document.querySelectorAll(".sample-chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        document.querySelectorAll(".sample-chip").forEach(function (c) { c.classList.remove("active"); });
         this.classList.add("active");
         var st = this.dataset.state, q = this.dataset.query;
-        if(st && window.__selectState) window.__selectState(st);
+        if (st && window.__selectState) window.__selectState(st);
         var input = document.getElementById("ulpin-input");
-        if(input) input.value = q;
+        if (input) input.value = q;
+        doSearch(q);
+      });
+    });
+
+    // Not-found pill buttons
+    document.querySelectorAll(".snf-pill-btn").forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var st = this.dataset.state;
+        var q = this.dataset.query;
+        if (st && window.__selectState) window.__selectState(st);
+        var input = document.getElementById("ulpin-input");
+        if (input) input.value = q;
         doSearch(q);
       });
     });
 
     // View details / Next: Land Passport
     var detailsBtn = document.getElementById("pic-details-btn");
-    if(detailsBtn){
-      detailsBtn.addEventListener("click", function(){
+    if (detailsBtn) {
+      detailsBtn.addEventListener("click", function () {
         var t = document.getElementById("passport") || document.getElementById("dashboard");
-        if(t){ t.style.display = "block"; t.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"}); }
+        if (t) { t.style.display = "block"; t.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); }
       });
     }
 
     // Report & Export Actions
     var reportBtn = document.getElementById("report-btn");
-    if(reportBtn) reportBtn.addEventListener("click", openReport);
+    if (reportBtn) reportBtn.addEventListener("click", openReport);
     var reportOverlay = document.getElementById("report-overlay");
-    if(reportOverlay) reportOverlay.addEventListener("click", function(e){ if(e.target === this) closeReport(); });
+    if (reportOverlay) reportOverlay.addEventListener("click", function (e) { if (e.target === this) closeReport(); });
 
     // Export Cadastral GeoJSON
     var exportBtn = document.getElementById("export-geojson-btn");
-    if(exportBtn){
-      exportBtn.addEventListener("click", function(){
+    if (exportBtn) {
+      exportBtn.addEventListener("click", function () {
         var p = window.__currentParcel || PARCELS["UP"];
         var coordsStr = p.coords || "26.85,80.94";
         var parts = coordsStr.split(",");
@@ -980,17 +1496,17 @@
 
     // Copy Deep Share Link
     var copyBtn = document.getElementById("copy-link-btn");
-    if(copyBtn){
-      copyBtn.addEventListener("click", function(){
+    if (copyBtn) {
+      copyBtn.addEventListener("click", function () {
         var p = window.__currentParcel || PARCELS["UP"];
         var shareUrl = window.location.origin + window.location.pathname + "?state=" + encodeURIComponent(p.state || selectedState) + "&query=" + encodeURIComponent(p.ulpin || p.survey);
         var btnText = document.getElementById("copy-btn-text");
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(shareUrl).then(function(){
-            if(btnText){
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareUrl).then(function () {
+            if (btnText) {
               var prev = btnText.textContent;
               btnText.textContent = "✓ Link Copied!";
-              setTimeout(function(){ btnText.textContent = prev; }, 2400);
+              setTimeout(function () { btnText.textContent = prev; }, 2400);
             }
           });
         } else {
@@ -1001,56 +1517,56 @@
 
     // Search Another Land (scrolls back to search input)
     var newSearchBtn = document.getElementById("new-search-btn");
-    if(newSearchBtn){
-      newSearchBtn.addEventListener("click", function(){
+    if (newSearchBtn) {
+      newSearchBtn.addEventListener("click", function () {
         var searchTop = document.getElementById("search-top");
-        if(searchTop){
-          searchTop.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        if (searchTop) {
+          searchTop.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
           var inp = document.getElementById("ulpin-input");
-          if(inp){ setTimeout(function(){ inp.focus(); inp.select(); }, 400); }
+          if (inp) { setTimeout(function () { inp.focus(); inp.select(); }, 400); }
         }
       });
     }
 
     // Back to Top button in footer
     var backToTop = document.getElementById("back-to-top-btn");
-    if(backToTop){
-      backToTop.addEventListener("click", function(){
-        window.scrollTo({top: 0, behavior: reduceMotion ? "auto" : "smooth"});
+    if (backToTop) {
+      backToTop.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
       });
     }
 
-    // Top Navigation Links (Dashboard, GIS Map, Passport, Intelligence, History, Integration)
+    // Navigation Links (Main & Contextual)
     var isClickScrolling = false;
     var clickScrollTimer = null;
 
-    function resetClickScrolling(){
+    function resetClickScrolling() {
       isClickScrolling = false;
-      if(clickScrollTimer) clearTimeout(clickScrollTimer);
+      if (clickScrollTimer) clearTimeout(clickScrollTimer);
     }
 
     window.addEventListener("wheel", resetClickScrolling, { passive: true });
     window.addEventListener("touchmove", resetClickScrolling, { passive: true });
 
-    function updateActiveNavOnScroll(){
-      if(isClickScrolling) return;
+    updateActiveNavOnScroll = function () {
+      if (isClickScrolling) return;
 
-      var navLinks = Array.from(document.querySelectorAll(".head-nav a")).filter(function(a){
+      var navLinks = Array.from(document.querySelectorAll(".head-nav a")).filter(function (a) {
         var href = a.getAttribute("href");
         return href && href.startsWith("#");
       });
-      if(!navLinks.length) return;
+      if (!navLinks.length) return;
 
       var visibleSections = [];
-      navLinks.forEach(function(link){
+      navLinks.forEach(function (link) {
         var id = link.getAttribute("href").substring(1);
         var el = document.getElementById(id);
-        if(el && (el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0) && getComputedStyle(el).display !== "none"){
+        if (el && (el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0) && getComputedStyle(el).display !== "none") {
           visibleSections.push({ id: id, el: el, link: link });
         }
       });
 
-      if(!visibleSections.length) return;
+      if (!visibleSections.length) return;
 
       var scrollPos = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
       var windowHeight = window.innerHeight;
@@ -1062,22 +1578,22 @@
       var activeSection = null;
 
       // When on the search page or viewing the search section, Search is always active
-      if(scrollPos < 100 || searchBottom > 220){
+      if (scrollPos < 100 || searchBottom > 220) {
         activeSection = visibleSections[0];
-      } else if(scrollPos + windowHeight >= docHeight - 40){
+      } else if (scrollPos + windowHeight >= docHeight - 40) {
         activeSection = visibleSections[visibleSections.length - 1];
       } else {
         var headerOffset = 110;
-        for(var i = 0; i < visibleSections.length; i++){
+        for (var i = 0; i < visibleSections.length; i++) {
           var rect = visibleSections[i].el.getBoundingClientRect();
-          if(rect.top <= headerOffset && rect.bottom > headerOffset){
+          if (rect.top <= headerOffset && rect.bottom > headerOffset) {
             activeSection = visibleSections[i];
             break;
           }
         }
-        if(!activeSection){
-          for(var j = visibleSections.length - 1; j >= 0; j--){
-            if(visibleSections[j].el.getBoundingClientRect().top <= headerOffset){
+        if (!activeSection) {
+          for (var j = visibleSections.length - 1; j >= 0; j--) {
+            if (visibleSections[j].el.getBoundingClientRect().top <= headerOffset) {
               activeSection = visibleSections[j];
               break;
             }
@@ -1085,53 +1601,66 @@
         }
       }
 
-      if(!activeSection) activeSection = visibleSections[0];
+      if (!activeSection) activeSection = visibleSections[0];
 
-      navLinks.forEach(function(a){ a.classList.remove("active"); });
+      navLinks.forEach(function (a) { a.classList.remove("active"); });
       activeSection.link.classList.add("active");
+
+      // Sync contextual nav links (.pcn-link)
+      var pcnLinks = document.querySelectorAll(".pcn-link");
+      if (pcnLinks.length && activeSection) {
+        pcnLinks.forEach(function (link) {
+          var tId = link.getAttribute("data-target") || (link.getAttribute("href") || "").substring(1);
+          if (tId === activeSection.id) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
 
       // Update Crazy Cadastral Scroll HUD, Laser Bar, Telemetry & Scanline
       updateCadastralScrollHud(scrollPos, docHeight, windowHeight, activeSection);
     }
 
     var scrollStopTimer = null;
-    function updateCadastralScrollHud(scrollPos, docHeight, windowHeight, activeSection){
+    function updateCadastralScrollHud(scrollPos, docHeight, windowHeight, activeSection) {
       var maxScroll = docHeight - windowHeight;
       var scrollPct = maxScroll > 0 ? Math.min(100, Math.max(0, Math.round((scrollPos / maxScroll) * 100))) : 0;
 
       // 1. Top Laser Scanner Bar
       var laserBar = document.getElementById("scroll-laser-bar");
-      if(laserBar){
+      if (laserBar) {
         laserBar.style.width = scrollPct + "%";
       }
 
       // 2. Dynamic scroll glow on body & scrollbar
       document.body.classList.add("is-scrolling");
       clearTimeout(scrollStopTimer);
-      scrollStopTimer = setTimeout(function(){
+      scrollStopTimer = setTimeout(function () {
         document.body.classList.remove("is-scrolling");
         var teleHud = document.getElementById("scroll-telemetry-hud");
-        if(teleHud) teleHud.classList.remove("active");
+        if (teleHud) teleHud.classList.remove("active");
       }, 700);
 
       // 4. Floating Cadastral Telemetry Pill
       var teleHud = document.getElementById("scroll-telemetry-hud");
       var teleText = document.getElementById("tele-readout");
       var elev = Math.round(120 + scrollPct * 14.8);
-      if(teleHud && teleText){
+      if (teleHud && teleText) {
         teleHud.classList.add("active");
         var parcelTag = (window.__currentParcel && window.__currentParcel.survey) ? ("PARCEL " + window.__currentParcel.survey) : "CADASTRE SCAN";
         teleText.textContent = parcelTag + " · " + scrollPct + "% · ELEV " + elev + "m";
       }
       var chnAlt = document.getElementById("chn-altitude");
-      if(chnAlt) chnAlt.textContent = "ELEV " + elev + "m";
+      if (chnAlt) chnAlt.textContent = "ELEV " + elev + "m";
 
       // 5. Waypoint Radar HUD Navigation
       var hudNodes = document.querySelectorAll(".chn-node");
-      if(hudNodes.length && activeSection){
-        hudNodes.forEach(function(node){
+      if (hudNodes.length && activeSection) {
+        hudNodes.forEach(function (node) {
           var targetId = node.getAttribute("data-target");
-          if(targetId === activeSection.id){
+          if (targetId === activeSection.id) {
             node.classList.add("active");
           } else {
             node.classList.remove("active");
@@ -1141,9 +1670,9 @@
     }
 
     var scrollTicking = false;
-    window.addEventListener("scroll", function(){
-      if(!scrollTicking){
-        requestAnimationFrame(function(){
+    window.addEventListener("scroll", function () {
+      if (!scrollTicking) {
+        requestAnimationFrame(function () {
           updateActiveNavOnScroll();
           scrollTicking = false;
         });
@@ -1151,113 +1680,100 @@
       }
     }, { passive: true });
 
-    document.querySelectorAll(".head-nav a").forEach(function(link){
-      link.addEventListener("click", function(e){
+    // Main Navigation Links (Home, Search Land)
+    document.querySelectorAll(".head-nav a").forEach(function (link) {
+      link.addEventListener("click", function (e) {
         var href = this.getAttribute("href");
-        if(!href || !href.startsWith("#")) return;
+        if (!href || !href.startsWith("#")) return;
         var targetId = href.substring(1);
         var targetEl = document.getElementById(targetId);
 
         e.preventDefault();
-
-        // If clicking search, scroll to search top immediately
-        if(targetId === "search-top"){
-          document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
-          this.classList.add("active");
-          if(targetEl){
-            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-          }
-          return;
-        }
-
-        // If touching a module before searching, initialize default demo parcel immediately
-        var isHidden = !targetEl || targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none";
-        if(!window.__currentParcel || isHidden){
-          var inputVal = document.getElementById("ulpin-input") ? document.getElementById("ulpin-input").value.trim() : "";
-          var query = inputVal || (selectedState === "Telangana" ? "Rangareddy: Survey 245/A" : (selectedState === "Bihar" ? "Patna: Jamabandi 418" : (selectedState === "Maharashtra" ? "Pune: 7/12 Gat 88/1A" : "Khasra 412/1")));
-          doSearch(query, targetId);
-          return;
-        }
-
-        // Target section is already visible
-        document.querySelectorAll(".head-nav a").forEach(function(a){ a.classList.remove("active"); });
+        document.querySelectorAll(".head-nav a").forEach(function (a) { a.classList.remove("active"); });
         this.classList.add("active");
 
-        isClickScrolling = true;
-        clearTimeout(clickScrollTimer);
-        clickScrollTimer = setTimeout(function(){
-          isClickScrolling = false;
-          updateActiveNavOnScroll();
-        }, 900);
-
-        if(targetEl){
-          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          if (targetId === "search-top") {
+            var inp = document.getElementById("ulpin-input");
+            if (inp) { setTimeout(function () { inp.focus(); inp.select(); }, 400); }
+          }
         }
       });
     });
 
-    // Cadastral Waypoint HUD click handler
-    document.querySelectorAll(".chn-node").forEach(function(node){
-      node.addEventListener("click", function(e){
-        var targetId = this.getAttribute("data-target");
-        if(!targetId) return;
+    // Contextual Parcel Navigation links (Parcel Overview, GIS, Intelligence, History, Data Sources)
+    document.querySelectorAll(".pcn-link").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        var href = this.getAttribute("href");
+        if (!href || !href.startsWith("#")) return;
+        var targetId = href.substring(1);
         var targetEl = document.getElementById(targetId);
-        e.preventDefault();
-
-        if(targetId === "search-top"){
-          document.querySelectorAll(".chn-node").forEach(function(n){ n.classList.remove("active"); });
+        if (targetEl) {
+          e.preventDefault();
+          document.querySelectorAll(".pcn-link").forEach(function (a) { a.classList.remove("active"); });
           this.classList.add("active");
-          if(targetEl){
-            targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-          }
-          return;
-        }
 
-        var isHidden = !targetEl || targetEl.style.display === "none" || getComputedStyle(targetEl).display === "none";
-        if(!window.__currentParcel || isHidden){
-          var inputVal = document.getElementById("ulpin-input") ? document.getElementById("ulpin-input").value.trim() : "";
-          var query = inputVal || (selectedState === "Telangana" ? "Rangareddy: Survey 245/A" : (selectedState === "Bihar" ? "Patna: Jamabandi 418" : (selectedState === "Maharashtra" ? "Pune: 7/12 Gat 88/1A" : "Khasra 412/1")));
-          doSearch(query, targetId);
-          return;
-        }
+          isClickScrolling = true;
+          clearTimeout(clickScrollTimer);
+          clickScrollTimer = setTimeout(function () {
+            isClickScrolling = false;
+            updateActiveNavOnScroll();
+          }, 900);
 
-        document.querySelectorAll(".chn-node").forEach(function(n){ n.classList.remove("active"); });
-        this.classList.add("active");
-
-        isClickScrolling = true;
-        clearTimeout(clickScrollTimer);
-        clickScrollTimer = setTimeout(function(){
-          isClickScrolling = false;
-          updateActiveNavOnScroll();
-        }, 900);
-
-        if(targetEl){
-          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
+          targetEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
         }
       });
     });
+
+    // "Search Land →" button in No Parcel Selected empty state
+    var emptySearchBtn = document.getElementById("empty-search-land-btn");
+    if (emptySearchBtn) {
+      emptySearchBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var searchTop = document.getElementById("search-top");
+        if (searchTop) {
+          searchTop.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          var inp = document.getElementById("ulpin-input");
+          if (inp) { setTimeout(function () { inp.focus(); inp.select(); }, 400); }
+        }
+      });
+    }
+
+    // "Change Parcel ↺" button in contextual nav
+    var pcnChangeBtn = document.getElementById("pcn-change-btn");
+    if (pcnChangeBtn) {
+      pcnChangeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var searchTop = document.getElementById("search-top");
+        if (searchTop) {
+          searchTop.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          var inp = document.getElementById("ulpin-input");
+          if (inp) { setTimeout(function () { inp.focus(); inp.select(); }, 400); }
+        }
+      });
+    }
 
     // Dashboard navigation cards click handler
-    document.querySelectorAll(".dash-nav-card").forEach(function(card){
-      card.addEventListener("click", function(e){
+    document.querySelectorAll(".dash-nav-card").forEach(function (card) {
+      card.addEventListener("click", function (e) {
         var href = this.getAttribute("href");
-        if(!href || !href.startsWith("#")) return;
+        if (!href || !href.startsWith("#")) return;
         var targetEl = document.getElementById(href.substring(1));
-        if(targetEl){
+        if (targetEl) {
           e.preventDefault();
           targetEl.style.display = "block";
 
           isClickScrolling = true;
           clearTimeout(clickScrollTimer);
-          clickScrollTimer = setTimeout(function(){
+          clickScrollTimer = setTimeout(function () {
             isClickScrolling = false;
             updateActiveNavOnScroll();
           }, 900);
 
-          targetEl.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-          // Sync header nav active link
-          document.querySelectorAll(".head-nav a").forEach(function(a){
-            if(a.getAttribute("href") === href) a.classList.add("active");
+          targetEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          document.querySelectorAll(".pcn-link").forEach(function (a) {
+            if (a.getAttribute("href") === href) a.classList.add("active");
             else a.classList.remove("active");
           });
         }
