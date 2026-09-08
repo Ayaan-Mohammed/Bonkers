@@ -900,6 +900,8 @@
     var sheet = document.getElementById("report-sheet");
     var overlay = document.getElementById("report-overlay");
     if (!sheet || !overlay) return;
+    document.body.classList.add("modal-open");
+    document.body.classList.add("printing-report");
     var today = new Date().toISOString().slice(0, 10);
     sheet.innerHTML =
       '<button type="button" class="report-close" id="report-close-btn" aria-label="Close">&times;</button>' +
@@ -920,6 +922,8 @@
   function closeReport() {
     var overlay = document.getElementById("report-overlay");
     if (overlay) overlay.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    document.body.classList.remove("printing-report");
   }
 
   function drawQr(id, customText) {
@@ -1331,10 +1335,12 @@
       if (form) form.style.display = "block";
       if (successBox) successBox.style.display = "none";
       overlay.style.display = "flex";
+      document.body.classList.add("modal-open");
     }
 
     function closeModal() {
       overlay.style.display = "none";
+      document.body.classList.remove("modal-open");
     }
 
     if (btnDispute) btnDispute.addEventListener("click", function () { openModal("demarcation"); });
@@ -1785,6 +1791,35 @@
 
     // URL params & hash handling
     handleUrlParams();
+
+    // Global keyboard accessibility: Escape to dismiss active modal overlays
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        var repOverlay = document.getElementById("report-overlay");
+        if (repOverlay && repOverlay.classList.contains("show")) {
+          closeReport();
+        }
+        var grievOverlay = document.getElementById("grievance-overlay");
+        if (grievOverlay && grievOverlay.style.display === "flex") {
+          grievOverlay.style.display = "none";
+          document.body.classList.remove("modal-open");
+        }
+      }
+    });
+
+    // Before/After print safety listeners
+    window.addEventListener("beforeprint", function () {
+      var repOverlay = document.getElementById("report-overlay");
+      if (repOverlay && repOverlay.classList.contains("show")) {
+        document.body.classList.add("printing-report");
+      }
+    });
+    window.addEventListener("afterprint", function () {
+      var repOverlay = document.getElementById("report-overlay");
+      if (!repOverlay || !repOverlay.classList.contains("show")) {
+        document.body.classList.remove("printing-report");
+      }
+    });
   });
 
 })();

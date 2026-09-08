@@ -145,7 +145,7 @@ button{font-family:var(--font-body);cursor:pointer;}
 /* Section scroll offsets for sticky header & contextual nav */
 .search-hero, .dashboard-section, .gis-section, .passport-section, .intel-section, .intelligence-section, .history-section, .integration-section,
 #search-top, #dashboard, #gis-view, #passport, #intelligence, #history, #integration {
-  scroll-margin-top: 118px;
+  scroll-margin-top: 110px;
 }
 
 /* ===== Landing Page ===== */
@@ -503,7 +503,7 @@ button{font-family:var(--font-body);cursor:pointer;}
 .map-gis-controls button:hover{background:rgba(231,174,89,0.18);border-color:rgba(231,174,89,0.35);color:var(--amber);}
 
 .map-legend{
-  position:absolute;left:14px;top:14px;z-index:5;
+  position:absolute;left:14px;top:54px;z-index:5;
   background:rgba(18,16,13,0.82);border:1px solid rgba(231,174,89,0.2);
   padding:6px 10px;border-radius:7px;display:flex;gap:10px;backdrop-filter:blur(8px);
 }
@@ -718,16 +718,17 @@ button{font-family:var(--font-body);cursor:pointer;}
 
 /* ===== Report modal ===== */
 .report-overlay{
-  position:fixed;inset:0;background:rgba(6,7,14,0.75);
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  display:none;align-items:flex-start;justify-content:center;
-  padding:40px 20px;overflow-y:auto;z-index:100;
+  position:fixed;inset:0;background:rgba(6,7,14,0.85);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;
+  padding:40px 20px;overflow-y:auto;z-index:100000;
 }
 .report-overlay.show{display:flex;}
 .report-sheet{
   background:var(--paper);max-width:600px;width:100%;padding:38px;
   border-radius:var(--radius);position:relative;
-  box-shadow:0 36px 80px -20px rgba(0,0,0,0.55);
+  margin:auto;
+  box-shadow:0 36px 80px -20px rgba(0,0,0,0.7);
 }
 .report-close{
   position:absolute;top:16px;right:18px;background:var(--paper-line);border:none;
@@ -745,6 +746,26 @@ button{font-family:var(--font-body);cursor:pointer;}
 .print-btn{
   margin-top:20px;background:var(--ink);color:var(--paper);border:none;padding:11px 18px;
   font-size:0.82rem;border-radius:8px;font-weight:500;
+}
+
+/* Modal Open State: Prevent background scrolling & completely suppress fixed top notch & HUDs */
+body.modal-open,
+body.printing-report {
+  overflow: hidden;
+}
+
+body.modal-open .parcel-context-nav,
+body.printing-report .parcel-context-nav,
+body.modal-open .cadastral-hud-nav,
+body.printing-report .cadastral-hud-nav,
+body.modal-open .scroll-telemetry-hud,
+body.printing-report .scroll-telemetry-hud,
+body.modal-open .scroll-laser-gauge,
+body.printing-report .scroll-laser-gauge {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-20px) !important;
 }
 
 /* MapLibre overrides */
@@ -870,7 +891,7 @@ button{font-family:var(--font-body);cursor:pointer;}
 /* ===== Contextual Parcel Navigation (Sub-bar active after parcel selection) ===== */
 .parcel-context-nav {
   position:sticky;
-  top:70px;
+  top:61px;
   z-index:990;
   background:rgba(18,14,10,0.94);
   border-bottom:1px solid rgba(241,204,137,0.18);
@@ -1855,9 +1876,9 @@ button{font-family:var(--font-body);cursor:pointer;}
 .grievance-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(8px);
+  z-index: 100000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1987,10 +2008,14 @@ button{font-family:var(--font-body);cursor:pointer;}
 }
 
 @media print{
-  /* Hide page Chrome */
+  /* Hide page Chrome, top notch navigation bar, HUDs, background canvas, and action buttons */
   .site-header, .site-head, .search-hero, .hero, .site-footer, .site-foot,
+  .parcel-context-nav, #parcel-context-nav, .pcn-inner,
+  .cadastral-hud-nav, .scroll-telemetry-hud, .scroll-laser-gauge,
   .passport-print-btn, .nav-action-btn, .quick-tags, .search-filter-pills, .filter-chip,
-  .report-btn, .report-close, #report-btn {
+  .report-btn, .report-close, #report-btn, .print-btn, #report-close-btn,
+  .land-bg-canvas, #land-bg, .system-status-pill, .grievance-overlay,
+  .export-section, .feedback-container {
     display: none !important;
   }
 
@@ -2090,18 +2115,61 @@ button{font-family:var(--font-body);cursor:pointer;}
     color: #554433 !important;
   }
 
+  /* When printing verification report snapshot */
+  body.printing-report .dark-section,
+  body.printing-report .dashboard-section,
+  body.printing-report .gis-section,
+  body.printing-report .passport-section,
+  body.printing-report .intel-section,
+  body.printing-report .intelligence-section,
+  body.printing-report .history-section,
+  body.printing-report .integration-section,
+  body.printing-report .search-hero,
+  body.printing-report .parcel-context-nav {
+    display: none !important;
+  }
+
+  body.printing-report {
+    background: #ffffff !important;
+    color: #1a1207 !important;
+  }
+
   /* Only show report overlay when explicitly open with .show */
   .report-overlay:not(.show) {
     display: none !important;
   }
 
+  body.printing-report .report-overlay.show,
   .report-overlay.show {
     position: static !important;
     background: none !important;
     padding: 0 !important;
+    margin: 0 auto !important;
     display: block !important;
+    overflow: visible !important;
+    z-index: auto !important;
   }
-  .report-sheet {
+
+  body.printing-report .report-sheet,
+  .report-overlay.show .report-sheet {
     box-shadow: none !important;
+    border: 1.5px solid #1a1207 !important;
+    max-width: 740px !important;
+    margin: 20px auto !important;
+    padding: 32px !important;
+    background: #ffffff !important;
+    color: #1a1207 !important;
+    page-break-inside: avoid !important;
+  }
+
+  body.printing-report .report-sheet *,
+  .report-overlay.show .report-sheet * {
+    color: #1a1207 !important;
+    text-shadow: none !important;
+  }
+
+  .report-overlay.show .report-close,
+  .report-overlay.show .print-btn {
+    display: none !important;
   }
 }
