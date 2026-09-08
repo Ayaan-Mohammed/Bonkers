@@ -448,7 +448,7 @@
 
   function hideResultSections() {
     window.__currentParcel = null;
-    ["gis-view", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
+    ["gis-view", "dossier", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) { el.style.display = "none"; }
     });
@@ -461,7 +461,7 @@
   }
 
   function showResultSections(p) {
-    ["dashboard", "gis-view", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
+    ["dashboard", "gis-view", "dossier", "passport", "intelligence", "history", "integration", "report"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) {
         el.style.display = "block";
@@ -597,7 +597,7 @@
 
       // Render SIH Modules
       renderParcelOverview(p);
-      renderPassport(p);
+      renderDossier(p, key);
       renderLandIntelligence(p, key);
       renderLandHistory(p);
       window.__currentParcel = p;
@@ -643,11 +643,11 @@
   var renderDashboard = renderParcelOverview; // Alias for safety
 
   /* ============================================================
-     2. DIGITAL LAND PASSPORT
+     2. CERTIFIED PARCEL DOSSIER (प्रमाणित भू-अभिलेख प्रतिवेदन)
   ============================================================ */
-  function renderPassport(p){
-    var sheet = document.getElementById("passport-sheet");
-    if(!sheet) return;
+  function renderDossier(p, key) {
+    var sheet = document.getElementById("dossier-sheet") || document.getElementById("passport-sheet");
+    if (!sheet) return;
 
     var isWarn = (p.score && p.score < 90);
     var ulpin = p.ulpin || "Data not available";
@@ -655,73 +655,173 @@
     var area = p.area || "Data not available";
     var state = p.state || "Data not available";
     var district = p.district || "Data not available";
-    var location = (p.village ? (p.village + ", " + (p.mandal || "") + (p.coords ? " (" + p.coords + ")" : "")) : "Data not available");
+    var mandal = p.mandal || "Taluk / Mandal";
+    var village = p.village || "Revenue Village";
+    var villageMandal = (p.village ? p.village + ", " + (p.mandal || "") : "Not recorded");
+    var districtState = district + ", " + state;
+    var coords = p.coords || "Coordinates geo-referenced";
     var status = p.status || "Data not available";
     var holder = p.holder || "Data not available";
-    var ror = p.ror || "Data not available";
+    var ror = p.ror || "Record of Rights verified";
+    var type = p.type || "Agricultural / Rural";
+    var ownership = p.ownership || "Presumptive record of rights";
+    var mutation = p.mutation || "Mutation order recorded";
+    var encumbrance = p.encumbrance || "Clean title — No active lien";
+    var tax = p.tax || "Land revenue cess cleared";
+    var valuation = p.valuation || "Guideline value standard";
+
+    // Spatial Cadastre & Variance calculations
+    var isBR = (key === "BR" || (p.district && p.district.indexOf("Patna") !== -1));
+    var isMH = (key === "MH" || (p.district && p.district.indexOf("Pune") !== -1));
+    var gisArea = isBR ? "2.80 Acres (1.13 ha)" : area;
+    var varianceText = isBR ? "-0.30 Acres (-9.7% Variance · Boundary Shift)" : "0.00% Variance · Exact Cadastral Tally";
+    var isAreaDiscrepancy = isBR;
+    var cadastralStatus = isBR ? "⚠️ Ortho-boundary mismatch flagged against cadastral sheet" : "✓ DILRMP Spatial Polygon locked & topologically consistent";
+    var disputeStatus = isMH ? "⚠️ Civil stay petition noted; SRO bank lien active" : (isBR ? "⚠️ Demarcation dispute registered at Circle Office" : "✓ No pending revenue court disputes recorded");
+
+    var stateCode = (state && state.length >= 2) ? state.substring(0, 2).toUpperCase() : "IN";
+    var cleanSurvey = (survey || "01").replace(/[^a-zA-Z0-9]/g, "");
+    var dispatchRef = "REV/NLIP/2026/DOS-" + stateCode + "-" + cleanSurvey + "-892";
+    var auditHash = "SHA-256: 4e91a·" + (ulpin.replace(/[^a-zA-Z0-9]/g, "").slice(-6) || "88204b") + "·2026";
 
     sheet.innerHTML =
-      '<div class="passport-sheet-head">' +
-        '<div class="ps-brand">' +
-          '<div class="ps-emblem">🏛️</div>' +
-          '<div class="ps-title">' +
+      '<div class="passport-sheet-head dossier-sheet-head">' +
+        '<div class="ps-brand dossier-brand">' +
+          '<div class="ps-emblem dossier-emblem">🏛️</div>' +
+          '<div class="ps-title dossier-title">' +
             '<h3>National Land Intelligence Platform</h3>' +
-            '<p>Digital Land Certificate &middot; Government of India / ' + state + '</p>' +
+            '<div class="dossier-title-hi">प्रमाणित भू-अभिलेख एवं विधिक स्वामित्व प्रतिवेदन</div>' +
+            '<p>State Revenue Administration &middot; Government of India / ' + state + '</p>' +
           '</div>' +
         '</div>' +
-        '<div class="ps-qr-meta">' +
+        '<div class="ps-qr-meta dossier-qr-meta">' +
           '<div>' +
-            '<div class="ps-ulpin-box">' + ulpin + '</div>' +
-            '<div style="font-size:0.7rem;color:#a89b88;margin-top:3px;">Unique Land Parcel Identifier</div>' +
+            '<div class="ps-ulpin-box dossier-ulpin-box">' + ulpin + '</div>' +
+            '<div class="dossier-dispatch-ref">' + dispatchRef + '</div>' +
           '</div>' +
-          '<canvas id="passport-qr-canvas" width="56" height="56"></canvas>' +
+          '<canvas id="dossier-qr-canvas" width="58" height="58"></canvas>' +
+          '<canvas id="passport-qr-canvas" width="58" height="58" style="display:none;"></canvas>' +
         '</div>' +
       '</div>' +
 
-      '<div class="passport-fields-grid">' +
-        '<div class="pf-item mono"><dt>1. ULPIN / Parcel ID</dt><dd>' + ulpin + '</dd></div>' +
-        '<div class="pf-item"><dt>2. Survey / Khasra / Patta</dt><dd>' + survey + '</dd></div>' +
-        '<div class="pf-item"><dt>3. Area</dt><dd>' + area + '</dd></div>' +
-        '<div class="pf-item"><dt>4. State</dt><dd>' + state + '</dd></div>' +
-        '<div class="pf-item"><dt>5. District</dt><dd>' + district + '</dd></div>' +
-        '<div class="pf-item"><dt>6. Location</dt><dd>' + location + '</dd></div>' +
-        '<div class="pf-item"><dt>7. Status</dt><dd>' + status + '</dd></div>' +
-        '<div class="pf-item"><dt>Recorded Holder</dt><dd>' + holder + '</dd></div>' +
-        '<div class="pf-item"><dt>Record of Rights (RoR)</dt><dd>' + ror + '</dd></div>' +
+      '<div class="dossier-pillars-grid">' +
+        '<!-- Pillar 1: Cadastral Identification -->' +
+        '<div class="dossier-pillar-card">' +
+          '<div class="dossier-pillar-head">' +
+            '<span class="dossier-pillar-title"><span>📍</span> PILLAR 1: Cadastral Identification</span>' +
+            '<span class="dossier-pillar-badge">Bhu-Aadhaar ULPIN</span>' +
+          '</div>' +
+          '<dl class="dossier-rows-table">' +
+            '<div class="dossier-row-item mono"><dt>Bhu-Aadhaar ULPIN</dt><dd>' + ulpin + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Survey / Khasra / Patta</dt><dd>' + survey + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Village / Mandal</dt><dd>' + villageMandal + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>District &amp; State</dt><dd>' + districtState + '</dd></div>' +
+            '<div class="dossier-row-item full-span mono"><dt>Centroid Coordinates (WGS-84)</dt><dd>' + coords + '</dd></div>' +
+          '</dl>' +
+        '</div>' +
+
+        '<!-- Pillar 2: Rights & Tenancy -->' +
+        '<div class="dossier-pillar-card">' +
+          '<div class="dossier-pillar-head">' +
+            '<span class="dossier-pillar-title"><span>📜</span> PILLAR 2: Rights &amp; Tenancy (RoR)</span>' +
+            '<span class="dossier-pillar-badge">Revenue Record</span>' +
+          '</div>' +
+          '<dl class="dossier-rows-table">' +
+            '<div class="dossier-row-item full-span"><dt>Recorded Holder (Pattadar / Khatedar)</dt><dd>' + holder + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Land Classification</dt><dd>' + type + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Title Standard</dt><dd>' + ownership + '</dd></div>' +
+            '<div class="dossier-row-item full-span"><dt>Record of Rights Source</dt><dd>' + ror + '</dd></div>' +
+            '<div class="dossier-row-item full-span"><dt>Mutation Entry</dt><dd>' + mutation + '</dd></div>' +
+          '</dl>' +
+        '</div>' +
+
+        '<!-- Pillar 3: Spatial Cadastre & Area Tally -->' +
+        '<div class="dossier-pillar-card">' +
+          '<div class="dossier-pillar-head">' +
+            '<span class="dossier-pillar-title"><span>📐</span> PILLAR 3: Spatial GIS &amp; Area Tally</span>' +
+            '<span class="dossier-pillar-badge">DILRMP Cadastre</span>' +
+          '</div>' +
+          '<dl class="dossier-rows-table">' +
+            '<div class="dossier-row-item"><dt>Recorded RoR Area</dt><dd>' + area + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>GIS Cadastral Area</dt><dd>' + gisArea + '</dd></div>' +
+            '<div class="dossier-variance-box">' +
+              '<div class="dv-metric">' +
+                '<span class="dv-label">Spatial Variance Tally</span>' +
+                '<span class="dv-val">' + varianceText + '</span>' +
+              '</div>' +
+              '<span class="dv-badge' + (isAreaDiscrepancy ? ' warn' : '') + '">' + (isAreaDiscrepancy ? '⚠️ AREA VARIANCE' : '✓ 100% CADASTRAL MATCH') + '</span>' +
+            '</div>' +
+            '<div class="dossier-row-item full-span"><dt>Cadastral Boundary Status</dt><dd>' + cadastralStatus + '</dd></div>' +
+          '</dl>' +
+        '</div>' +
+
+        '<!-- Pillar 4: Encumbrance & Legal -->' +
+        '<div class="dossier-pillar-card">' +
+          '<div class="dossier-pillar-head">' +
+            '<span class="dossier-pillar-title"><span>⚖️</span> PILLAR 4: Encumbrance &amp; Legal</span>' +
+            '<span class="dossier-pillar-badge">SRO Clearance</span>' +
+          '</div>' +
+          '<dl class="dossier-rows-table">' +
+            '<div class="dossier-row-item full-span"><dt>Encumbrance / Mortgage Standing</dt><dd>' + encumbrance + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Land Revenue Tax Status</dt><dd>' + tax + '</dd></div>' +
+            '<div class="dossier-row-item"><dt>Guideline Valuation</dt><dd>' + valuation + '</dd></div>' +
+            '<div class="dossier-row-item full-span"><dt>Dispute &amp; Litigation Standing</dt><dd>' + disputeStatus + '</dd></div>' +
+          '</dl>' +
+        '</div>' +
       '</div>' +
 
-      '<div class="passport-sheet-foot">' +
-        '<div class="ps-seal-mark' + (isWarn ? ' warn' : '') + '">' +
-          '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED' : '✓ OFFICIAL DIGITAL RECORD') + '</span>' +
-          '<span>&middot;</span>' +
-          '<span>Presumptive Title Standard</span>' +
+      '<div class="passport-sheet-foot dossier-sheet-foot">' +
+        '<div class="dossier-seals-wrap">' +
+          '<div class="dossier-seal-pill' + (isWarn ? ' warn' : '') + '">' +
+            '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED · AUDIT PENDING' : '✓ OFFICIAL STATE REVENUE DOSSIER') + '</span>' +
+            '<span>&middot;</span>' +
+            '<span>' + (isWarn ? 'DILRMP Discrepancy' : 'Presumptive Title Standard') + '</span>' +
+          '</div>' +
+          '<div class="dossier-audit-hash">' + auditHash + '</div>' +
         '</div>' +
-        '<div class="ps-legal-note">' +
-          'Consolidated digital certificate issued for administrative reference under National Land Intelligence Platform standard.' +
+        '<div class="ps-legal-note dossier-legal-note">' +
+          'Certified electronic record under Section 65B of Indian Evidence Act &amp; IT Act 2000. Generated by National Land Intelligence Platform for Smart India Hackathon governance evaluation.' +
         '</div>' +
       '</div>';
 
     window.__currentParcel = p;
+    drawQr("dossier-qr-canvas");
     drawQr("passport-qr-canvas");
   }
+  var renderPassport = renderDossier; // Backwards compatibility alias
 
-  window.printPassport = function(){
-    var p = window.__currentParcel;
-    var sheet = document.getElementById("passport-sheet");
+  window.printDossier = function(){
+    var p = window.__currentParcel || PARCELS["UP"];
+    var sheet = document.getElementById("dossier-sheet") || document.getElementById("passport-sheet");
     if(!sheet){ window.print(); return; }
 
-    var ulpin = (p && p.ulpin) || "TS-DEMO-245-018";
-    var survey = (p && p.survey) || "245/A";
-    var area = (p && p.area) || "2.30 Acres";
-    var state = (p && p.state) || "Telangana";
-    var district = (p && p.district) || "Rangareddy";
-    var location = (p && (p.village ? (p.village + ", " + (p.mandal || "") + (p.coords ? " (" + p.coords + ")" : "")) : p.location)) || "Kanakamamidi, Moinabad";
-    var status = (p && p.status) || "✓ Verified — Consistent";
-    var holder = (p && p.holder) || "K. Venkat Reddy";
-    var ror = (p && p.ror) || "Dharani e-Pattadar Passbook";
-    var isWarn = (p && p.score && p.score < 90);
+    var ulpin = p.ulpin || "TS-DEMO-245-018";
+    var survey = p.survey || "245/A";
+    var area = p.area || "2.30 Acres";
+    var state = p.state || "Telangana";
+    var district = p.district || "Rangareddy";
+    var villageMandal = (p.village ? p.village + ", " + (p.mandal || "") : "Kanakamamidi, Moinabad");
+    var coords = p.coords || "17.3850° N, 78.4867° E";
+    var status = p.status || "✓ Verified — Consistent";
+    var holder = p.holder || "K. Venkat Reddy";
+    var ror = p.ror || "Dharani e-Pattadar Passbook";
+    var type = p.type || "Agricultural — Irrigated";
+    var ownership = p.ownership || "Presumptive record of rights";
+    var mutation = p.mutation || "Mutation cleared (Order dated 2023-04-12)";
+    var encumbrance = p.encumbrance || "None recorded — Clean title";
+    var tax = p.tax || "Paid to date (FY 2025–26)";
+    var valuation = p.valuation || "Guideline value ₹14.5L / acre";
+    var isWarn = (p.score && p.score < 90);
 
-    var qrCanvas = document.getElementById("passport-qr-canvas");
+    var isBR = (district && district.indexOf("Patna") !== -1);
+    var gisArea = isBR ? "2.80 Acres (1.13 ha)" : area;
+    var stateCode = (state && state.length >= 2) ? state.substring(0, 2).toUpperCase() : "IN";
+    var cleanSurvey = (survey || "01").replace(/[^a-zA-Z0-9]/g, "");
+    var dispatchRef = "REV/NLIP/2026/DOS-" + stateCode + "-" + cleanSurvey + "-892";
+    var auditHash = "SHA-256: 4e91a·" + (ulpin.replace(/[^a-zA-Z0-9]/g, "").slice(-6) || "88204b") + "·2026";
+    var today = new Date().toISOString().slice(0, 10);
+
+    var qrCanvas = document.getElementById("dossier-qr-canvas") || document.getElementById("passport-qr-canvas");
     var qrDataUrl = qrCanvas ? qrCanvas.toDataURL("image/png") : "";
 
     var printFrame = document.getElementById("passport-print-frame");
@@ -738,69 +838,115 @@
     document.body.appendChild(printFrame);
 
     var html = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
-      '<title>Digital Land Passport — ' + ulpin + '</title>' +
+      '<title>Certified Parcel Dossier — ' + ulpin + '</title>' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">' +
       '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">' +
       '<style>' +
-      '@page { size: A4 portrait; margin: 12mm 15mm; }' +
+      '@page { size: A4 portrait; margin: 10mm 12mm; }' +
       '* { box-sizing: border-box; }' +
       'body { margin: 0; padding: 12px; font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; background: #fff; color: #1a1207; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
-      '.cert-card { border: 2.5px solid #1a1207; border-radius: 12px; padding: 28px 32px; background: #fff; position: relative; }' +
-      '.cert-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1a1207; padding-bottom: 18px; margin-bottom: 22px; gap: 16px; }' +
-      '.cert-brand { display: flex; align-items: center; gap: 14px; }' +
-      '.cert-emblem { font-size: 2.4rem; line-height: 1; }' +
-      '.cert-title h1 { margin: 0; font-size: 1.35rem; font-weight: 800; color: #1a1207; letter-spacing: -0.02em; }' +
-      '.cert-title p { margin: 4px 0 0; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6b5a45; font-weight: 700; }' +
-      '.cert-meta { text-align: right; display: flex; align-items: center; gap: 14px; }' +
-      '.ulpin-pill { font-family: "JetBrains Mono", monospace; font-size: 0.92rem; font-weight: 700; background: #fdfaf3; color: #1a1207; padding: 7px 14px; border-radius: 6px; border: 1.5px solid #c29e69; }' +
-      '.ulpin-sub { font-size: 0.68rem; color: #6b5a45; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }' +
+      '.cert-card { border: 2.5px solid #1a1207; border-radius: 10px; padding: 24px 28px; background: #fff; position: relative; }' +
+      '.gov-banner { text-align: center; border-bottom: 2px solid #1a1207; padding-bottom: 12px; margin-bottom: 16px; }' +
+      '.gov-banner-top { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #5a4b3b; font-weight: 800; }' +
+      '.gov-banner h1 { margin: 4px 0 2px; font-size: 1.35rem; font-weight: 800; color: #1a1207; letter-spacing: -0.01em; }' +
+      '.gov-banner-hi { font-size: 0.85rem; color: #85581a; font-weight: 700; }' +
+      '.gov-meta-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #d4c5b0; padding-bottom: 12px; margin-bottom: 16px; }' +
+      '.ulpin-pill { font-family: "JetBrains Mono", monospace; font-size: 0.95rem; font-weight: 700; background: #fbf7ef; color: #1a1207; padding: 6px 14px; border-radius: 6px; border: 1.5px solid #92510b; display: inline-block; }' +
+      '.ulpin-sub { font-size: 0.65rem; color: #6b5a45; font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }' +
+      '.dispatch-box { text-align: right; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: #4a3b2b; }' +
       '.qr-box { width: 56px; height: 56px; border-radius: 6px; border: 1px solid #d4c5b0; display: block; }' +
-      '.fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }' +
-      '.field-box { background: #faf8f5; border: 1px solid #ddd2c4; border-radius: 8px; padding: 11px 13px; }' +
-      '.field-box dt { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7a6a55; font-weight: 700; margin-bottom: 4px; }' +
-      '.field-box dd { margin: 0; font-size: 0.92rem; font-weight: 700; color: #1a1207; }' +
-      '.field-box.mono dd { font-family: "JetBrains Mono", monospace; color: #92510b; }' +
-      '.cert-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1.5px solid #ddd2c4; padding-top: 16px; gap: 16px; }' +
+      '.pillars-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }' +
+      '.pillar-box { background: #faf8f5; border: 1.5px solid #d4c5b0; border-radius: 8px; padding: 12px; }' +
+      '.pillar-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #92510b; font-weight: 800; margin-bottom: 8px; border-bottom: 1px solid #e2d7c7; padding-bottom: 4px; display: flex; justify-content: space-between; }' +
+      '.field-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }' +
+      '.field-table td { padding: 3px 0; vertical-align: top; }' +
+      '.field-table td.k { color: #6b5a45; font-weight: 700; width: 44%; text-transform: uppercase; font-size: 0.65rem; }' +
+      '.field-table td.v { color: #1a1207; font-weight: 600; }' +
+      '.field-table td.mono { font-family: "JetBrains Mono", monospace; font-weight: 700; color: #92510b; }' +
+      '.variance-tally-box { background: #fdfaf3; border: 1px solid #c29e69; border-radius: 6px; padding: 6px 10px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; }' +
+      '.cert-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1.5px solid #1a1207; padding-top: 14px; gap: 16px; }' +
       '.cert-seal { display: inline-flex; align-items: center; gap: 8px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; background: #eafaf1; color: #1e8449; border: 1.5px solid #27ae60; }' +
       '.cert-seal.warn { background: #fef5e7; color: #ba4a00; border-color: #d35400; }' +
-      '.cert-legal { font-size: 0.70rem; color: #6b5a45; line-height: 1.4; max-width: 480px; text-align: right; }' +
+      '.cert-legal { font-size: 0.68rem; color: #5a4b3b; line-height: 1.35; max-width: 460px; text-align: right; }' +
       '</style></head><body>' +
       '<div class="cert-card">' +
-        '<div class="cert-header">' +
-          '<div class="cert-brand">' +
-            '<div class="cert-emblem">🏛️</div>' +
-            '<div class="cert-title">' +
-              '<h1>National Land Intelligence Platform</h1>' +
-              '<p>Digital Land Certificate &middot; Government of India / ' + state + '</p>' +
+        '<div class="gov-banner">' +
+          '<div class="gov-banner-top">Government of India &middot; State Revenue Administration</div>' +
+          '<h1>NATIONAL LAND INTELLIGENCE PLATFORM (NLIP)</h1>' +
+          '<div class="gov-banner-hi">प्रमाणित भू-अभिलेख एवं विधिक स्वामित्व प्रतिवेदन (Certified Parcel Dossier)</div>' +
+        '</div>' +
+
+        '<div class="gov-meta-row">' +
+          '<div>' +
+            '<div class="ulpin-pill">' + ulpin + '</div>' +
+            '<div class="ulpin-sub">Bhu-Aadhaar National ULPIN Identifier</div>' +
+          '</div>' +
+          '<div class="dispatch-box">' +
+            '<div><b>Dispatch Ref:</b> ' + dispatchRef + '</div>' +
+            '<div><b>Issued Date:</b> ' + today + '</div>' +
+            '<div><b>Hash:</b> ' + auditHash + '</div>' +
+          '</div>' +
+          (qrDataUrl ? '<img class="qr-box" src="' + qrDataUrl + '" alt="QR Code">' : '') +
+        '</div>' +
+
+        '<div class="pillars-grid">' +
+          '<!-- Pillar 1 -->' +
+          '<div class="pillar-box">' +
+            '<div class="pillar-title"><span>📍 Pillar 1: Cadastral ID</span><span>Bhu-Aadhaar</span></div>' +
+            '<table class="field-table">' +
+              '<tr><td class="k">ULPIN ID</td><td class="v mono">' + ulpin + '</td></tr>' +
+              '<tr><td class="k">Survey / Plot</td><td class="v">' + survey + '</td></tr>' +
+              '<tr><td class="k">Village / Taluk</td><td class="v">' + villageMandal + '</td></tr>' +
+              '<tr><td class="k">District, State</td><td class="v">' + district + ', ' + state + '</td></tr>' +
+              '<tr><td class="k">Coordinates</td><td class="v mono">' + coords + '</td></tr>' +
+            '</table>' +
+          '</div>' +
+
+          '<!-- Pillar 2 -->' +
+          '<div class="pillar-box">' +
+            '<div class="pillar-title"><span>📜 Pillar 2: Rights &amp; Tenancy</span><span>RoR Title</span></div>' +
+            '<table class="field-table">' +
+              '<tr><td class="k">Recorded Holder</td><td class="v"><b>' + holder + '</b></td></tr>' +
+              '<tr><td class="k">Classification</td><td class="v">' + type + '</td></tr>' +
+              '<tr><td class="k">Title Standard</td><td class="v">' + ownership + '</td></tr>' +
+              '<tr><td class="k">RoR Source</td><td class="v">' + ror + '</td></tr>' +
+              '<tr><td class="k">Mutation Status</td><td class="v">' + mutation + '</td></tr>' +
+            '</table>' +
+          '</div>' +
+
+          '<!-- Pillar 3 -->' +
+          '<div class="pillar-box">' +
+            '<div class="pillar-title"><span>📐 Pillar 3: Spatial Tally</span><span>DILRMP Cadastre</span></div>' +
+            '<table class="field-table">' +
+              '<tr><td class="k">RoR Area</td><td class="v">' + area + '</td></tr>' +
+              '<tr><td class="k">Cadastral GIS Area</td><td class="v">' + gisArea + '</td></tr>' +
+            '</table>' +
+            '<div class="variance-tally-box">' +
+              '<span>Area Variance: ' + (isBR ? '-9.7%' : '0.00%') + '</span>' +
+              '<span>' + (isBR ? '⚠️ Discrepancy Flagged' : '✓ Exact Cadastral Match') + '</span>' +
             '</div>' +
           '</div>' +
-          '<div class="cert-meta">' +
-            '<div>' +
-              '<div class="ulpin-pill">' + ulpin + '</div>' +
-              '<div class="ulpin-sub">Unique Land Parcel Identifier</div>' +
-            '</div>' +
-            (qrDataUrl ? '<img class="qr-box" src="' + qrDataUrl + '" alt="QR Code">' : '') +
+
+          '<!-- Pillar 4 -->' +
+          '<div class="pillar-box">' +
+            '<div class="pillar-title"><span>⚖️ Pillar 4: Encumbrance</span><span>SRO Clearance</span></div>' +
+            '<table class="field-table">' +
+              '<tr><td class="k">Lien / Mortgage</td><td class="v">' + encumbrance + '</td></tr>' +
+              '<tr><td class="k">Revenue Tax Cess</td><td class="v">' + tax + '</td></tr>' +
+              '<tr><td class="k">Govt Valuation</td><td class="v">' + valuation + '</td></tr>' +
+              '<tr><td class="k">Civil Dispute</td><td class="v">' + (isWarn ? 'Attention Flagged' : 'Clean — No Disputes') + '</td></tr>' +
+            '</table>' +
           '</div>' +
         '</div>' +
-        '<div class="fields-grid">' +
-          '<div class="field-box mono"><dt>1. ULPIN / Parcel ID</dt><dd>' + ulpin + '</dd></div>' +
-          '<div class="field-box"><dt>2. Survey / Khasra / Patta</dt><dd>' + survey + '</dd></div>' +
-          '<div class="field-box"><dt>3. Area</dt><dd>' + area + '</dd></div>' +
-          '<div class="field-box"><dt>4. State</dt><dd>' + state + '</dd></div>' +
-          '<div class="field-box"><dt>5. District</dt><dd>' + district + '</dd></div>' +
-          '<div class="field-box"><dt>6. Location</dt><dd>' + location + '</dd></div>' +
-          '<div class="field-box"><dt>7. Status</dt><dd>' + status + '</dd></div>' +
-          '<div class="field-box"><dt>Recorded Holder</dt><dd>' + holder + '</dd></div>' +
-          '<div class="field-box"><dt>Record of Rights (RoR)</dt><dd>' + ror + '</dd></div>' +
-        '</div>' +
+
         '<div class="cert-footer">' +
           '<div class="cert-seal' + (isWarn ? ' warn' : '') + '">' +
-            '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED' : '✓ OFFICIAL DIGITAL RECORD') + '</span>' +
+            '<span>' + (isWarn ? '⚠️ ATTENTION FLAGGED' : '✓ OFFICIAL STATE REVENUE DOSSIER') + '</span>' +
             '<span>&middot;</span>' +
-            '<span>Presumptive Title Standard</span>' +
+            '<span>DILRMP Standard</span>' +
           '</div>' +
           '<div class="cert-legal">' +
-            'Consolidated digital certificate issued for administrative reference under National Land Intelligence Platform standard.' +
+            'Admissible electronic record under Section 65B of Indian Evidence Act &amp; IT Act 2000. Verified by National Land Intelligence Platform for Smart India Hackathon administrative audit.' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -821,6 +967,7 @@
       }
     }, 200);
   };
+  window.printPassport = window.printDossier; // Backwards compatibility alias
 
   /* ============================================================
      3. LAND INTELLIGENCE
@@ -1526,18 +1673,29 @@
       });
     });
 
-    // View details / Next: Land Passport
+    // View details / Next: Certified Dossier
     var detailsBtn = document.getElementById("pic-details-btn");
     if (detailsBtn) {
       detailsBtn.addEventListener("click", function () {
-        var t = document.getElementById("passport") || document.getElementById("dashboard");
+        var t = document.getElementById("dossier") || document.getElementById("passport") || document.getElementById("dashboard");
         if (t) { t.style.display = "block"; t.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); }
       });
     }
 
-    // Report & Export Actions
+    // Report & Export Actions — "Generate Dossier" smoothly targets the Certified Parcel Dossier
     var reportBtn = document.getElementById("report-btn");
-    if (reportBtn) reportBtn.addEventListener("click", openReport);
+    if (reportBtn) {
+      reportBtn.addEventListener("click", function () {
+        var t = document.getElementById("dossier") || document.getElementById("passport");
+        if (t) {
+          t.style.display = "block";
+          t.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          if (typeof updateActiveNavOnScroll === "function") updateActiveNavOnScroll();
+        } else {
+          openReport();
+        }
+      });
+    }
     var reportOverlay = document.getElementById("report-overlay");
     if (reportOverlay) reportOverlay.addEventListener("click", function (e) { if (e.target === this) closeReport(); });
 

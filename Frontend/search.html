@@ -52,7 +52,7 @@
       <div class="pcn-links">
         <a href="#dashboard" class="pcn-link active" data-target="dashboard">Parcel Overview</a>
         <a href="#gis-view" class="pcn-link" data-target="gis-view">GIS</a>
-        <a href="#passport" class="pcn-link" data-target="passport">Passport</a>
+        <a href="#dossier" class="pcn-link" data-target="dossier">Certified Dossier</a>
         <a href="#intelligence" class="pcn-link" data-target="intelligence">Intelligence</a>
         <a href="#history" class="pcn-link" data-target="history">History</a>
         <a href="#integration" class="pcn-link" data-target="integration">Data Sources</a>
@@ -262,7 +262,7 @@
           </div>
         </div>
 
-        <!-- 5 Contextual Navigation Cards (GIS, Passport, Intelligence, History, Data Sources) -->
+        <!-- 5 Contextual Navigation Cards (GIS, Dossier, Intelligence, History, Data Sources) -->
         <div class="dash-nav-grid">
           <a href="#gis-view" class="dash-nav-card" id="dash-card-map">
             <div class="dnc-icon">🗺️</div>
@@ -274,12 +274,12 @@
             <span class="dnc-arrow">↓</span>
           </a>
 
-          <a href="#passport" class="dash-nav-card" id="dash-card-passport">
-            <div class="dnc-icon">📜</div>
+          <a href="#dossier" class="dash-nav-card" id="dash-card-dossier">
+            <div class="dnc-icon">📑</div>
             <div class="dnc-body">
               <div class="dnc-tag">MODULE 2</div>
-              <h3>Digital Land Passport</h3>
-              <p>One verifiable digital certificate consolidating identity, RoR, and area.</p>
+              <h3>Certified Parcel Dossier</h3>
+              <p>Official governance dossier consolidating Bhu-Aadhaar ULPIN, RoR rights, spatial audit &amp; legal clearance.</p>
             </div>
             <span class="dnc-arrow">→</span>
           </a>
@@ -393,7 +393,7 @@
           </div>
           <div class="pic-footer">
             <button type="button" class="pic-details-btn" id="pic-details-btn">
-              <span>Next: Land Passport</span>
+              <span>Next: Certified Dossier</span>
               <span aria-hidden="true">↓</span>
             </button>
           </div>
@@ -402,25 +402,27 @@
     </div>
   </section>
 
-  <!-- ============ 2. DIGITAL LAND PASSPORT ============ -->
-  <section class="dark-section passport-section" id="passport" style="display:none;">
+  <!-- ============ 2. CERTIFIED PARCEL DOSSIER ============ -->
+  <section class="dark-section passport-section dossier-section" id="dossier" style="display:none;">
+    <span id="passport" style="position:relative;top:-120px;visibility:hidden;display:block;"></span>
     <div class="wrap">
-      <div class="passport-intro">
+      <div class="passport-intro dossier-intro">
         <div class="section-badge"><span class="badge-dot"></span> SIH DEMO · MODULE 2</div>
-        <h2 class="section-head">Digital Land Passport</h2>
-        <p class="section-lede">A single verifiable digital land certificate — consolidating parcel identity, ownership, area, and cadastral status.</p>
+        <h2 class="section-head">Certified Parcel Dossier</h2>
+        <div class="dossier-subhead-hi">प्रमाणित भू-अभिलेख एवं विधिक स्वामित्व प्रतिवेदन</div>
+        <p class="section-lede">Comprehensive state governance dossier consolidating Bhu-Aadhaar ULPIN identification, Record of Rights (RoR) tenancy, cadastral GIS vs. recorded area spatial variance, and legal encumbrance standing.</p>
       </div>
 
-      <div class="passport-action-bar">
-        <div class="pab-status">
-          <span class="pab-dot"></span> Official Verifiable Digital Certificate
+      <div class="passport-action-bar dossier-action-bar">
+        <div class="pab-status dossier-status-pill">
+          <span class="pab-dot"></span> ✓ State Revenue Administration Certified · DILRMP &amp; IT Act Sec 65B Admissible
         </div>
-        <button type="button" class="passport-print-btn" id="passport-print-btn" onclick="printPassport()">
-          <span>Print Passport</span> 🖨️
+        <button type="button" class="passport-print-btn dossier-print-btn" id="dossier-print-btn" onclick="printDossier()">
+          <span>Print / Export Official Dossier</span> 🖨️
         </button>
       </div>
 
-      <div class="passport-sheet" id="passport-sheet">
+      <div class="passport-sheet dossier-sheet" id="dossier-sheet">
         <!-- Populated dynamically by script.js -->
       </div>
     </div>
@@ -678,7 +680,7 @@
             <span class="ec-badge link">Deep Link</span>
           </div>
           <h3>Direct Parcel Link</h3>
-          <p>Generate a shareable, verifiable URL directly linked to this parcel's digital passport, spatial
+          <p>Generate a shareable, verifiable URL directly linked to this parcel's certified dossier, spatial
             layer, and history trail.</p>
           <button type="button" class="action-btn-secondary" id="copy-link-btn">
             <span id="copy-btn-text">Copy Share Link</span>
@@ -745,7 +747,7 @@
             <span class="foot-title">NLIP</span>
           </div>
           <p class="foot-desc">National Land Intelligence Platform — unifying India's 36 state and UT land registries
-            through connected records, cadastral GIS verification, and verifiable digital land passports.</p>
+            through connected records, cadastral GIS verification, and certified parcel dossiers.</p>
           <div class="system-status-pill">
             <span class="status-pulse-dot"></span>
             <span>All 36 State &amp; UT Registries Synchronized (SIH Sandbox)</span>
@@ -759,7 +761,7 @@
               <li><a href="#search-top">Search Parcel</a></li>
               <li><a href="#dashboard">Parcel Overview</a></li>
               <li><a href="#gis-view">GIS Cadastral Map</a></li>
-              <li><a href="#passport">Digital Land Passport</a></li>
+              <li><a href="#dossier">Certified Parcel Dossier</a></li>
               <li><a href="#intelligence">Land Intelligence Audit</a></li>
               <li><a href="#history">Mutation Chronology</a></li>
               <li><a href="#integration">Data Sources</a></li>
