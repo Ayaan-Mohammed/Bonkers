@@ -178,6 +178,57 @@
         { date: "2021-12-08", title: "Mutation (Ferfar) cleared", desc: "Partition succession updated under Haveli revenue circle." },
         { date: "2017-03-14", title: "Digital 7/12 issued", desc: "Record digitally signed under Mahabhumi modernisation program." }
       ]
+    },
+    "TS2": {
+      ulpin: "TS-DEMO-520-044", survey: "520/B", state: "Telangana",
+      district: "Warangal", mandal: "Khazipet", village: "Madikonda",
+      area: "2.60 Acres (1.05 ha)", type: "Agricultural — Irrigated (Borewell / Paddy)",
+      zoning: "Rural / Agricultural Zone", coords: "17.9780° N, 79.5240° E",
+      holder: "P. Ramachandra Murthy", ownership: "Pattadar (Presumptive record of rights)",
+      ror: "Dharani e-Pattadar Passbook (Passbook No. T2815003920)",
+      mutation: "Cleared — Dharani digital mutation (Order 2023-08-14)",
+      encumbrance: "None recorded — Clean title", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹18.5L / acre", status: "✓ Verified — Consistent",
+      score: 95,
+      history: [
+        { date: "2025-01-20", title: "Annual revenue cess paid", desc: "Electronic payment acknowledged via Dharani Telangana portal." },
+        { date: "2023-08-14", title: "Dharani digital mutation completed", desc: "Title transfer and passbook issued following succession settlement at Khazipet." },
+        { date: "2018-12-05", title: "Cadastral parcel digitised", desc: "Boundary validated under Telangana Land Records Updation Programme (LRUP)." }
+      ]
+    },
+    "TS3": {
+      ulpin: "TS-DEMO-165-007", survey: "165/A", state: "Telangana",
+      district: "Nizamabad", mandal: "Armoor", village: "Perkit",
+      area: "2.90 Acres (1.17 ha)", type: "Agricultural — Commercial crop (Turmeric / Maize)",
+      zoning: "Rural / Agricultural Zone", coords: "18.7910° N, 78.2830° E",
+      holder: "K. Satyanarayana", ownership: "Pattadar (Presumptive record of rights)",
+      ror: "Dharani e-Pattadar Passbook (Passbook No. T2814002984)",
+      mutation: "Cleared — Dharani registration & mutation (Order 2024-02-10)",
+      encumbrance: "None recorded — Clean title", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹21.0L / acre", status: "✓ Verified — Consistent",
+      score: 94,
+      history: [
+        { date: "2025-02-02", title: "Crop survey & Rythu Bandhu audit", desc: "Pattadar agricultural enumeration verified by Armoor Agriculture Officer." },
+        { date: "2024-02-10", title: "Succession transfer endorsed", desc: "Family partition mutation sanctioned without contest at Armoor Tahsil office." },
+        { date: "2019-03-18", title: "DGPS boundary mapping complete", desc: "Differential GPS cadastral demarcation integrated into central spatial layer." }
+      ]
+    },
+    "PY": {
+      ulpin: "PY-DEMO-042-005", survey: "42/1", state: "Puducherry",
+      district: "Puducherry", mandal: "Ariyankuppam Taluk", village: "Ariyankuppam",
+      area: "1.25 Acres (0.51 ha)", type: "Agricultural — Coastal Horticulture (Coconut / Banana)",
+      zoning: "Rural / Coastal Settlement Zone", coords: "11.9015° N, 79.8130° E",
+      holder: "S. Anandaradjou", ownership: "Patta Holder (Presumptive record of rights)",
+      ror: "Puducherry Nilamagal Patta No. 892",
+      mutation: "Cleared — Digital mutation (Order 2024-04-18)",
+      encumbrance: "None recorded — Sub-Registrar NOC issued", tax: "Paid to date (FY 2025–26)",
+      valuation: "Guideline value ₹38.0L / acre", status: "✓ Verified — Consistent",
+      score: 97,
+      history: [
+        { date: "2024-11-15", title: "Annual land revenue tax cleared", desc: "Electronic challan paid through Nilamagal Puducherry citizen portal." },
+        { date: "2024-04-18", title: "Transfer of registry approved", desc: "Registration and computerized patta transfer completed at Ariyankuppam Sub-Taluk." },
+        { date: "2020-07-22", title: "Cadastral resurvey synced", desc: "Spatial coordinates verified under Puducherry Directorate of Survey and Land Records." }
+      ]
     }
   };
 
@@ -197,13 +248,13 @@
   };
 
   var CHECKS = [
-    { name: "Boundary verification", desc: "Cadastral boundary matched against latest survey.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
-    { name: "Record vs. map", desc: "Record of rights area compared against mapped parcel area.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
-    { name: "Land-use consistency", desc: "Recorded land use checked against zoning classification.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "ok", MH: "warn" } },
-    { name: "Ownership verification", desc: "Recorded holder cross-checked against registration filings.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
-    { name: "Duplicate record check", desc: "Parcel checked against neighbouring ULPINs for overlap.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "ok", MH: "ok" } },
-    { name: "Land-change detection", desc: "Compared against the last two available survey cycles.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "ok" } },
-    { name: "Encumbrance check", desc: "Cross-checked against registered charges and mortgages.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", BR: "warn", MH: "warn" } }
+    { name: "Boundary verification", desc: "Cadastral boundary matched against latest survey.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "warn", MH: "ok" } },
+    { name: "Record vs. map", desc: "Record of rights area compared against mapped parcel area.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "warn", MH: "ok" } },
+    { name: "Land-use consistency", desc: "Recorded land use checked against zoning classification.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "ok", MH: "warn" } },
+    { name: "Ownership verification", desc: "Recorded holder cross-checked against registration filings.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "warn", MH: "ok" } },
+    { name: "Duplicate record check", desc: "Parcel checked against neighbouring ULPINs for overlap.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "ok", MH: "ok" } },
+    { name: "Land-change detection", desc: "Compared against the last two available survey cycles.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "warn", MH: "ok" } },
+    { name: "Encumbrance check", desc: "Cross-checked against registered charges and mortgages.", ok: { UP: "ok", TN: "ok", KA: "ok", TS: "ok", TS2: "ok", TS3: "ok", PY: "ok", BR: "warn", MH: "warn" } }
   ];
 
   var DEFAULT_ASSESSMENTS = {
@@ -342,7 +393,22 @@
       return "MH";
     }
 
-    // Check Telangana first if state or query contains TS keywords or any TS district
+    // Check Puducherry (Union Territory demo)
+    if (q.indexOf("puducherry") !== -1 || q.indexOf("pondicherry") !== -1 || q.indexOf("py-demo") !== -1 || q.indexOf("nilamagal") !== -1 || q.indexOf("ariyankuppam") !== -1 || (s.indexOf("puducherry") !== -1 && (q.indexOf("42") !== -1 || q.indexOf("ariyankuppam") !== -1 || q.indexOf("villianur") !== -1))) {
+      return "PY";
+    }
+
+    // Check Warangal (Telangana District 2)
+    if (q.indexOf("warangal") !== -1 || q.indexOf("520") !== -1 || q.indexOf("madikonda") !== -1 || q.indexOf("khazipet") !== -1 || q.indexOf("ts-demo-520") !== -1 || (s.indexOf("telangana") !== -1 && (q.indexOf("warangal") !== -1 || q.indexOf("520") !== -1 || q.indexOf("madikonda") !== -1))) {
+      return "TS2";
+    }
+
+    // Check Nizamabad (Telangana District 3)
+    if (q.indexOf("nizamabad") !== -1 || q.indexOf("165") !== -1 || q.indexOf("armoor") !== -1 || q.indexOf("perkit") !== -1 || q.indexOf("ts-demo-165") !== -1 || (s.indexOf("telangana") !== -1 && (q.indexOf("nizamabad") !== -1 || q.indexOf("165") !== -1 || q.indexOf("armoor") !== -1))) {
+      return "TS3";
+    }
+
+    // Check Telangana (Rangareddy / Dharani)
     if (q.indexOf("telangana") !== -1 || q.indexOf("ts-demo") !== -1 || q.indexOf("tg-demo") !== -1 || q.indexOf("dharani") !== -1 || q.indexOf("245") !== -1 || (s.indexOf("telangana") !== -1 && (q.indexOf("245") !== -1 || q.indexOf("moinabad") !== -1 || q.indexOf("rangareddy") !== -1 || q.indexOf("kanakamamidi") !== -1))) {
       return "TS";
     }
@@ -370,6 +436,9 @@
     if (q.indexOf("88/2") !== -1) return "KA";
     if (q.indexOf("187/2a") !== -1 || q.indexOf("patta 1042") !== -1) return "TN";
     if (q.indexOf("245/a") !== -1) return "TS";
+    if (q.indexOf("520/b") !== -1) return "TS2";
+    if (q.indexOf("165/a") !== -1) return "TS3";
+    if (q.indexOf("42/1") !== -1) return "PY";
     if (q.indexOf("512/3") !== -1 || q.indexOf("418") !== -1) return "BR";
     if (q.indexOf("88/1a") !== -1) return "MH";
 
@@ -519,8 +588,10 @@
       if (window.LandMap && window.LandMap.selectParcel) {
         var mapLabel = null;
         if (p.state === "Telangana") mapLabel = "Survey " + p.survey + " — " + p.village + ", " + p.district + ", Telangana";
+        else if (p.state === "Puducherry") mapLabel = "Survey " + p.survey + " — " + p.village + ", Puducherry (UT)";
         else if (p.state === "Bihar") mapLabel = "Khasra " + p.survey + " — Walmi, Patna, Bihar (⚠️ Score: 74/100)";
         else if (p.state === "Maharashtra") mapLabel = "7/12 Gat " + p.survey + " — Wagholi, Pune, Maharashtra (⚠️ Score: 82/100)";
+        else mapLabel = (p.survey ? ("Survey " + p.survey + " — ") : "") + (p.village ? (p.village + ", ") : "") + (p.district ? (p.district + ", ") : "") + (p.state || "");
         window.LandMap.selectParcel(key, mapLabel);
       }
 
@@ -1060,6 +1131,28 @@
               }
             }
           }
+        },
+        "Nizamabad": {
+          mandals: {
+            "Armoor": {
+              villages: {
+                "Perkit": ["Survey 165/A"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Puducherry": {
+      districts: {
+        "Puducherry": {
+          mandals: {
+            "Ariyankuppam Taluk": {
+              villages: {
+                "Ariyankuppam": ["Survey 42/1"]
+              }
+            }
+          }
         }
       }
     },
@@ -1268,6 +1361,9 @@
 
           var sites = [
             { key: "TS", state: "Telangana", dist: "Rangareddy", query: "Rangareddy: Survey 245/A", lat: 17.3195, lng: 78.2680 },
+            { key: "TS2", state: "Telangana", dist: "Warangal", query: "Warangal: Survey 520/B", lat: 17.9780, lng: 79.5240 },
+            { key: "TS3", state: "Telangana", dist: "Nizamabad", query: "Nizamabad: Survey 165/A", lat: 18.7910, lng: 78.2830 },
+            { key: "PY", state: "Puducherry", dist: "Puducherry", query: "Puducherry: Survey 42/1", lat: 11.9015, lng: 79.8130 },
             { key: "UP", state: "Uttar Pradesh", dist: "Lucknow", query: "Khasra 412/1", lat: 26.8467, lng: 80.9462 },
             { key: "KA", state: "Karnataka", dist: "Bengaluru Rural", query: "Survey: 88/2", lat: 13.2432, lng: 77.7141 },
             { key: "TN", state: "Tamil Nadu", dist: "Coimbatore", query: "Patta 1042", lat: 11.0021, lng: 77.0432 },

@@ -184,6 +184,27 @@
       targetSurvey: "245/A",
       targetId: "TS-DEMO-245-018"
     },
+    TS2: {
+      label: "Survey No. 520/B — Madikonda, Khazipet, Warangal, Telangana",
+      center: [79.5240, 17.9780],
+      baseNum: 520,
+      targetSurvey: "520/B",
+      targetId: "TS-DEMO-520-044"
+    },
+    TS3: {
+      label: "Survey No. 165/A — Perkit, Armoor, Nizamabad, Telangana",
+      center: [78.2830, 18.7910],
+      baseNum: 165,
+      targetSurvey: "165/A",
+      targetId: "TS-DEMO-165-007"
+    },
+    PY: {
+      label: "Survey No. 42/1 — Ariyankuppam, Puducherry (UT)",
+      center: [79.8130, 11.9015],
+      baseNum: 42,
+      targetSurvey: "42/1",
+      targetId: "PY-DEMO-042-005"
+    },
     BR: {
       label: "Khasra 512/3 — Walmi, Phulwari Sharif, Patna, Bihar (⚠️ Discrepancy Flagged)",
       center: [85.0680, 25.5600],
