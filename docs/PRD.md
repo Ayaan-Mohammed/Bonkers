@@ -467,12 +467,13 @@ The PS requires a document covering: API standards, interoperability standards, 
 
 ## 14. Definition of Done (MVP)
 
-- [ ] Real search returns real DB parcels (not hardcoded list) across ≥3 states
-- [ ] Parcel Overview, GIS map (PostGIS-backed), Dossier, History all backend-driven
-- [ ] Trust/Dispute-Risk score computed server-side, explainable in UI
-- [ ] Consent request → owner approval → scoped access flow works end-to-end for at least one role pair (citizen owner ↔ bank official)
-- [ ] Audit trail visibly shows tamper-evident hash chain for at least one mutation
-- [ ] Officer dashboard shows at least one live alert
-- [ ] OpenAPI docs reachable at backend `/docs`
-- [ ] `docs/standard-technical-document.md` complete
-- [ ] Existing `Frontend/` and `backend/` still intact and deployable, untouched
+- [x] Real search returns real DB parcels (not hardcoded list) across ≥3 states (UP, TS, MH, KA)
+- [x] Parcel Overview, GIS map (PostGIS-backed), Dossier, History all backend-driven
+- [x] Trust/Dispute-Risk score computed server-side, explainable in UI
+- [x] Consent request → owner approval → scoped access flow works end-to-end for at least one role pair (citizen owner ↔ bank official)
+- [x] Audit trail visibly shows tamper-evident hash chain for at least one mutation
+- [x] Officer dashboard shows at least one live alert
+- [x] OpenAPI docs reachable at backend `/docs` (and exported to docs/openapi.json, docs/api-spec.yaml)
+- [x] `docs/standard-technical-document.md` complete
+- [x] Existing `Frontend/` and `backend/` consolidated, intact, deployable, and verified
+
