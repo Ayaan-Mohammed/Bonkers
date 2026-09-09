@@ -85,6 +85,13 @@ export const Navbar: React.FC = () => {
       `mock-jwt-token-${profile.role}`
     );
     setRoleDropdownOpen(false);
+
+    // Auto-navigate to officer dashboard without requiring an extra click
+    if (profile.role === 'revenue_officer') {
+      navigate('/officer-dashboard');
+    } else if (profile.role === 'developer') {
+      navigate('/dev-sandbox');
+    }
   };
 
   const handleLogout = () => {
