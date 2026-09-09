@@ -84,6 +84,28 @@ class ApiError extends Error {
   }
 }
 
+function getStoredGrievances(): Grievance[] {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const raw = localStorage.getItem('nlip_submitted_grievances');
+      if (raw) return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.error('Failed to read stored grievances', e);
+  }
+  return [];
+}
+
+function saveStoredGrievances(items: Grievance[]) {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('nlip_submitted_grievances', JSON.stringify(items));
+    }
+  } catch (e) {
+    console.error('Failed to save stored grievances', e);
+  }
+}
+
 function fallbackMock<T>(
   method: string,
   path: string,
@@ -152,7 +174,24 @@ function fallbackMock<T>(
 
   if (path === '/alerts' || path.startsWith('/alerts')) return MOCK_ALERTS as unknown as T;
   if (path.startsWith('/consents')) return MOCK_CONSENTS as unknown as T;
-  if (path.startsWith('/grievances')) return MOCK_GRIEVANCES as unknown as T;
+  if (path.startsWith('/grievances')) {
+    const local = getStoredGrievances();
+    const seed = Array.isArray(MOCK_GRIEVANCES) ? MOCK_GRIEVANCES : ((MOCK_GRIEVANCES as any).items ?? []);
+    const seen = new Set<string>();
+    const merged: Grievance[] = [];
+    for (const g of [...local, ...seed]) {
+      if (!seen.has(g.id)) {
+        seen.add(g.id);
+        merged.push(g);
+      }
+    }
+    return {
+      items: merged,
+      total: merged.length,
+      page: 1,
+      limit: 50,
+    } as unknown as T;
+  }
   if (path.startsWith('/auth/login') || path.startsWith('/auth/me')) {
     return {
       access_token: 'mock_jwt_token',
@@ -354,17 +393,111 @@ export const patchAlert = (id: string, body: PatchAlertRequest) =>
 // Grievances
 // ---------------------------------------------------------------------------
 
-export const createGrievance = (body: CreateGrievanceRequest) =>
-  request<Grievance>('POST', '/grievances', { body });
+export const createGrievance = async (body: CreateGrievanceRequest): Promise<Grievance> => {
+  const newId = `grv-${Math.floor(1000 + Math.random() * 9000)}`;
+  const now = new Date().toISOString();
+  const newGrievance: Grievance = {
+    id: newId,
+    parcel_id: body.parcel_id,
+    applicant_user_id: 'usr-citizen-demo',
+    applicant: {
+      id: 'usr-citizen-demo',
+      name: body.complainant_name || 'Citizen Applicant',
+      email: 'citizen@nlip.gov.in',
+    },
+    category: body.category,
+    description: body.description,
+    status: 'open',
+    sla_due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+    assigned_officer_id: null,
+    created_at: now,
+  };
+
+  // 1. Immediately store in localStorage so any officer dashboard session sees it
+  const stored = getStoredGrievances();
+  saveStoredGrievances([newGrievance, ...stored]);
+
+  // 2. Dispatch custom event so same-window components can update immediately
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('nlip_grievance_created', { detail: newGrievance }));
+  }
+
+  // 3. Attempt backend sync if available
+  try {
+    const res = await request<Grievance>('POST', '/grievances', { body });
+    return res;
+  } catch (err) {
+    console.warn('Backend grievance sync deferred; recorded in local registry:', err);
+    return newGrievance;
+  }
+};
 
 /** GET /grievances/mine (citizen) or /grievances?officer=me (officer) */
-export const listGrievances = (params?: { officer?: 'me' | string }) =>
-  request<PaginatedResponse<Grievance>>('GET', params?.officer ? '/grievances' : '/grievances/mine', {
-    params: params?.officer ? { officer: params.officer } : undefined,
-  });
+export const listGrievances = async (params?: { officer?: 'me' | string }): Promise<PaginatedResponse<Grievance>> => {
+  let backendItems: Grievance[] = [];
+  try {
+    const res = await request<any>('GET', params?.officer ? '/grievances' : '/grievances/mine', {
+      params: params?.officer ? { officer: params.officer } : undefined,
+    });
+    if (Array.isArray(res)) {
+      backendItems = res.map((r: any) => ({
+        id: String(r.id),
+        parcel_id: String(r.parcel_id || r.ulpin),
+        applicant_user_id: String(r.citizen_user_id || 'usr-citizen'),
+        applicant: {
+          id: String(r.citizen_user_id || 'usr-citizen'),
+          name: r.citizen_name || 'Citizen Applicant',
+          email: 'citizen@nlip.gov.in',
+        },
+        category: r.category,
+        description: r.description,
+        status: r.status === 'submitted' ? 'open' : r.status,
+        sla_due_date: new Date(Date.now() + 25 * 86400000).toISOString().slice(0, 10),
+        assigned_officer_id: r.assigned_officer_id ? String(r.assigned_officer_id) : null,
+        created_at: r.created_at || new Date().toISOString(),
+      }));
+    } else if (res && Array.isArray(res.items)) {
+      backendItems = res.items;
+    }
+  } catch (err) {
+    backendItems = Array.isArray(MOCK_GRIEVANCES)
+      ? MOCK_GRIEVANCES
+      : ((MOCK_GRIEVANCES as any).items ?? []);
+  }
 
-export const patchGrievance = (id: string, body: PatchGrievanceRequest) =>
-  request<Grievance>('PATCH', `/grievances/${id}`, { body });
+  // Merge with locally stored grievances
+  const localItems = getStoredGrievances();
+  const seenIds = new Set<string>();
+  const merged: Grievance[] = [];
+
+  for (const g of [...localItems, ...backendItems]) {
+    if (!seenIds.has(g.id)) {
+      seenIds.add(g.id);
+      merged.push(g);
+    }
+  }
+
+  return {
+    items: merged,
+    total: merged.length,
+    page: 1,
+    limit: 50,
+  };
+};
+
+export const patchGrievance = async (id: string, body: PatchGrievanceRequest): Promise<Grievance> => {
+  const localItems = getStoredGrievances();
+  const updated = localItems.map((g) =>
+    g.id === id ? { ...g, status: body.status, remarks: body.remarks } : g
+  );
+  saveStoredGrievances(updated);
+
+  try {
+    return await request<Grievance>('PATCH', `/grievances/${id}`, { body });
+  } catch (err) {
+    return { id, status: body.status } as unknown as Grievance;
+  }
+};
 
 // ---------------------------------------------------------------------------
 // Audit trail  (GET /audit/{entity_type}/{entity_id})

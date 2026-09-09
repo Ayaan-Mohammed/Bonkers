@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@/components/common/Modal';
 import { Button } from '@/components/common/Button';
 import { createGrievance } from '@/lib/api';
@@ -25,6 +26,7 @@ export const CitizenActionModal: React.FC<CitizenActionModalProps> = ({
   parcel,
   initialCategory = 'demarcation',
 }) => {
+  const queryClient = useQueryClient();
   const [category, setCategory] = useState(initialCategory);
   const [complainantName, setComplainantName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -57,11 +59,15 @@ export const CitizenActionModal: React.FC<CitizenActionModalProps> = ({
 
     try {
       await createGrievance({
+        ulpin: parcel.ulpin,
         parcel_id: parcel.id,
         category,
-        description: `[Complainant: ${complainantName.trim()} | Contact: ${contactPhone.trim()}] - ${description.trim() || 'No additional details provided.'}`,
+        description: `[Complainant: ${complainantName.trim() || 'Registered Citizen'} | Contact: ${contactPhone.trim() || 'N/A'}] - ${description.trim() || 'Administrative dispute objection recorded via NLIP portal.'}`,
+        complainant_name: complainantName.trim() || 'Registered Citizen',
+        contact_phone: contactPhone.trim(),
       });
 
+      queryClient.invalidateQueries({ queryKey: ['officer-grievances'] });
       setSuccessData({ ackNo: generatedAck });
     } catch (err: unknown) {
       // Graceful error fallback for unbuilt backend-v2 endpoints (Task 11 pending)

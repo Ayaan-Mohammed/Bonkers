@@ -424,9 +424,12 @@ export interface PatchAlertRequest {
 }
 
 export interface CreateGrievanceRequest {
+  ulpin?: string;
   parcel_id: UUID;
   category: string;
   description: string;
+  complainant_name?: string;
+  contact_phone?: string;
 }
 
 export interface PatchGrievanceRequest {

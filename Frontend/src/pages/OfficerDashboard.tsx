@@ -48,6 +48,19 @@ export const OfficerDashboardPage: React.FC = () => {
     queryFn: () => listGrievances({ officer: 'me' }),
   });
 
+  // Listen for newly filed complaints in real time across tabs and modals
+  React.useEffect(() => {
+    const handleGrievanceEvent = () => {
+      queryClient.invalidateQueries({ queryKey: ['officer-grievances'] });
+    };
+    window.addEventListener('nlip_grievance_created', handleGrievanceEvent);
+    window.addEventListener('storage', handleGrievanceEvent);
+    return () => {
+      window.removeEventListener('nlip_grievance_created', handleGrievanceEvent);
+      window.removeEventListener('storage', handleGrievanceEvent);
+    };
+  }, [queryClient]);
+
   // Mutation for patching alert status
   const updateAlertMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: 'under_review' | 'resolved' }) =>
@@ -69,7 +82,9 @@ export const OfficerDashboardPage: React.FC = () => {
   });
 
   const alerts = alertsData?.items ?? [];
-  const grievances = grievancesData?.items ?? [];
+  const grievances = Array.isArray(grievancesData)
+    ? grievancesData
+    : (grievancesData?.items ?? []);
 
   const openAlertsCount = alerts.filter((a) => a.status === 'open').length;
   const inReviewAlertsCount = alerts.filter((a) => a.status === 'under_review').length;

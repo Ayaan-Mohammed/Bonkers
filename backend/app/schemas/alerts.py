@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -21,9 +21,12 @@ class AlertStatusUpdate(BaseModel):
 
 
 class GrievanceCreate(BaseModel):
-    ulpin: str
-    category: str = Field(min_length=3, max_length=100)
-    description: str = Field(min_length=10)
+    ulpin: Optional[str] = None
+    parcel_id: Optional[Union[int, str]] = None
+    category: str = Field(min_length=3, max_length=150)
+    description: str = Field(min_length=5)
+    complainant_name: Optional[str] = None
+    contact_phone: Optional[str] = None
 
 
 class GrievanceStatusUpdate(BaseModel):
