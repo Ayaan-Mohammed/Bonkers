@@ -33,12 +33,6 @@ const DEMO_PROFILES = [
     label: 'Revenue Officer (KA)',
   },
   {
-    name: 'Priya Nair',
-    email: 'priya@bankofmah.in',
-    role: 'bank_official' as UserRole,
-    label: 'Bank Official (MH)',
-  },
-  {
     name: 'Dev Portal User',
     email: 'dev@nlip.in',
     role: 'developer' as UserRole,
@@ -86,11 +80,16 @@ export const Navbar: React.FC = () => {
     );
     setRoleDropdownOpen(false);
 
-    // Auto-navigate to officer dashboard without requiring an extra click
+    // Auto-navigate to the appropriate page for each role
     if (profile.role === 'revenue_officer') {
       navigate('/officer-dashboard');
     } else if (profile.role === 'developer') {
       navigate('/dev-sandbox');
+    } else {
+      // When switching back to citizen, leave officer/dev-only pages
+      if (location.pathname === '/officer-dashboard' || location.pathname === '/dev-sandbox') {
+        navigate('/');
+      }
     }
   };
 

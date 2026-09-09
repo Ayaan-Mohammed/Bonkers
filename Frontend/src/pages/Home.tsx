@@ -94,9 +94,9 @@ export const HomePage: React.FC = () => {
         {/* Quick Search Form */}
         <form
           onSubmit={handleQuickSubmit}
-          className="max-w-xl mx-auto mb-8 p-1.5 rounded-full bg-nlip-surface border border-nlip-border-hi backdrop-blur-xl shadow-2xl flex items-center gap-2"
+          className="max-w-2xl mx-auto mb-8 p-2 rounded-full bg-nlip-surface/80 border border-nlip-border-hi backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center gap-3 hover:border-nlip-amber/40 transition-colors duration-300"
         >
-          <div className="pl-4 text-nlip-amber">
+          <div className="pl-5 text-nlip-amber">
             <Search className="w-5 h-5" />
           </div>
           <input
@@ -104,13 +104,13 @@ export const HomePage: React.FC = () => {
             value={quickInput}
             onChange={(e) => setQuickInput(e.target.value)}
             placeholder="Search by ULPIN, Survey No, Khasra, or Plot..."
-            className="flex-1 bg-transparent px-2 py-2 text-sm sm:text-base font-mono text-nlip-text placeholder:text-nlip-text-faint focus:outline-none"
+            className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base font-mono text-nlip-text placeholder:text-nlip-text-faint focus:outline-none"
           />
           <Button
             type="submit"
             variant="primary"
             size="md"
-            className="rounded-full shrink-0"
+            className="rounded-full shrink-0 px-6"
             iconRight={<ArrowRight className="w-4 h-4" />}
           >
             Search
