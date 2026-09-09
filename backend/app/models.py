@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Numeric, Integer, BigInteger, Date, DateTime, Boolean, ForeignKey, func
 from sqlalchemy.dialects.postgresql import JSONB
 from geoalchemy2 import Geometry
-from app.database import Base
+from app.db.base import Base
 
 class Parcel(Base):
     __tablename__ = "parcels"

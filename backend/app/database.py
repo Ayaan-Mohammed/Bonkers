@@ -1,19 +1,11 @@
-import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+"""
+Database compatibility layer for legacy imports.
+Prefer importing directly from `app.db` or `app.core.config`.
+"""
+from app.core.config import settings
+from app.db.base import Base
+from app.db.session import SessionLocal, engine, get_db
 
-load_dotenv()
+SUPABASE_DB_URL = settings.DATABASE_URL
 
-SUPABASE_DB_URL = os.getenv("SUPABASE_DB_URL")  # use the pooled (pgbouncer) connection string
-
-engine = create_engine(SUPABASE_DB_URL, pool_pre_ping=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+__all__ = ["Base", "engine", "SessionLocal", "get_db", "settings", "SUPABASE_DB_URL"]

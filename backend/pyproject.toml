@@ -1,9 +1,9 @@
 [project]
-name = "backend-v2"
+name = "backend"
 version = "0.1.0"
-description = "National Land Intelligence Platform (NLIP) FastAPI Backend"
+description = "FastAPI backend with PostGIS for National Land Intelligence Platform (NLIP)"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
@@ -17,6 +17,8 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
     "python-dotenv>=1.0.1",
+    "pandas>=2.2.0",
+    "geopandas>=0.14.0",
 ]
 
 [project.optional-dependencies]
@@ -28,8 +30,3 @@ dev = [
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["tests"]
-

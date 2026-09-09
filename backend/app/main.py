@@ -1,23 +1,40 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 
-from .database import settings
-from .routers import intelligence, parcels
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
+    docs_url=f"{settings.API_V1_PREFIX}/docs",
+    redoc_url=f"{settings.API_V1_PREFIX}/redoc",
+)
 
-app = FastAPI(title="Parcel Intelligence API", version="0.1.0")
-
+# CORS middleware for Frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip() for origin in settings.cors_origins.split(",")],
+    allow_origins=settings.cors_origin_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(parcels.router)
-app.include_router(intelligence.router)
-
 
 @app.get("/health", tags=["health"])
 def health_check() -> dict[str, str]:
-    return {"status": "ok"}
+    """Basic health-check endpoint for load balancers and container probes."""
+    return {
+        "status": "ok",
+        "app": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+    }
+
+
+@app.get("/", tags=["root"])
+def root() -> dict[str, str]:
+    """Root info endpoint directing to API documentation."""
+    return {
+        "message": f"Welcome to {settings.PROJECT_NAME}",
+        "docs": f"{settings.API_V1_PREFIX}/docs",
+        "health": "/health",
+    }
