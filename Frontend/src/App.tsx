@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Shell } from '@/components/layout/Shell';
+import { Shell } from '@/components/layout';
 import {
   HomePage,
   SearchPage,
