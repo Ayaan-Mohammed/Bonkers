@@ -4,23 +4,23 @@
 
 /* ===== NLIP Design Tokens (Extracted from Frontend/style.css) ===== */
 :root {
-  /* Color Palette */
-  --color-bg: #17140f;
-  --color-bg-2: #211c14;
-  --color-surface: rgba(255, 255, 255, 0.045);
-  --color-surface-hi: rgba(255, 255, 255, 0.08);
-  --color-border: rgba(255, 255, 255, 0.09);
-  --color-border-hi: rgba(255, 255, 255, 0.16);
+  /* Color Palette — Synced with 3D Cadastral Land Art */
+  --color-bg: #110e0b;
+  --color-bg-2: #18140e;
+  --color-surface: rgba(22, 18, 13, 0.86);
+  --color-surface-hi: rgba(34, 28, 20, 0.94);
+  --color-border: rgba(231, 174, 89, 0.22);
+  --color-border-hi: rgba(231, 174, 89, 0.45);
 
-  /* Typography Colors */
-  --color-text: #F3F4FA;
-  --color-text-soft: #9BA0C2;
-  --color-text-faint: #8085AC;
+  /* Typography Colors — Enhanced Legibility & Ease of Reading */
+  --color-text: #FFFFFF;
+  --color-text-soft: #D6DAF0;
+  --color-text-faint: #B0B5DC;
 
   /* Accent & Civic Amber */
-  --color-amber: #e7ae59;
-  --color-amber-deep: #b87628;
-  --color-amber-glow: rgba(231, 174, 89, 0.14);
+  --color-amber: #F2BA63;
+  --color-amber-deep: #C7822E;
+  --color-amber-glow: rgba(242, 186, 99, 0.28);
 
   /* Document & Official Print (Dossier Mode) */
   --color-paper: #FBFAFF;
@@ -39,23 +39,31 @@
   --wrap: 1100px;
 }
 
+body {
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
 /* ===== Custom Scrollbar matching existing civic-tech aesthetic ===== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-track {
   background: #120e0a;
-  border-left: 1px solid rgba(231, 174, 89, 0.12);
+  border-left: 1px solid rgba(231, 174, 89, 0.15);
 }
 ::-webkit-scrollbar-thumb {
   background: #c29e69;
   border-radius: 999px;
-  border: 1.5px solid #120e0a;
+  border: 2px solid #120e0a;
   transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #e7ae59;
+  background: #f2ba63;
 }
 
 /* ===== Logo Mark Helper ===== */
@@ -66,17 +74,49 @@
   display: inline-block;
 }
 
-/* ===== Subtle Glassmorphism Card Style ===== */
+/* ===== Synchronized Obsidian Glassmorphism Card Style ===== */
 .nlip-glass-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .nlip-glass-card:hover {
   border-color: var(--color-border-hi);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 20px var(--color-amber-glow);
+}
+
+/* ===== Leaflet Map Controls Theming ===== */
+.leaflet-bar {
+  border: 1px solid rgba(231, 174, 89, 0.3) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+}
+.leaflet-bar a {
+  background-color: rgba(22, 18, 13, 0.94) !important;
+  color: #F2BA63 !important;
+  border-bottom: 1px solid rgba(231, 174, 89, 0.2) !important;
+  transition: all 0.15s ease;
+}
+.leaflet-bar a:hover {
+  background-color: rgba(42, 34, 24, 0.98) !important;
+  color: #ffffff !important;
+}
+.leaflet-bar a.leaflet-disabled {
+  background-color: rgba(20, 16, 12, 0.8) !important;
+  color: #666677 !important;
+}
+.leaflet-control-layers {
+  background: rgba(22, 18, 13, 0.94) !important;
+  border: 1px solid rgba(231, 174, 89, 0.3) !important;
+  border-radius: 8px !important;
+  color: #D6DAF0 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* ===== Print Styles for Certified Land Dossier ===== */

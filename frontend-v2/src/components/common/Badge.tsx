@@ -20,8 +20,8 @@ export const Badge: React.FC<BadgeProps> = ({
     'inline-flex items-center gap-1.5 font-mono font-medium rounded-full border transition-colors';
 
   const sizeStyles = {
-    sm: 'px-2 py-0.5 text-[10px] tracking-wide',
-    md: 'px-2.5 py-1 text-xs tracking-normal',
+    sm: 'px-2.5 py-0.5 text-xs tracking-wide',
+    md: 'px-3 py-1 text-sm tracking-normal',
   };
 
   const variantStyles = {

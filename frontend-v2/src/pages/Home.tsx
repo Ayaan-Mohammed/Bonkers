@@ -149,58 +149,59 @@ export const HomePage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Feature Pillar Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Card 1: 360 Dossier */}
-          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/40 transition-colors group">
+          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/50 transition-all group">
             <div className="w-12 h-12 rounded-xl bg-nlip-surface-hi border border-nlip-border flex items-center justify-center text-nlip-amber mb-4 group-hover:scale-105 transition-transform">
               <FileCheck2 className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-display text-nlip-text mb-2">
               360° Certified Dossier
             </h3>
-            <p className="text-xs text-nlip-text-soft leading-relaxed">
+            <p className="text-sm text-nlip-text-soft leading-relaxed">
               Consolidates Record of Rights (RoR), NGDRS deeds, registered mortgages,
               and tax receipts into a printable certified report.
             </p>
           </div>
 
           {/* Card 2: GIS Layers */}
-          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/40 transition-colors group">
+          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/50 transition-all group">
             <div className="w-12 h-12 rounded-xl bg-nlip-surface-hi border border-nlip-border flex items-center justify-center text-nlip-amber mb-4 group-hover:scale-105 transition-transform">
               <Layers className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-display text-nlip-text mb-2">
               Integrated GIS & Drone Maps
             </h3>
-            <p className="text-xs text-nlip-text-soft leading-relaxed">
+            <p className="text-sm text-nlip-text-soft leading-relaxed">
               Real-time polygon boundaries with automated area variance calculation
               flagging discrepancies over 2% between survey & satellite.
             </p>
           </div>
 
           {/* Card 3: Trust Score */}
-          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/40 transition-colors group">
+          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/50 transition-all group">
             <div className="w-12 h-12 rounded-xl bg-nlip-surface-hi border border-nlip-border flex items-center justify-center text-nlip-amber mb-4 group-hover:scale-105 transition-transform">
               <Brain className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-display text-nlip-text mb-2">
               Dispute-Risk Intelligence
             </h3>
-            <p className="text-xs text-nlip-text-soft leading-relaxed">
+            <p className="text-sm text-nlip-text-soft leading-relaxed">
               Explainable Trust Score (0–100) powered by weighted risk factors:
               boundary shifts, court encumbrances, and mutation velocity.
             </p>
           </div>
 
           {/* Card 4: Consent DPI */}
-          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/40 transition-colors group">
+          <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border hover:border-nlip-amber/50 transition-all group">
             <div className="w-12 h-12 rounded-xl bg-nlip-surface-hi border border-nlip-border flex items-center justify-center text-nlip-amber mb-4 group-hover:scale-105 transition-transform">
               <Shield className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-display text-nlip-text mb-2">
               DPI Consent Framework
             </h3>
-            <p className="text-xs text-nlip-text-soft leading-relaxed">
+            <p className="text-sm text-nlip-text-soft leading-relaxed">
               DEPA-compliant consent architecture allowing citizens to share
               granular, time-bound land verification data with lending banks.
             </p>
@@ -213,18 +214,18 @@ export const HomePage: React.FC = () => {
         <div className="nlip-glass-card p-6 sm:p-8 rounded-nlip border border-nlip-border-hi">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-xs font-mono uppercase text-nlip-amber tracking-wider font-semibold">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs sm:text-sm font-mono uppercase text-nlip-amber tracking-wider font-semibold">
                   Pre-Indexed Sandbox Registry
                 </span>
               </div>
-              <h3 className="text-xl font-bold font-display text-nlip-text">
+              <h3 className="text-xl sm:text-2xl font-bold font-display text-nlip-text">
                 Explore Demo Parcels across States
               </h3>
             </div>
             <Link to="/search">
-              <Button variant="outline" size="sm" iconRight={<ArrowRight className="w-3.5 h-3.5" />}>
+              <Button variant="outline" size="sm" iconRight={<ArrowRight className="w-4 h-4" />}>
                 Open Full Search
               </Button>
             </Link>
@@ -235,30 +236,30 @@ export const HomePage: React.FC = () => {
               <div
                 key={p.ulpin}
                 onClick={() => navigate(`/parcel/${p.ulpin}`)}
-                className="p-4 rounded-xl bg-black/30 border border-nlip-border hover:border-nlip-amber/60 transition-all cursor-pointer group flex flex-col justify-between"
+                className="p-5 rounded-xl bg-[#1a1611]/85 border border-nlip-border hover:border-nlip-amber/60 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="text-xs font-semibold text-nlip-text">
+                  <div className="flex items-start justify-between gap-2 mb-2.5">
+                    <span className="text-sm font-semibold text-nlip-text">
                       {p.state}
                     </span>
                     <Badge variant={p.variant} size="sm">
                       {p.badge}
                     </Badge>
                   </div>
-                  <div className="text-xs font-mono text-nlip-amber font-bold mb-1 group-hover:underline">
+                  <div className="text-sm font-mono text-nlip-amber font-bold mb-1.5 group-hover:underline">
                     {p.ulpin}
                   </div>
-                  <div className="text-[11px] text-nlip-text-soft mb-2">
+                  <div className="text-xs sm:text-sm text-nlip-text-soft mb-2 font-medium">
                     {p.loc}
                   </div>
-                  <p className="text-[11px] text-nlip-text-faint leading-relaxed">
+                  <p className="text-xs sm:text-sm text-nlip-text-faint leading-relaxed">
                     {p.desc}
                   </p>
                 </div>
-                <div className="pt-3 mt-3 border-t border-nlip-border/40 text-[11px] font-mono text-nlip-amber flex items-center justify-between">
+                <div className="pt-3.5 mt-3.5 border-t border-nlip-border/50 text-xs sm:text-sm font-mono text-nlip-amber flex items-center justify-between font-medium">
                   <span>Explore Parcel</span>
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             ))}

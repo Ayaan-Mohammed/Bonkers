@@ -18,7 +18,16 @@ import type {
   UtilityFeatureProperties,
 } from '@/types';
 import { Badge } from '@/components/common/Badge';
-import { Layers, Map as MapIcon, Satellite, Eye, EyeOff } from 'lucide-react';
+import {
+  Layers,
+  Map as MapIcon,
+  Satellite,
+  Eye,
+  EyeOff,
+  Crosshair,
+  ExternalLink,
+  Navigation,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Tile layer URLs (free, no API key)
@@ -85,19 +94,19 @@ const zoneStyle = (feature: Feature | undefined): L.PathOptions => {
 // FitBounds helper component
 // ---------------------------------------------------------------------------
 
-const FitToParcel: React.FC<{ geom: Feature<Polygon> }> = ({ geom }) => {
+const FitToParcel: React.FC<{ geom: Feature<Polygon>; trigger?: number }> = ({ geom, trigger }) => {
   const map = useMap();
   useEffect(() => {
     try {
       const geoJsonLayer = L.geoJSON(geom);
       const bounds = geoJsonLayer.getBounds();
       if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [60, 60], maxZoom: 17 });
+        map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 17, duration: 0.75 });
       }
     } catch {
       // silently fail if geometry is malformed
     }
-  }, [geom, map]);
+  }, [geom, map, trigger]);
   return null;
 };
 
@@ -127,6 +136,7 @@ export const MapView: React.FC<MapViewProps> = ({
 }) => {
   const [showZones, setShowZones] = useState(false);
   const [showUtility, setShowUtility] = useState(false);
+  const [recenterCount, setRecenterCount] = useState(0);
 
   // Compute center from parcel geometry for initial map position
   const center = useMemo<[number, number]>(() => {
@@ -154,7 +164,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
   return (
     <div className="relative">
-      {/* Map Layer Toggle Controls (overlaid on top of the map) */}
+      {/* Map Layer Toggle & Navigation Controls (overlaid on top of the map) */}
       <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1.5">
         <button
           type="button"
@@ -183,6 +193,27 @@ export const MapView: React.FC<MapViewProps> = ({
           {showUtility ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
           <span>Utilities</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setRecenterCount((c) => c + 1)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono shadow-lg backdrop-blur-md bg-[#1a1610]/90 text-nlip-text-soft border border-nlip-border hover:border-nlip-amber hover:text-nlip-amber transition-all"
+          title="Re-center map to this parcel's bounds"
+        >
+          <Crosshair className="w-3 h-3 text-nlip-amber" />
+          <span>Re-center</span>
+        </button>
+
+        <a
+          href={`https://www.google.com/maps?q=${center[0]},${center[1]}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono shadow-lg backdrop-blur-md bg-[#1a1610]/90 text-nlip-text-soft border border-nlip-border hover:border-nlip-amber hover:text-nlip-amber transition-all"
+          title="Redirect & open exact location in Google Maps"
+        >
+          <ExternalLink className="w-3 h-3 text-sky-400" />
+          <span>Google Maps ↗</span>
+        </a>
       </div>
 
       {/* Area Variance Callout Badge (overlaid bottom-left) */}
@@ -196,14 +227,25 @@ export const MapView: React.FC<MapViewProps> = ({
         </div>
       )}
 
-      {/* Parcel Info Badge (overlaid top-left) */}
-      <div className="absolute top-3 left-3 z-[1000]">
-        <div className="px-3 py-2 rounded-lg bg-[#1a1610]/90 border border-nlip-border text-xs font-mono text-nlip-text shadow-lg backdrop-blur-md max-w-[220px]">
-          <div className="text-nlip-amber font-bold">{parcel.ulpin}</div>
-          <div className="text-nlip-text-soft text-[10px]">
+      {/* Parcel Info Badge (overlaid top-left, offset to clear Leaflet zoom controls) */}
+      <div className="absolute top-3 left-14 sm:left-16 z-[1000] max-w-[calc(100%-180px)] sm:max-w-[280px]">
+        <div className="px-3.5 py-2.5 rounded-lg bg-[#1a1610]/95 border border-nlip-border text-xs sm:text-sm font-mono text-nlip-text shadow-xl backdrop-blur-md">
+          <div className="flex items-center justify-between gap-2.5">
+            <span className="text-nlip-amber font-bold text-sm tracking-tight">{parcel.ulpin}</span>
+            <a
+              href={`https://www.google.com/maps?q=${center[0]},${center[1]}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-sky-400 hover:text-sky-300 hover:underline inline-flex items-center gap-1 font-sans font-medium"
+              title="Redirect to coordinates in Google Maps"
+            >
+              <span>GPS ↗</span>
+            </a>
+          </div>
+          <div className="text-nlip-text-soft text-xs mt-0.5 font-medium">
             {parcel.village_name}, {parcel.district_name} [{parcel.state_code}]
           </div>
-          <div className="text-nlip-text-faint text-[10px] mt-0.5 capitalize">
+          <div className="text-nlip-text-faint text-xs mt-0.5 capitalize">
             {parcel.land_use_type} · {parcel.source.replace('_', ' ')}
           </div>
         </div>
@@ -228,7 +270,7 @@ export const MapView: React.FC<MapViewProps> = ({
         </LayersControl>
 
         {/* Auto-fit bounds to parcel polygon */}
-        <FitToParcel geom={parcel.geom} />
+        <FitToParcel geom={parcel.geom} trigger={recenterCount} />
 
         {/* Neighboring parcels (lighter, behind) */}
         {neighbors.map((n) => (

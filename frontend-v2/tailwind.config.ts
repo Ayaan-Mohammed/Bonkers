@@ -30,6 +30,17 @@ const config: Config = {
         body: ['var(--font-body)'],
         mono: ['var(--font-mono)'],
       },
+      fontSize: {
+        '2xs': ['0.75rem', { lineHeight: '1.15rem' }],
+        xs: ['0.84rem', { lineHeight: '1.25rem' }],
+        sm: ['0.95rem', { lineHeight: '1.45rem' }],
+        base: ['1.0625rem', { lineHeight: '1.65rem' }],
+        lg: ['1.2rem', { lineHeight: '1.8rem' }],
+        xl: ['1.35rem', { lineHeight: '1.95rem' }],
+        '2xl': ['1.65rem', { lineHeight: '2.25rem' }],
+        '3xl': ['2.1rem', { lineHeight: '2.55rem' }],
+        '4xl': ['2.65rem', { lineHeight: '3.1rem' }],
+      },
       borderRadius: {
         'nlip-sm': 'var(--radius-sm)',
         'nlip': 'var(--radius)',
@@ -39,7 +50,7 @@ const config: Config = {
       },
       boxShadow: {
         'amber-glow': '0 0 24px var(--color-amber-glow)',
-        'subtle': '0 8px 32px rgba(0, 0, 0, 0.37)',
+        'subtle': '0 8px 32px rgba(0, 0, 0, 0.45)',
       },
     },
   },

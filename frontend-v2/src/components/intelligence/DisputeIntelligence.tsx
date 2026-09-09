@@ -43,7 +43,13 @@ export const DisputeIntelligence: React.FC<DisputeIntelligenceProps> = ({
       setZoningResult({
         ulpin,
         intersecting_zones: [
-          { zone_type: 'agricultural', permissible_far: 0.5, permissible_use: 'farming' },
+          {
+            id: 'fallback-zone-1',
+            state_id: 'fallback-state-1',
+            zone_type: 'agricultural',
+            permissible_far: 0.5,
+            permissible_use: 'farming',
+          },
         ],
         is_compliant: true,
       });

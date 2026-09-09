@@ -61,10 +61,10 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
     <div className="w-full space-y-4">
       <div className="flex flex-col sm:flex-row gap-3">
         {/* State Filter Selector */}
-        <div className="sm:w-56 shrink-0">
+        <div className="sm:w-60 shrink-0">
           <label
             htmlFor="state-select"
-            className="block text-xs font-mono text-nlip-text-soft mb-1.5 uppercase tracking-wider"
+            className="block text-xs sm:text-sm font-mono text-nlip-text-soft mb-2 font-medium uppercase tracking-wider"
           >
             State / Registry
           </label>
@@ -73,7 +73,7 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
               id="state-select"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full h-11 px-3 py-2 bg-[#1c1813] border border-nlip-border rounded-nlip-sm text-sm text-nlip-text focus:outline-none focus:border-nlip-amber transition-colors appearance-none cursor-pointer"
+              className="w-full h-12 px-3.5 py-2 bg-[#1c1813]/90 border border-nlip-border hover:border-nlip-amber/50 rounded-nlip-sm text-sm sm:text-base text-nlip-text focus:outline-none focus:border-nlip-amber focus:ring-1 focus:ring-nlip-amber/30 transition-all appearance-none cursor-pointer"
             >
               {STATES.map((s) => (
                 <option key={s.code} value={s.code} className="bg-[#1c1813] text-nlip-text">
@@ -81,7 +81,7 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-nlip-text-soft text-xs">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-nlip-amber text-xs">
               ▼
             </div>
           </div>
@@ -91,13 +91,13 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
         <div className="flex-1">
           <label
             htmlFor="quick-query"
-            className="block text-xs font-mono text-nlip-text-soft mb-1.5 uppercase tracking-wider"
+            className="block text-xs sm:text-sm font-mono text-nlip-text-soft mb-2 font-medium uppercase tracking-wider"
           >
             Identifier (ULPIN, Survey, Khasra, Gata, Patta)
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-nlip-amber">
-              <Search className="w-4 h-4" />
+              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <input
               id="quick-query"
@@ -105,17 +105,17 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. UP09412601001, K-2234, 412/601, 83/05..."
-              className="w-full h-11 pl-10 pr-10 bg-[#1c1813] border border-nlip-border rounded-nlip-sm text-sm font-mono text-nlip-text placeholder:text-nlip-text-faint focus:outline-none focus:border-nlip-amber transition-colors"
+              className="w-full h-12 pl-11 pr-11 bg-[#1c1813]/90 border border-nlip-border hover:border-nlip-amber/50 rounded-nlip-sm text-sm sm:text-base font-mono text-nlip-text placeholder:text-nlip-text-faint focus:outline-none focus:border-nlip-amber focus:ring-1 focus:ring-nlip-amber/30 transition-all"
               autoComplete="off"
             />
             {query && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-nlip-text-soft hover:text-nlip-text"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-nlip-text-soft hover:text-nlip-amber transition-colors"
                 aria-label="Clear search input"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
           </div>
@@ -123,9 +123,9 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
       </div>
 
       {/* Preset Quick Badges */}
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <span className="text-xs font-mono text-nlip-text-faint flex items-center gap-1">
-          <MapPin className="w-3 h-3 text-nlip-amber" />
+      <div className="flex flex-wrap items-center gap-2 pt-1.5">
+        <span className="text-xs sm:text-sm font-mono text-nlip-text-soft flex items-center gap-1.5 font-medium">
+          <MapPin className="w-3.5 h-3.5 text-nlip-amber" />
           <span>Quick Samples:</span>
         </span>
         {PRESETS.map((preset) => (
@@ -133,7 +133,7 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
             key={preset.label}
             type="button"
             onClick={() => handleApplyPreset(preset)}
-            className="px-2.5 py-1 text-xs font-mono bg-nlip-surface-hi hover:bg-nlip-amber/15 border border-nlip-border hover:border-nlip-amber/50 text-nlip-text hover:text-nlip-amber rounded-md transition-all active:scale-95"
+            className="px-3 py-1.5 text-xs sm:text-sm font-mono bg-[#1f1a14]/90 hover:bg-nlip-amber/20 border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber rounded-lg transition-all active:scale-95 shadow-sm"
           >
             {preset.label}
           </button>

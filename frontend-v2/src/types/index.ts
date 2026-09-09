@@ -330,8 +330,8 @@ export interface ApiClient {
 // ---------------------------------------------------------------------------
 
 export type ZoneFeatureProperties = {
-  id: UUID;
-  state_id: UUID;
+  id?: UUID;
+  state_id?: UUID;
   zone_type: 'residential' | 'commercial' | 'industrial' | 'green' | string;
   permissible_far: number | null;
   permissible_use: string | null;

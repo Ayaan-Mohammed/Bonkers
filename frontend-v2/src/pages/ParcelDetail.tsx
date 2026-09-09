@@ -205,16 +205,16 @@ export const ParcelDetailPage: React.FC = () => {
         <div className="max-w-nlip-wrap mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between py-3 gap-3">
             {/* Active Parcel Info */}
-            <div className="flex items-center flex-wrap gap-2 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-nlip-text-faint uppercase font-bold">
+            <div className="flex items-center flex-wrap gap-2.5 text-xs sm:text-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-nlip-text-soft uppercase font-bold text-xs">
                 ACTIVE PARCEL:
               </span>
-              <span className="font-mono font-bold text-nlip-amber px-2 py-0.5 rounded bg-black/40 border border-nlip-border">
+              <span className="font-mono font-bold text-nlip-amber px-2.5 py-1 rounded bg-black/60 border border-nlip-border text-sm">
                 {parcel.ulpin}
               </span>
-              <span className="text-nlip-text-soft flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-nlip-amber" />
+              <span className="text-nlip-text-soft flex items-center gap-1.5 font-medium">
+                <MapPin className="w-4 h-4 text-nlip-amber" />
                 <span>
                   {parcel.village_name}, {parcel.district_name} [{parcel.state_code}]
                 </span>
@@ -231,21 +231,35 @@ export const ParcelDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* Change Parcel Button */}
-            <Link to="/search">
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={<RotateCcw className="w-3.5 h-3.5" />}
-                className="text-xs"
+            {/* Action Buttons: Redirect to Location & Change Parcel */}
+            <div className="flex items-center gap-2">
+              <a
+                href={`https://www.google.com/maps?q=${centroid.lat},${centroid.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono text-nlip-text-soft hover:text-nlip-amber border border-nlip-border hover:border-nlip-amber bg-black/60 transition-all font-medium"
+                title="Redirect to coordinates in Google Maps"
               >
-                Change Parcel
-              </Button>
-            </Link>
+                <ExternalLink className="w-4 h-4 text-sky-400" />
+                <span className="hidden sm:inline">Redirect to Location ↗</span>
+                <span className="sm:hidden">GPS ↗</span>
+              </a>
+
+              <Link to="/search">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={<RotateCcw className="w-4 h-4" />}
+                  className="text-xs sm:text-sm"
+                >
+                  Change Parcel
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Navigation Tabs Bar */}
-          <div className="flex items-center overflow-x-auto no-scrollbar gap-1 border-t border-nlip-border/50 pt-1 pb-1">
+          <div className="flex items-center overflow-x-auto no-scrollbar gap-1 border-t border-nlip-border/50 pt-1.5 pb-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.id;
@@ -254,13 +268,13 @@ export const ParcelDetailPage: React.FC = () => {
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabClick(tab.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-t-lg text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs sm:text-sm whitespace-nowrap transition-colors border-b-2 ${
                     isActive
-                      ? 'text-nlip-amber border-nlip-amber bg-white/[0.04] font-semibold'
-                      : 'text-nlip-text-soft border-transparent hover:text-nlip-text hover:bg-white/[0.02]'
+                      ? 'text-nlip-amber border-nlip-amber bg-white/[0.06] font-bold'
+                      : 'text-nlip-text-soft border-transparent hover:text-nlip-text hover:bg-white/[0.03] font-medium'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -278,81 +292,81 @@ export const ParcelDetailPage: React.FC = () => {
           <div className="space-y-6">
             {/* Top Stat Banner */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="nlip-glass-card p-4 rounded-nlip border border-nlip-border">
-                <div className="text-[11px] font-mono text-nlip-text-faint uppercase mb-1">
+              <div className="nlip-glass-card p-5 rounded-nlip border border-nlip-border">
+                <div className="text-xs sm:text-sm font-mono text-nlip-text-soft uppercase font-medium mb-1.5">
                   Bhu-Aadhaar Key
                 </div>
-                <div className="text-base font-mono font-bold text-nlip-amber truncate">
+                <div className="text-lg sm:text-xl font-mono font-bold text-nlip-amber truncate">
                   {parcel.ulpin}
                 </div>
-                <div className="text-[11px] text-nlip-text-soft mt-1">
+                <div className="text-xs sm:text-sm text-nlip-text-soft mt-1.5">
                   Survey: {parcel.survey_number ?? '—'} · Khasra: {parcel.khasra_number ?? '—'}
                 </div>
               </div>
 
-              <div className="nlip-glass-card p-4 rounded-nlip border border-nlip-border">
-                <div className="text-[11px] font-mono text-nlip-text-faint uppercase mb-1">
+              <div className="nlip-glass-card p-5 rounded-nlip border border-nlip-border">
+                <div className="text-xs sm:text-sm font-mono text-nlip-text-soft uppercase font-medium mb-1.5">
                   Land Use & Classification
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-bold text-nlip-text capitalize">
+                  <span className="text-lg sm:text-xl font-bold text-nlip-text capitalize">
                     {parcel.land_use_type}
                   </span>
                   <Badge variant="blue" size="sm">
                     {parcel.source.replace(/_/g, ' ')}
                   </Badge>
                 </div>
-                <div className="text-[11px] text-nlip-text-soft mt-1">
+                <div className="text-xs sm:text-sm text-nlip-text-soft mt-1.5">
                   Gata: {parcel.gata_number ?? '—'} · Patta: {parcel.patta_number ?? '—'}
                 </div>
               </div>
 
-              <div className="nlip-glass-card p-4 rounded-nlip border border-nlip-border">
-                <div className="text-[11px] font-mono text-nlip-text-faint uppercase mb-1">
+              <div className="nlip-glass-card p-5 rounded-nlip border border-nlip-border">
+                <div className="text-xs sm:text-sm font-mono text-nlip-text-soft uppercase font-medium mb-1.5">
                   Recorded vs GIS Area
                 </div>
-                <div className="text-base font-bold text-nlip-text">
+                <div className="text-lg sm:text-xl font-bold text-nlip-text">
                   {parcel.area_recorded_sqm?.toLocaleString()} m²
-                  <span className="text-xs text-nlip-text-soft font-normal ml-1">
+                  <span className="text-xs sm:text-sm text-nlip-text-soft font-normal ml-1.5">
                     (GIS: {parcel.area_gis_sqm?.toLocaleString()} m²)
                   </span>
                 </div>
-                <div className="mt-1">
+                <div className="mt-1.5">
                   {hasAreaVariance ? (
-                    <span className="text-[11px] font-mono text-nlip-amber flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3 text-nlip-amber" />
+                    <span className="text-xs sm:text-sm font-mono text-nlip-amber flex items-center gap-1.5 font-medium">
+                      <AlertTriangle className="w-3.5 h-3.5 text-nlip-amber" />
                       Variance {variancePct.toFixed(1)}% &gt; 2%
                     </span>
                   ) : (
-                    <span className="text-[11px] font-mono text-emerald-400">
+                    <span className="text-xs sm:text-sm font-mono text-emerald-400 font-medium">
                       ✓ Within 2% survey tolerance
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="nlip-glass-card p-4 rounded-nlip border border-nlip-border">
-                <div className="text-[11px] font-mono text-nlip-text-faint uppercase mb-1">
+              <div className="nlip-glass-card p-5 rounded-nlip border border-nlip-border">
+                <div className="text-xs sm:text-sm font-mono text-nlip-text-soft uppercase font-medium mb-1.5">
                   Encumbrance Status
                 </div>
                 <div className="flex items-center gap-2">
                   {activeEncumbrances.length > 0 ? (
                     <>
                       <ShieldAlert className="w-5 h-5 text-rose-400" />
-                      <span className="text-base font-bold text-rose-400">
+                      <span className="text-lg sm:text-xl font-bold text-rose-400">
                         {activeEncumbrances.length} Active
                       </span>
                     </>
                   ) : (
                     <>
                       <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                      <span className="text-base font-bold text-emerald-400">
+                      <span className="text-lg sm:text-xl font-bold text-emerald-400">
                         Clear Title
                       </span>
                     </>
                   )}
                 </div>
-                <div className="text-[11px] text-nlip-text-soft mt-1">
+                <div className="text-xs sm:text-sm text-nlip-text-soft mt-1.5">
                   {activeEncumbrances.length > 0
                     ? 'Liabilities or court dispute registered'
                     : 'No active lien or mortgage on file'}
@@ -739,6 +753,16 @@ export const ParcelDetailPage: React.FC = () => {
                 <Badge variant="blue" size="sm">
                   RFC 7946 GeoJSON
                 </Badge>
+                <a
+                  href={`https://www.google.com/maps?q=${centroid.lat},${centroid.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-nlip-amber/15 text-nlip-amber border border-nlip-amber/40 hover:bg-nlip-amber/25 hover:border-nlip-amber transition-all shadow-sm"
+                  title="Redirect & open location in Google Maps"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Redirect to Location ↗</span>
+                </a>
               </div>
             </div>
 

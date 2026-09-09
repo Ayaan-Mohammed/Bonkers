@@ -16,7 +16,7 @@ confirm the plan once than pay for a wrong first attempt.
 
 | # | Task | Assigned Model | Batch Group | Status | Key Deliverables / Acceptance Criteria |
 |---|------|----------------|-------------|--------|----------------------------------------|
-| **1** | Scaffold FastAPI + Docker + Postgres/PostGIS | **Gemini** | **Batch 1 (1 alone)** | In Progress | `docker-compose.yml` (PostGIS 15/16), Dockerfile, poetry/pip dependencies, DB connection pool & healthcheck |
+| **1** | Scaffold FastAPI + Docker + Postgres/PostGIS | **Gemini** | **Batch 1 (1 alone)** | ✅ Complete | `docker-compose.yml` (PostGIS 15/16), Dockerfile, poetry/pip dependencies, DB connection pool & healthcheck |
 | **2** | Models — admin hierarchy + base layer (geom/PostGIS) | **Claude/GPT** | Isolated | Pending | Spatial models with SRID 4326, SP-GIST/GIST indexes, GeoJSON serializers |
 | **3** | Models — essential + additional layers | **Gemini** | **Batch 2 (3+7)** | Pending | SQLAlchemy models for Encumbrances, Mortgages, Court cases, Mutation history following base pattern |
 | **4** | Models — platform/DPI layer (User/Consent/AuditTrail) | **Claude/GPT** | Isolated | Pending | Cryptographic hash-chain fields (`prev_hash`, `block_hash`), consent grant models, role enums |

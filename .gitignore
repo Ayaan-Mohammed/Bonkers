@@ -11,3 +11,9 @@ venv/
 
 # Nested repo
 Bonkers/
+
+# Archives & build caches
+*.zip
+*.tsbuildinfo
+.pytest_cache/
+
