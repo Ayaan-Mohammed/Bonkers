@@ -20,6 +20,19 @@ class Settings(BaseSettings):
     # Database connection string (Supabase / Postgres)
     DATABASE_URL: str = "sqlite:///./test.db"
 
+    @field_validator("DATABASE_URL", mode="after")
+    @classmethod
+    def resolve_sqlite_path(cls, v: str) -> str:
+        if v.startswith("sqlite:///") and not v.startswith("sqlite:////"):
+            rel_path = v.replace("sqlite:///", "").lstrip("./").lstrip(".\\")
+            if not os.path.isabs(rel_path):
+                backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                candidate = os.path.join(backend_dir, rel_path)
+                if os.path.exists(candidate) and os.path.getsize(candidate) > 0:
+                    return f"sqlite:///{candidate.replace(os.sep, '/')}"
+        return v
+
+
     # JWT Authentication
     JWT_SECRET: str = "dev_secret_key_change_in_production_min_32_chars_long"
     JWT_ALGORITHM: str = "HS256"
