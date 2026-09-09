@@ -1,0 +1,1895 @@
+openapi: 3.1.0
+info:
+  title: Parcel Intelligence API
+  version: 0.1.0
+paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+      - auth
+      summary: Register
+      description: Register a new user account.
+      operationId: register_api_v1_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login
+      description: Authenticate with email and password to receive JWT tokens.
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/refresh:
+    post:
+      tags:
+      - auth
+      summary: Refresh Token Endpoint
+      description: Obtain a new access token using a valid refresh token.
+      operationId: refresh_token_endpoint_api_v1_auth_refresh_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/me:
+    get:
+      tags:
+      - auth
+      summary: Get Current User Profile
+      description: Retrieve profile of the currently authenticated user.
+      operationId: get_current_user_profile_api_v1_auth_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      security:
+      - HTTPBearer: []
+  /api/v1/parcels:
+    get:
+      tags:
+      - parcels
+      summary: Search Parcels
+      description: Search and filter cadastral land parcels across administrative
+        hierarchies.
+      operationId: search_parcels_api_v1_parcels_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search by ULPIN, Survey Number, Khasra Number, or Patta Number
+          title: Q
+        description: Search by ULPIN, Survey Number, Khasra Number, or Patta Number
+      - name: state_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by State ID
+          title: State Id
+        description: Filter by State ID
+      - name: district_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by District ID
+          title: District Id
+        description: Filter by District ID
+      - name: village_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by Village ID
+          title: Village Id
+        description: Filter by Village ID
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelSummary'
+                title: Response Search Parcels Api V1 Parcels Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Detail
+      description: Retrieve comprehensive cadastral parcel details including GeoJSON
+        polygon boundary.
+      operationId: get_parcel_detail_api_v1_parcels__ulpin__get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/ror:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Ror
+      description: Retrieve Record of Rights (RoR / Khatauni) ownership records for
+        a parcel.
+      operationId: get_parcel_ror_api_v1_parcels__ulpin__ror_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoRItem'
+                title: Response Get Parcel Ror Api V1 Parcels  Ulpin  Ror Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/registrations:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Registrations
+      description: Retrieve Sub-Registrar registered deed transactions for a parcel.
+      operationId: get_parcel_registrations_api_v1_parcels__ulpin__registrations_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistrationItem'
+                title: Response Get Parcel Registrations Api V1 Parcels  Ulpin  Registrations
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/encumbrances:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Encumbrances
+      description: Retrieve bank mortgages, judicial liens, or litigation claims on
+        a parcel.
+      operationId: get_parcel_encumbrances_api_v1_parcels__ulpin__encumbrances_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EncumbranceItem'
+                title: Response Get Parcel Encumbrances Api V1 Parcels  Ulpin  Encumbrances
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/mutations:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Mutations
+      description: Retrieve land title mutation and transfer history for a parcel.
+      operationId: get_parcel_mutations_api_v1_parcels__ulpin__mutations_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MutationItem'
+                title: Response Get Parcel Mutations Api V1 Parcels  Ulpin  Mutations
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/building-permissions:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Building Permissions
+      description: Retrieve town planning sanctioned building plans and permissions.
+      operationId: get_parcel_building_permissions_api_v1_parcels__ulpin__building_permissions_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuildingPermissionItem'
+                title: Response Get Parcel Building Permissions Api V1 Parcels  Ulpin  Building
+                  Permissions Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/tax:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Property Tax
+      description: Retrieve municipal property tax assessments and payment statuses.
+      operationId: get_parcel_property_tax_api_v1_parcels__ulpin__tax_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyTaxItem'
+                title: Response Get Parcel Property Tax Api V1 Parcels  Ulpin  Tax
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/history:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Combined History
+      description: Retrieve an integrated chronological timeline merging registrations,
+        mutations, and alerts.
+      operationId: get_parcel_combined_history_api_v1_parcels__ulpin__history_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelHistoryItem'
+                title: Response Get Parcel Combined History Api V1 Parcels  Ulpin  History
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/zoning-check:
+    post:
+      tags:
+      - parcels
+      summary: Check Parcel Zoning
+      description: Perform spatial intersection check between parcel geometry and
+        master plan zoning.
+      operationId: check_parcel_zoning_api_v1_parcels__ulpin__zoning_check_post
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoningCheckResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}/intelligence:
+    get:
+      tags:
+      - parcels
+      summary: Get Parcel Intelligence
+      description: Calculate and retrieve statutory dispute risk, title trust score,
+        and explainable deductions.
+      operationId: get_parcel_intelligence_api_v1_parcels__ulpin__intelligence_get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeIntelligenceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/audit/{entity_type}/{entity_id}:
+    get:
+      tags:
+      - audit
+      summary: Get Audit Trail
+      description: Retrieve immutable audit ledger blocks for any land title or legal
+        entity.
+      operationId: get_audit_trail_api_v1_audit__entity_type___entity_id__get
+      parameters:
+      - name: entity_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Entity Type
+      - name: entity_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Entity Id
+      - name: verify
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Cryptographically verify the SHA-256 chain integrity
+          default: false
+          title: Verify
+        description: Cryptographically verify the SHA-256 chain integrity
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Audit Trail Api V1 Audit  Entity Type   Entity
+                  Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/consents:
+    post:
+      tags:
+      - consents
+      summary: Request Consent
+      description: Submit a DPI Consent request to inspect sensitive parcel records.
+      operationId: request_consent_api_v1_consents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /api/v1/consents/{consent_id}:
+    patch:
+      tags:
+      - consents
+      summary: Handle Consent Action
+      description: Approve or revoke a pending/active consent grant.
+      operationId: handle_consent_action_api_v1_consents__consent_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: consent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Consent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentActionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/consents/mine:
+    get:
+      tags:
+      - consents
+      summary: Get My Consents
+      description: List incoming and outgoing consent grants relevant to the current
+        user.
+      operationId: get_my_consents_api_v1_consents_mine_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ConsentResponse'
+                type: array
+                title: Response Get My Consents Api V1 Consents Mine Get
+      security:
+      - HTTPBearer: []
+  /api/v1/alerts:
+    get:
+      tags:
+      - alerts
+      summary: List Alerts
+      description: List cadastral boundary shift and land use change alerts.
+      operationId: list_alerts_api_v1_alerts_get
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlertResponse'
+                title: Response List Alerts Api V1 Alerts Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/alerts/{alert_id}:
+    patch:
+      tags:
+      - alerts
+      summary: Update Alert Status
+      description: Update change detection alert status (restricted to officers/administrators).
+      operationId: update_alert_status_api_v1_alerts__alert_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: alert_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Alert Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertStatusUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/grievances:
+    post:
+      tags:
+      - grievances
+      summary: Submit Grievance
+      description: Submit a citizen land grievance or dispute report.
+      operationId: submit_grievance_api_v1_grievances_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrievanceCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrievanceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - grievances
+      summary: List Grievances
+      description: Retrieve citizen grievances with role-based visibility.
+      operationId: list_grievances_api_v1_grievances_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrievanceResponse'
+                title: Response List Grievances Api V1 Grievances Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/grievances/{grievance_id}:
+    patch:
+      tags:
+      - grievances
+      summary: Update Grievance
+      description: Update grievance resolution status and assign officer (revenue
+        officers only).
+      operationId: update_grievance_api_v1_grievances__grievance_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: grievance_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Grievance Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrievanceStatusUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrievanceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/dev/api-keys:
+    post:
+      tags:
+      - developer
+      summary: Generate Api Key
+      description: Generate a new Developer Sandbox API Key for external integrations.
+      operationId: generate_api_key_api_v1_dev_api_keys_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiKeyCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/public/parcels/{ulpin}:
+    get:
+      tags:
+      - developer
+      summary: Get Public Parcel Data
+      description: Public, sanitized parcel lookup endpoint (excludes citizen PII
+        and sensitive legal encumbrances).
+      operationId: get_public_parcel_data_api_v1_public_parcels__ulpin__get
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      - name: x-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+          description: Developer Sandbox API Key
+          title: X-Api-Key
+        description: Developer Sandbox API Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicParcelResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+      - health
+      summary: Health Check
+      description: Basic health-check endpoint for load balancers and container probes.
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Check Health Get
+  /:
+    get:
+      tags:
+      - root
+      summary: Root
+      description: Root info endpoint directing to API documentation.
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Root  Get
+components:
+  schemas:
+    AlertResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        parcel_id:
+          type: integer
+          title: Parcel Id
+        ulpin:
+          type: string
+          title: Ulpin
+        alert_type:
+          type: string
+          title: Alert Type
+        confidence_score:
+          type: number
+          title: Confidence Score
+        source:
+          type: string
+          title: Source
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - parcel_id
+      - ulpin
+      - alert_type
+      - confidence_score
+      - source
+      - status
+      - created_at
+      title: AlertResponse
+    AlertStatusUpdate:
+      properties:
+        status:
+          type: string
+          pattern: ^(unresolved|investigating|dismissed|resolved)$
+          title: Status
+      type: object
+      required:
+      - status
+      title: AlertStatusUpdate
+    ApiKeyCreateRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 3
+          title: Name
+          description: Developer or application name
+        rate_limit_per_minute:
+          anyOf:
+          - type: integer
+            maximum: 1000.0
+            minimum: 1.0
+          - type: 'null'
+          title: Rate Limit Per Minute
+          default: 60
+      type: object
+      required:
+      - name
+      title: ApiKeyCreateRequest
+    ApiKeyCreateResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        raw_api_key:
+          type: string
+          title: Raw Api Key
+        rate_limit_per_minute:
+          type: integer
+          title: Rate Limit Per Minute
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - name
+      - raw_api_key
+      - rate_limit_per_minute
+      - created_at
+      title: ApiKeyCreateResponse
+    BuildingPermissionItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        application_number:
+          type: string
+          title: Application Number
+        approved_use:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Approved Use
+        built_up_area_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Built Up Area Sqm
+        floors_approved:
+          type: integer
+          title: Floors Approved
+        sanction_date:
+          type: string
+          format: date
+          title: Sanction Date
+        status:
+          type: string
+          title: Status
+        plan_document_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Plan Document Ref
+      type: object
+      required:
+      - id
+      - application_number
+      - floors_approved
+      - sanction_date
+      - status
+      title: BuildingPermissionItem
+    ConsentActionRequest:
+      properties:
+        action:
+          type: string
+          pattern: ^(approve|revoke)$
+          title: Action
+          description: '''approve'' or ''revoke'''
+        valid_days:
+          anyOf:
+          - type: integer
+            maximum: 365.0
+            minimum: 1.0
+          - type: 'null'
+          title: Valid Days
+          default: 30
+      type: object
+      required:
+      - action
+      title: ConsentActionRequest
+    ConsentCreateRequest:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        purpose:
+          type: string
+          maxLength: 255
+          minLength: 3
+          title: Purpose
+          description: e.g. loan_due_diligence, title_verification
+        scope:
+          items:
+            type: string
+          type: array
+          title: Scope
+          description: 'List of scopes: ror, encumbrance, tax, mutations'
+          default:
+          - ror
+          - encumbrance
+          - tax
+      type: object
+      required:
+      - ulpin
+      - purpose
+      title: ConsentCreateRequest
+    ConsentResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        requester_user_id:
+          type: integer
+          title: Requester User Id
+        requester_name:
+          type: string
+          title: Requester Name
+        parcel_id:
+          type: integer
+          title: Parcel Id
+        ulpin:
+          type: string
+          title: Ulpin
+        purpose:
+          type: string
+          title: Purpose
+        scope:
+          items:
+            type: string
+          type: array
+          title: Scope
+        status:
+          type: string
+          title: Status
+        valid_until:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Valid Until
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - requester_user_id
+      - requester_name
+      - parcel_id
+      - ulpin
+      - purpose
+      - scope
+      - status
+      - created_at
+      title: ConsentResponse
+    DisputeIntelligenceResponse:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        score:
+          type: number
+          title: Score
+        trust_level:
+          type: string
+          title: Trust Level
+        factors:
+          $ref: '#/components/schemas/DisputeRiskFactors'
+        deductions:
+          additionalProperties:
+            type: number
+          type: object
+          title: Deductions
+        explanations:
+          items:
+            type: string
+          type: array
+          title: Explanations
+        model_version:
+          type: string
+          title: Model Version
+        calculated_at:
+          type: string
+          format: date-time
+          title: Calculated At
+      type: object
+      required:
+      - ulpin
+      - score
+      - trust_level
+      - factors
+      - deductions
+      - explanations
+      - model_version
+      - calculated_at
+      title: DisputeIntelligenceResponse
+    DisputeRiskFactors:
+      properties:
+        area_variance_pct:
+          type: number
+          title: Area Variance Pct
+        encumbrance_active:
+          type: boolean
+          title: Encumbrance Active
+        mutation_frequency_12mo:
+          type: integer
+          title: Mutation Frequency 12Mo
+        pending_litigation:
+          type: boolean
+          title: Pending Litigation
+        boundary_overlap_flag:
+          type: boolean
+          title: Boundary Overlap Flag
+      type: object
+      required:
+      - area_variance_pct
+      - encumbrance_active
+      - mutation_frequency_12mo
+      - pending_litigation
+      - boundary_overlap_flag
+      title: DisputeRiskFactors
+    EncumbranceItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        type:
+          type: string
+          title: Type
+        holder_name:
+          type: string
+          title: Holder Name
+        amount:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Amount
+        start_date:
+          type: string
+          format: date
+          title: Start Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - type
+      - holder_name
+      - start_date
+      - status
+      title: EncumbranceItem
+    GrievanceCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        category:
+          type: string
+          maxLength: 100
+          minLength: 3
+          title: Category
+        description:
+          type: string
+          minLength: 10
+          title: Description
+      type: object
+      required:
+      - ulpin
+      - category
+      - description
+      title: GrievanceCreate
+    GrievanceResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        parcel_id:
+          type: integer
+          title: Parcel Id
+        ulpin:
+          type: string
+          title: Ulpin
+        citizen_user_id:
+          type: integer
+          title: Citizen User Id
+        citizen_name:
+          type: string
+          title: Citizen Name
+        assigned_officer_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Assigned Officer Id
+        category:
+          type: string
+          title: Category
+        description:
+          type: string
+          title: Description
+        status:
+          type: string
+          title: Status
+        resolution_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resolution Notes
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - parcel_id
+      - ulpin
+      - citizen_user_id
+      - citizen_name
+      - category
+      - description
+      - status
+      - created_at
+      - updated_at
+      title: GrievanceResponse
+    GrievanceStatusUpdate:
+      properties:
+        status:
+          type: string
+          pattern: ^(submitted|under_review|hearing_scheduled|resolved|rejected)$
+          title: Status
+        resolution_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resolution Notes
+        assigned_officer_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Assigned Officer Id
+      type: object
+      required:
+      - status
+      title: GrievanceStatusUpdate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MutationItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        mutation_type:
+          type: string
+          title: Mutation Type
+        previous_owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Previous Owner
+        new_owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: New Owner
+        applied_date:
+          type: string
+          format: date
+          title: Applied Date
+        approved_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Approved Date
+        status:
+          type: string
+          title: Status
+        remarks:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remarks
+      type: object
+      required:
+      - id
+      - mutation_type
+      - applied_date
+      - status
+      title: MutationItem
+    ParcelDetail:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        survey_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Number
+        khasra_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khasra Number
+        gata_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gata Number
+        patta_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Patta Number
+        area_recorded_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Area Recorded Sqm
+        area_gis_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Area Gis Sqm
+        land_use_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Land Use Type
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        district:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: District
+        village:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Village
+        geometry:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Geometry
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - id
+      - ulpin
+      title: ParcelDetail
+    ParcelHistoryItem:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+        type:
+          type: string
+          title: Type
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        reference_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reference Id
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - date
+      - type
+      - title
+      - description
+      - status
+      title: ParcelHistoryItem
+    ParcelSummary:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        survey_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Number
+        khasra_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khasra Number
+        gata_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gata Number
+        patta_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Patta Number
+        area_recorded_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Area Recorded Sqm
+        area_gis_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Area Gis Sqm
+        land_use_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Land Use Type
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        district:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: District
+        village:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Village
+      type: object
+      required:
+      - id
+      - ulpin
+      title: ParcelSummary
+    PropertyTaxItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        assessment_year:
+          type: integer
+          title: Assessment Year
+        assessed_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Assessed Value
+        tax_amount:
+          type: number
+          title: Tax Amount
+        paid_status:
+          type: string
+          title: Paid Status
+        ulb_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ulb Id
+      type: object
+      required:
+      - id
+      - assessment_year
+      - tax_amount
+      - paid_status
+      title: PropertyTaxItem
+    PublicParcelResponse:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        survey_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Number
+        khasra_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khasra Number
+        land_use_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Land Use Type
+        area_sqm:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Area Sqm
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        district:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: District
+        village:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Village
+      type: object
+      required:
+      - ulpin
+      title: PublicParcelResponse
+    RegistrationItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        deed_type:
+          type: string
+          title: Deed Type
+        deed_number:
+          type: string
+          title: Deed Number
+        registration_date:
+          type: string
+          format: date
+          title: Registration Date
+        sub_registrar_office:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sub Registrar Office
+        consideration_amount:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Consideration Amount
+        ngdrs_ref_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ngdrs Ref Id
+        document_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Document Hash
+      type: object
+      required:
+      - id
+      - deed_type
+      - deed_number
+      - registration_date
+      title: RegistrationItem
+    RoRItem:
+      properties:
+        id:
+          type: integer
+          title: Id
+        owner_name:
+          type: string
+          title: Owner Name
+        ownership_type:
+          type: string
+          title: Ownership Type
+        share_percentage:
+          type: number
+          title: Share Percentage
+        tenure_type:
+          type: string
+          title: Tenure Type
+        khatauni_number:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khatauni Number
+        source_document_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Document Ref
+        valid_from:
+          type: string
+          format: date
+          title: Valid From
+        valid_to:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Valid To
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - owner_name
+      - ownership_type
+      - share_percentage
+      - tenure_type
+      - valid_from
+      - status
+      title: RoRItem
+    TokenRefreshRequest:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - refresh_token
+      title: TokenRefreshRequest
+    TokenResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        expires_in:
+          type: integer
+          title: Expires In
+        user_id:
+          type: integer
+          title: User Id
+        role:
+          type: string
+          title: Role
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      - expires_in
+      - user_id
+      - role
+      - name
+      title: TokenResponse
+    UserLogin:
+      properties:
+        email:
+          type: string
+          title: Email
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - email
+      - password
+      title: UserLogin
+    UserRegister:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+        email:
+          type: string
+          maxLength: 255
+          minLength: 3
+          title: Email
+        password:
+          type: string
+          maxLength: 100
+          minLength: 6
+          title: Password
+        role:
+          type: string
+          title: Role
+          default: citizen
+        mobile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Mobile
+        state_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: State Id
+      type: object
+      required:
+      - name
+      - email
+      - password
+      title: UserRegister
+    UserResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          title: Email
+        role:
+          type: string
+          title: Role
+        mobile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Mobile
+        state_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: State Id
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - name
+      - email
+      - role
+      title: UserResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ZoningCheckResponse:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        is_within_zone:
+          type: boolean
+          title: Is Within Zone
+        zone_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone Type
+        permissible_far:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Permissible Far
+        permissible_use:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Permissible Use
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - ulpin
+      - is_within_zone
+      - message
+      title: ZoningCheckResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

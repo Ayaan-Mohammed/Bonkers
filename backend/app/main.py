@@ -19,6 +19,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.api.v1 import auth, parcels, audit, consents, alerts, grievances, developer
+
+# Mount API v1 Routers
+app.include_router(auth.router, prefix=settings.API_V1_PREFIX)
+app.include_router(parcels.router, prefix=settings.API_V1_PREFIX)
+app.include_router(audit.router, prefix=settings.API_V1_PREFIX)
+app.include_router(consents.router, prefix=settings.API_V1_PREFIX)
+app.include_router(alerts.router, prefix=settings.API_V1_PREFIX)
+app.include_router(grievances.router, prefix=settings.API_V1_PREFIX)
+app.include_router(developer.router, prefix=settings.API_V1_PREFIX)
+
+
 
 @app.get("/health", tags=["health"])
 def health_check() -> dict[str, str]:
