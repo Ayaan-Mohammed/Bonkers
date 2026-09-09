@@ -133,13 +133,33 @@ def run_seed():
     first_names = ["Rajesh", "Prakash", "Amit", "Sunita", "Lakshmi", "Venkatesh", "Deepak", "Shalini", "Manoj", "Kavita"]
     last_names = ["Sharma", "Patel", "Reddy", "Verma", "Kulkarni", "Singh", "Yadav", "Gowda", "Deshpande", "Chatterjee"]
 
+    showcase_configs = [
+        {"ulpin": "UP09412601001", "state_code": "UP", "rec_area": 842.0, "gis_area": 845.37, "land_use": "agricultural", "has_mortgage": False, "has_court": False, "tax_paid": "paid", "joint": False},
+        {"ulpin": "MH27830501001", "state_code": "MH", "rec_area": 1250.0, "gis_area": 1336.25, "land_use": "residential", "has_mortgage": True, "has_court": False, "tax_paid": "paid", "joint": False},
+        {"ulpin": "KA29150301001", "state_code": "KA", "rec_area": 2100.0, "gis_area": 2118.9, "land_use": "commercial", "has_mortgage": False, "has_court": False, "tax_paid": "paid", "joint": True},
+        {"ulpin": "TS36280201001", "state_code": "TS", "rec_area": 1800.0, "gis_area": 2016.0, "land_use": "residential", "has_mortgage": True, "has_court": True, "tax_paid": "due", "joint": False},
+    ]
+
     total_parcels = 160
     for p_num in range(1, total_parcels + 1):
-        village, base_lat, base_lon = random.choice(all_villages)
-        state_code = village.taluka.district.state.code
-
-        # Generate realistic 14-char ULPIN (e.g. UP09412601001)
-        ulpin = f"{state_code}{random.randint(1000, 9999)}{random.randint(10000000, 99999999)}" if p_num > 1 else "UP09412601001"
+        if p_num <= 4:
+            cfg = showcase_configs[p_num - 1]
+            state_code = cfg["state_code"]
+            matching_villages = [v for v in all_villages if v[0].taluka.district.state.code == state_code]
+            village, base_lat, base_lon = matching_villages[0]
+            ulpin = cfg["ulpin"]
+            recorded_area = cfg["rec_area"]
+            gis_area = cfg["gis_area"]
+            land_use = cfg["land_use"]
+            is_variance_case = (cfg["has_court"] or cfg["has_mortgage"] or abs(gis_area - recorded_area)/recorded_area > 0.05)
+        else:
+            village, base_lat, base_lon = random.choice(all_villages)
+            state_code = village.taluka.district.state.code
+            ulpin = f"{state_code}{random.randint(1000, 9999)}{random.randint(10000000, 99999999)}"
+            recorded_area = round(random.uniform(450.0, 4200.0), 2)
+            is_variance_case = (p_num % 10 == 0)
+            gis_area = round(recorded_area * random.uniform(1.12, 1.25), 2) if is_variance_case else round(recorded_area * random.uniform(0.985, 1.015), 2)
+            land_use = random.choice(["agricultural", "residential", "commercial", "mixed"])
 
         # Centroid offset
         offset_x = (random.random() - 0.5) * 0.08
@@ -150,14 +170,6 @@ def run_seed():
         size = random.uniform(0.0008, 0.0025)
         polygon_wkt = f"POLYGON(({c_x} {c_y}, {c_x+size} {c_y}, {c_x+size} {c_y+size}, {c_x} {c_y+size}, {c_x} {c_y}))"
 
-        recorded_area = round(random.uniform(450.0, 4200.0), 2)
-        # Deliberate variance case (~10% of parcels have >8% discrepancy)
-        is_variance_case = (p_num % 10 == 0)
-        if is_variance_case:
-            gis_area = round(recorded_area * random.uniform(1.12, 1.25), 2)
-        else:
-            gis_area = round(recorded_area * random.uniform(0.985, 1.015), 2)
-
         parcel = Parcel(
             ulpin=ulpin,
             village_id=village.id,
@@ -167,7 +179,7 @@ def run_seed():
             patta_number=f"PT-{random.randint(10000, 99999)}",
             area_recorded_sqm=recorded_area,
             area_gis_sqm=gis_area,
-            land_use_type=random.choice(["agricultural", "residential", "commercial", "mixed"]),
+            land_use_type=land_use,
             geom=WKTElement(polygon_wkt, srid=4326),
             source="cadastral_survey",
         )
@@ -187,11 +199,13 @@ def run_seed():
         db.flush()
 
         # Record of Rights (RoR)
+        share_pct = 50.00 if (p_num <= 4 and cfg.get("joint")) else 100.00
+        ownership_type = "joint" if (p_num <= 4 and cfg.get("joint")) else ("disputed" if is_variance_case else "sole")
         ror = RecordOfRights(
             parcel_id=parcel.id,
             owner_id=owner.id,
-            ownership_type="sole" if not is_variance_case else "disputed",
-            share_percentage=100.00,
+            ownership_type=ownership_type,
+            share_percentage=share_pct,
             tenure_type="Freehold Bhoomidhari",
             khatauni_number=f"KT-{random.randint(100, 999)}",
             source_document_ref=f"REV-DOC-{p_num:04d}",
@@ -200,6 +214,30 @@ def run_seed():
         )
         db.add(ror)
         db.flush()
+
+        # If joint ownership showcase, add second co-owner
+        if p_num <= 4 and cfg.get("joint"):
+            owner2 = Owner(
+                full_name="Kiran Kulkarni",
+                aadhaar_hash=hashlib.sha256(f"AADHAAR-{p_num}-2".encode()).hexdigest(),
+                mobile_hash=hashlib.sha256(f"MOBILE-{p_num}-2".encode()).hexdigest(),
+                father_or_spouse_name=f"Late Ramesh Kulkarni",
+                address=f"Village {village.name}, Taluka {village.taluka.name}, {village.taluka.district.name}",
+            )
+            db.add(owner2)
+            db.flush()
+            ror2 = RecordOfRights(
+                parcel_id=parcel.id,
+                owner_id=owner2.id,
+                ownership_type="joint",
+                share_percentage=50.00,
+                tenure_type="Freehold Bhoomidhari",
+                khatauni_number=ror.khatauni_number,
+                source_document_ref=f"REV-DOC-{p_num:04d}-2",
+                valid_from=ror.valid_from,
+                status="active",
+            )
+            db.add(ror2)
 
         # Cryptographic Audit Log for RoR Creation
         payload_ror = {"action": "INITIAL_ROR_CREATION", "ulpin": parcel.ulpin, "owner": owner.full_name}
@@ -233,18 +271,29 @@ def run_seed():
         db.add(reg)
         db.flush()
 
-        # Active Encumbrances (~20% of parcels)
-        if p_num % 5 == 0 or (is_variance_case and p_num % 2 == 0):
-            is_court_case = (p_num % 10 == 0)
-            enc = Encumbrance(
+        # Active Encumbrances
+        has_mortgage = cfg.get("has_mortgage") if p_num <= 4 else (p_num % 5 == 0)
+        has_court = cfg.get("has_court") if p_num <= 4 else (is_variance_case and p_num % 10 == 0)
+        if has_mortgage:
+            enc_m = Encumbrance(
                 parcel_id=parcel.id,
-                type="court_case" if is_court_case else "mortgage",
-                holder_name="Civil Court Sub-Division" if is_court_case else "State Bank of India",
-                amount=round(random.uniform(2500000.0, 6000000.0), 2) if not is_court_case else None,
+                type="mortgage",
+                holder_name="State Bank of India",
+                amount=round(random.uniform(2500000.0, 6000000.0), 2),
                 start_date=date.today() - timedelta(days=random.randint(50, 400)),
                 status="active",
             )
-            db.add(enc)
+            db.add(enc_m)
+        if has_court:
+            enc_c = Encumbrance(
+                parcel_id=parcel.id,
+                type="court_case",
+                holder_name="Civil Court Sub-Division (Injunction Order)",
+                amount=None,
+                start_date=date.today() - timedelta(days=random.randint(100, 500)),
+                status="active",
+            )
+            db.add(enc_c)
 
         # Mutations
         mut = Mutation(
