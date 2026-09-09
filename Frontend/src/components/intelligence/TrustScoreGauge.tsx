@@ -4,64 +4,65 @@ import { ShieldCheck, ShieldAlert, AlertTriangle } from 'lucide-react';
 
 export interface TrustScoreGaugeProps {
   score: number; // 0–100
-  modelVersion?: string;
-  computedAt?: string;
+  statusBand?: 'GOOD' | 'ATTENTION' | 'HIGH RISK';
+  description?: string;
+  engineVersion?: string;
 }
 
 export const TrustScoreGauge: React.FC<TrustScoreGaugeProps> = ({
   score,
-  modelVersion = 'v0.1-seed',
-  computedAt,
+  statusBand,
+  description,
+  engineVersion = 'v1.2-rules',
 }) => {
-  // Normalize score between 0 and 100
-  const clampedScore = Math.max(0, Math.min(100, score));
+  const clampedScore = Math.max(0, Math.min(100, Math.round(score)));
 
-  // Determine risk category and color
-  let riskLabel = 'LOW DISPUTE RISK';
-  let riskColor = '#34d399'; // Emerald
-  let badgeVariant: 'green' | 'amber' | 'red' = 'green';
-  let Icon = ShieldCheck;
-  let description =
-    'Clean cadastral boundaries, verified title deeds, and zero active litigation on file.';
-
-  if (clampedScore > 60) {
-    riskLabel = 'HIGH DISPUTE PROBABILITY';
-    riskColor = '#f43f5e'; // Rose
-    badgeVariant = 'red';
-    Icon = ShieldAlert;
-    description =
-      'Significant title risks identified: active court litigation, severe boundary variance, or unapproved building deviations.';
-  } else if (clampedScore > 30) {
-    riskLabel = 'MODERATE DISPUTE RISK';
-    riskColor = '#e7ae59'; // Amber
-    badgeVariant = 'amber';
-    Icon = AlertTriangle;
-    description =
-      'Minor boundary discrepancies, active bank charges, or joint ownership complexities detected.';
+  // Determine band & styling
+  let band = statusBand;
+  if (!band) {
+    if (clampedScore >= 85) band = 'GOOD';
+    else if (clampedScore >= 60) band = 'ATTENTION';
+    else band = 'HIGH RISK';
   }
 
-  // SVG Gauge calculations (radius = 70, circumference = 2 * PI * 70 = 439.82)
-  const radius = 70;
+  let badgeVariant: 'green' | 'amber' | 'red' = 'green';
+  let ringColor = '#10b981'; // Emerald
+  let Icon = ShieldCheck;
+  let defaultDesc = 'All cadastral, ownership, and encumbrance checks cleared without flags.';
+
+  if (band === 'ATTENTION') {
+    badgeVariant = 'amber';
+    ringColor = '#f59e0b'; // Amber
+    Icon = AlertTriangle;
+    defaultDesc = 'Moderate flags identified: area survey variance or registered bank mortgage.';
+  } else if (band === 'HIGH RISK') {
+    badgeVariant = 'red';
+    ringColor = '#ef4444'; // Red
+    Icon = ShieldAlert;
+    defaultDesc = 'Critical flags identified: active court stay order, disputed title, or severe variance.';
+  }
+
+  // SVG Gauge calculations
+  const radius = 68;
   const circumference = 2 * Math.PI * radius;
-  // We make a 270-degree arc
   const arcLength = circumference * 0.75;
   const strokeDashoffset = arcLength - (clampedScore / 100) * arcLength;
 
   return (
-    <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border flex flex-col items-center text-center space-y-4">
+    <div className="nlip-glass-card p-6 rounded-nlip border border-nlip-border flex flex-col items-center text-center space-y-4 shadow-lg">
       <div className="flex items-center justify-between w-full text-xs border-b border-nlip-border/50 pb-2.5">
-        <span className="font-mono text-[11px] uppercase text-nlip-text-faint">
-          AI/ML Trust Score
+        <span className="font-mono text-[11px] uppercase tracking-wider text-nlip-text-faint">
+          Score Engine
         </span>
         <Badge variant={badgeVariant} size="sm" dot>
-          {riskLabel}
+          {band}
         </Badge>
       </div>
 
       {/* Radial Meter SVG */}
       <div className="relative w-44 h-44 flex items-center justify-center my-1">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
-          {/* Background Track */}
+          {/* Track */}
           <circle
             cx="80"
             cy="80"
@@ -73,13 +74,13 @@ export const TrustScoreGauge: React.FC<TrustScoreGaugeProps> = ({
             strokeDashoffset="0"
             strokeLinecap="round"
           />
-          {/* Animated Value Arc */}
+          {/* Value Arc */}
           <circle
             cx="80"
             cy="80"
             r={radius}
             fill="none"
-            stroke={riskColor}
+            stroke={ringColor}
             strokeWidth="12"
             strokeDasharray={arcLength}
             strokeDashoffset={strokeDashoffset}
@@ -88,32 +89,32 @@ export const TrustScoreGauge: React.FC<TrustScoreGaugeProps> = ({
           />
         </svg>
 
-        {/* Center Text */}
+        {/* Center Score Display */}
         <div className="absolute flex flex-col items-center justify-center">
           <span className="text-4xl font-extrabold font-mono tracking-tight text-nlip-text">
-            {clampedScore.toFixed(1)}
+            {clampedScore}
           </span>
-          <span className="text-[11px] font-mono text-nlip-text-soft uppercase tracking-wider">
-            Risk Index / 100
+          <span className="text-[10px] font-mono text-nlip-text-soft uppercase tracking-wider mt-0.5">
+            / 100 Score
           </span>
         </div>
       </div>
 
-      {/* Evaluation Summary */}
+      {/* Status Band Description */}
       <div className="space-y-1 text-xs">
         <div className="flex items-center justify-center gap-1.5 font-bold text-nlip-text">
-          <Icon className="w-4 h-4" style={{ color: riskColor }} />
-          <span>{riskLabel}</span>
+          <Icon className="w-4 h-4" style={{ color: ringColor }} />
+          <span>Status: {band}</span>
         </div>
         <p className="text-[11px] text-nlip-text-soft max-w-xs mx-auto leading-relaxed">
-          {description}
+          {description || defaultDesc}
         </p>
       </div>
 
-      {/* Model Spec Footer */}
+      {/* Footer */}
       <div className="w-full pt-3 border-t border-nlip-border/40 flex justify-between text-[10px] font-mono text-nlip-text-faint">
-        <span>Model: {modelVersion}</span>
-        {computedAt && <span>Eval: {computedAt.slice(0, 10)}</span>}
+        <span>Engine: {engineVersion}</span>
+        <span className="text-emerald-400">Deterministic</span>
       </div>
     </div>
   );

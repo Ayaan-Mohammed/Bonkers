@@ -1047,10 +1047,15 @@ export const ParcelDetailPage: React.FC = () => {
         {currentTab === 'intelligence' && (
           <div className="space-y-6">
             <DisputeIntelligence
+              parcel={parcel}
+              rorList={rorList}
+              encumbrances={encumbrances}
+              taxRecords={taxRecords}
               scoreData={intelligenceScore}
               alerts={parcelAlerts}
               ulpin={parcel.ulpin}
-              isLoading={scoreLoading}
+              isLoading={scoreLoading || parcelLoading}
+              onViewGisEvidence={() => navigate(`/parcel/${parcel.ulpin}#gis`)}
             />
 
             {/* Citizen Action Bar in Intelligence Tab */}
