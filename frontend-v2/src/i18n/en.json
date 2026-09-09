@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "search": "Search Parcels",
+    "officer": "Officer Portal",
+    "developer": "Developer API",
+    "consent": "Citizen Consent"
+  },
+  "home": {
+    "tagline": "National Land Intelligence Platform",
+    "subtitle": "Digital Public Infrastructure for Unified Land Verification, Spatial Drone GIS, and Explainable Trust Scores.",
+    "search_cta": "Search Bhu-Aadhaar Index",
+    "officer_cta": "Officer Dashboard"
+  },
+  "terms": {
+    "bhu_aadhaar": "Bhu-Aadhaar (ULPIN)",
+    "khasra": "Khasra Number",
+    "khatauni": "Khatauni Reference",
+    "survey": "Survey Number",
+    "ror": "Record of Rights (RoR)",
+    "encumbrance": "Encumbrance & Liabilities",
+    "mutation": "Mutation (Dakhil-Kharij)",
+    "gis_area": "GIS Drone Survey Area",
+    "recorded_area": "Recorded Jamabandi Area",
+    "trust_score": "Dispute Trust Score",
+    "certified_dossier": "Certified Land Dossier",
+    "consent": "Citizen Consent (DEPA)"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "under_review": "Under Review",
+    "clear_title": "Clear Title (NEC)",
+    "high_risk": "High Dispute Risk"
+  }
+}

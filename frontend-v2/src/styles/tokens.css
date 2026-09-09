@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== NLIP Design Tokens (Extracted from Frontend/style.css) ===== */
+:root {
+  /* Color Palette */
+  --color-bg: #17140f;
+  --color-bg-2: #211c14;
+  --color-surface: rgba(255, 255, 255, 0.045);
+  --color-surface-hi: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-border-hi: rgba(255, 255, 255, 0.16);
+
+  /* Typography Colors */
+  --color-text: #F3F4FA;
+  --color-text-soft: #9BA0C2;
+  --color-text-faint: #8085AC;
+
+  /* Accent & Civic Amber */
+  --color-amber: #e7ae59;
+  --color-amber-deep: #b87628;
+  --color-amber-glow: rgba(231, 174, 89, 0.14);
+
+  /* Document & Official Print (Dossier Mode) */
+  --color-paper: #FBFAFF;
+  --color-paper-line: #E5E1F5;
+  --color-ink: #1A1B2E;
+  --color-ink-soft: #5B5E7E;
+
+  /* Font Families */
+  --font-display: "Manrope", -apple-system, sans-serif;
+  --font-body: "Manrope", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Radius & Layout Conformance */
+  --radius: 20px;
+  --radius-sm: 12px;
+  --wrap: 1100px;
+}
+
+/* ===== Custom Scrollbar matching existing civic-tech aesthetic ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #120e0a;
+  border-left: 1px solid rgba(231, 174, 89, 0.12);
+}
+::-webkit-scrollbar-thumb {
+  background: #c29e69;
+  border-radius: 999px;
+  border: 1.5px solid #120e0a;
+  transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e7ae59;
+}
+
+/* ===== Logo Mark Helper ===== */
+.nlip-mark-glyph {
+  color: var(--color-amber);
+  font-size: 1.15em;
+  line-height: 1;
+  display: inline-block;
+}
+
+/* ===== Subtle Glassmorphism Card Style ===== */
+.nlip-glass-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+}
+
+.nlip-glass-card:hover {
+  border-color: var(--color-border-hi);
+}
+
+/* ===== Print Styles for Certified Land Dossier ===== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #1a1b2e !important;
+    font-size: 11pt !important;
+  }
+
+  nav, footer, .no-print, header, [role="navigation"] {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .nlip-glass-card {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    color: #1a1b2e !important;
+    page-break-inside: avoid;
+    margin-bottom: 1rem !important;
+  }
+
+  .dossier-print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+}
