@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 import type {
   Parcel,
   RecordOfRights,
@@ -16,7 +17,6 @@ import {
   FileCheck2,
   CheckCircle2,
   AlertTriangle,
-  QrCode,
   Lock,
   Building2,
   Scale,
@@ -24,6 +24,7 @@ import {
   FileText,
   Copy,
 } from 'lucide-react';
+
 
 export interface CertifiedDossierProps {
   parcel: Parcel;
@@ -58,6 +59,24 @@ export const CertifiedDossier: React.FC<CertifiedDossierProps> = ({
 
   const dossierRef = `NLIP-DOS-2026-${parcel.ulpin}`;
   const issueTimestamp = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+
+  useEffect(() => {
+    const verifyUrl = `${window.location.origin}/parcel/${parcel.ulpin}`;
+    QRCode.toDataURL(verifyUrl, {
+      width: 140,
+      margin: 1,
+      color: {
+        dark: '#111111',
+        light: '#ffffff',
+      },
+      errorCorrectionLevel: 'M',
+    })
+      .then((url) => setQrDataUrl(url))
+      .catch((err) => console.error('Failed to generate real QR code', err));
+  }, [parcel.ulpin]);
+
 
   const handlePrint = () => {
     window.print();
@@ -549,9 +568,18 @@ export const CertifiedDossier: React.FC<CertifiedDossierProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               {/* QR Code Verification Box */}
               <div className="p-3 rounded-lg bg-black/40 print:bg-gray-50 border border-nlip-border print:border-gray-300 flex items-center gap-3">
-                <div className="w-16 h-16 bg-white p-1 rounded flex items-center justify-center shrink-0">
-                  <QrCode className="w-14 h-14 text-black" />
+                <div className="w-16 h-16 bg-white p-0.5 rounded flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                  {qrDataUrl ? (
+                    <img
+                      src={qrDataUrl}
+                      alt={`QR verification code for parcel ${parcel.ulpin}`}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 animate-pulse" />
+                  )}
                 </div>
+
                 <div className="text-[10px] text-nlip-text-soft print:text-gray-700 font-mono space-y-0.5">
                   <div className="font-bold text-nlip-text print:text-black uppercase">
                     Scan for Live Validation

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, MapPin } from 'lucide-react';
+import { Search, X, MapPin, Navigation, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
+
 
 export interface QuickSearchProps {
   initialQuery?: string;
@@ -47,6 +48,9 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
     return () => clearTimeout(handler);
   }, [query, selectedState, onSearchChange]);
 
+  const [gpsStatus, setGpsStatus] = useState<'idle' | 'locating' | 'success' | 'error'>('idle');
+  const [gpsMessage, setGpsMessage] = useState<string | null>(null);
+
   const handleClear = () => {
     setQuery('');
     onSearchChange({ query: '', state: selectedState || undefined });
@@ -55,6 +59,57 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
   const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
     setQuery(preset.query);
     setSelectedState(preset.state);
+  };
+
+  const handleLocateGps = () => {
+    if (!navigator.geolocation) {
+      setGpsStatus('error');
+      setGpsMessage('Geolocation is not supported by your browser.');
+      setTimeout(() => setGpsStatus('idle'), 4000);
+      return;
+    }
+
+    setGpsStatus('locating');
+    setGpsMessage(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
+
+        // Regional cadastral index anchor sites
+        const sites = [
+          { name: 'UP: Lucknow Sadar', state: 'UP', query: 'UP09412601001', lat: 26.85, lng: 80.95 },
+          { name: 'TS: Hyderabad', state: 'TS', query: 'TS36280201001', lat: 17.38, lng: 78.48 },
+          { name: 'MH: Mumbai', state: 'MH', query: 'MH27830501001', lat: 19.07, lng: 72.87 },
+          { name: 'KA: Bengaluru', state: 'KA', query: 'KA29150301001', lat: 12.97, lng: 77.59 },
+          { name: 'TN: Chennai', state: 'TN', query: 'TN62080401001', lat: 13.08, lng: 80.27 },
+        ];
+
+        let closest = sites[0];
+        let minD = Infinity;
+        sites.forEach((s) => {
+          const d = Math.pow(s.lat - userLat, 2) + Math.pow(s.lng - userLng, 2);
+          if (d < minD) {
+            minD = d;
+            closest = s;
+          }
+        });
+
+        setSelectedState(closest.state);
+        setQuery(closest.query);
+        setGpsStatus('success');
+        setGpsMessage(`Matched nearest cadastral sector: ${closest.name}`);
+        setTimeout(() => setGpsStatus('idle'), 5000);
+      },
+      (err) => {
+        // Graceful error fallback for denied/unavailable geolocation
+        setGpsStatus('error');
+        setGpsMessage(`GPS unavailable (${err.message}). Select your state manually above.`);
+        setTimeout(() => setGpsStatus('idle'), 5000);
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
   };
 
   return (
@@ -122,23 +177,71 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
         </div>
       </div>
 
-      {/* Preset Quick Badges */}
-      <div className="flex flex-wrap items-center gap-2 pt-1.5">
-        <span className="text-xs sm:text-sm font-mono text-nlip-text-soft flex items-center gap-1.5 font-medium">
-          <MapPin className="w-3.5 h-3.5 text-nlip-amber" />
-          <span>Quick Samples:</span>
-        </span>
-        {PRESETS.map((preset) => (
-          <button
-            key={preset.label}
-            type="button"
-            onClick={() => handleApplyPreset(preset)}
-            className="px-3 py-1.5 text-xs sm:text-sm font-mono bg-[#1f1a14]/90 hover:bg-nlip-amber/20 border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber rounded-lg transition-all active:scale-95 shadow-sm"
-          >
-            {preset.label}
-          </button>
-        ))}
+      {/* Preset Quick Badges & GPS Geolocation */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs sm:text-sm font-mono text-nlip-text-soft flex items-center gap-1.5 font-medium">
+            <MapPin className="w-3.5 h-3.5 text-nlip-amber" />
+            <span>Quick Samples:</span>
+          </span>
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => handleApplyPreset(preset)}
+              className="px-3 py-1.5 text-xs sm:text-sm font-mono bg-[#1f1a14]/90 hover:bg-nlip-amber/20 border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber rounded-lg transition-all active:scale-95 shadow-sm"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
+        {/* GPS Locate My Land Button */}
+        <button
+          type="button"
+          onClick={handleLocateGps}
+          disabled={gpsStatus === 'locating'}
+          className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono flex items-center gap-2 border transition-all active:scale-95 shadow-sm ${
+            gpsStatus === 'locating'
+              ? 'bg-nlip-amber/20 text-nlip-amber border-nlip-amber/60 animate-pulse'
+              : 'bg-[#221c15] hover:bg-nlip-amber/20 text-nlip-text hover:text-nlip-amber border-nlip-border hover:border-nlip-amber/60'
+          }`}
+          title="Detect nearby parcel using your device GPS location"
+        >
+          <span
+            className={`w-2 h-2 rounded-full ${
+              gpsStatus === 'locating'
+                ? 'bg-nlip-amber animate-ping'
+                : gpsStatus === 'success'
+                ? 'bg-emerald-400'
+                : gpsStatus === 'error'
+                ? 'bg-rose-400'
+                : 'bg-nlip-amber'
+            }`}
+          />
+          <Navigation className="w-3.5 h-3.5" />
+          <span>{gpsStatus === 'locating' ? 'Acquiring GPS...' : 'Locate My Land'}</span>
+        </button>
       </div>
+
+      {/* GPS Feedback Notice */}
+      {gpsMessage && (
+        <div
+          className={`p-2.5 rounded-lg text-xs font-mono flex items-center gap-2 transition-all ${
+            gpsStatus === 'error'
+              ? 'bg-rose-500/10 border border-rose-500/30 text-rose-300'
+              : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
+          }`}
+        >
+          {gpsStatus === 'error' ? (
+            <AlertCircle className="w-4 h-4 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+          )}
+          <span>{gpsMessage}</span>
+        </div>
+      )}
+
     </div>
   );
 };

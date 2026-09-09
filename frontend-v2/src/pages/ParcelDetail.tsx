@@ -21,7 +21,7 @@ import { Button } from '@/components/common/Button';
 import { Loader } from '@/components/common/Loader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MapView } from '@/components/map';
-import { CertifiedDossier, ChainOfTitle } from '@/components/dossier';
+import { CertifiedDossier, ChainOfTitle, CitizenActionModal } from '@/components/dossier';
 import { DisputeIntelligence } from '@/components/intelligence';
 import {
   Layers,
@@ -43,7 +43,12 @@ import {
   Info,
   CheckCircle2,
   XCircle,
+  Download,
+  Share2,
+  Scale,
+  Check,
 } from 'lucide-react';
+
 
 export const ParcelDetailPage: React.FC = () => {
   const { ulpin } = useParams<{ ulpin: string }>();
@@ -140,6 +145,62 @@ export const ParcelDetailPage: React.FC = () => {
     enabled: !!ulpin && currentTab === 'intelligence',
   });
 
+  const [isCitizenModalOpen, setIsCitizenModalOpen] = React.useState(false);
+  const [citizenActionCategory, setCitizenActionCategory] = React.useState<
+    'demarcation' | 'ec_issuance' | 'mutation_objection' | 'area_rectification'
+  >('demarcation');
+  const [shareCopied, setShareCopied] = React.useState(false);
+
+  const openCitizenModal = (
+    cat: 'demarcation' | 'ec_issuance' | 'mutation_objection' | 'area_rectification' = 'demarcation'
+  ) => {
+    setCitizenActionCategory(cat);
+    setIsCitizenModalOpen(true);
+  };
+
+  const handleExportGeoJSON = () => {
+    if (!parcel) return;
+    const fc = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: {
+            ulpin: parcel.ulpin,
+            survey_number: parcel.survey_number,
+            khasra_number: parcel.khasra_number,
+            state_code: parcel.state_code,
+            district: parcel.district_name,
+            village: parcel.village_name,
+            area_gis_sqm: parcel.area_gis_sqm,
+            area_recorded_sqm: parcel.area_recorded_sqm,
+            land_use_type: parcel.land_use_type,
+            source: parcel.source,
+            export_source: 'National Land Intelligence Platform (NLIP)',
+
+            export_timestamp: new Date().toISOString(),
+          },
+          geometry: parcel.geom?.geometry ?? { type: 'Polygon', coordinates: [] },
+        },
+      ],
+    };
+    const blob = new Blob([JSON.stringify(fc, null, 2)], { type: 'application/geo+json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${parcel.ulpin}-cadastral.geojson`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyShareLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShareCopied(true);
+    setTimeout(() => setShareCopied(false), 2400);
+  };
+
   const handleTabClick = (tabKey: string) => {
     navigate(`/parcel/${ulpin}#${tabKey}`);
   };
@@ -152,6 +213,7 @@ export const ParcelDetailPage: React.FC = () => {
     const avgLat = coords.reduce((sum, c) => sum + c[1], 0) / coords.length;
     return { lat: avgLat, lng: avgLng };
   }, [parcel]);
+
 
   if (parcelLoading) {
     return (
@@ -231,8 +293,37 @@ export const ParcelDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* Action Buttons: Redirect to Location & Change Parcel */}
-            <div className="flex items-center gap-2">
+            {/* Action Buttons: Export GeoJSON, Share Link, Redirect to Location & Change Parcel */}
+            <div className="flex items-center flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<Download className="w-3.5 h-3.5 text-nlip-amber" />}
+                onClick={handleExportGeoJSON}
+                className="text-xs font-mono"
+                title="Download standard OGC Cadastral GeoJSON"
+              >
+                <span className="hidden sm:inline">Export GeoJSON</span>
+                <span className="sm:hidden">GeoJSON</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                icon={
+                  shareCopied ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Share2 className="w-3.5 h-3.5 text-nlip-amber" />
+                  )
+                }
+                onClick={handleCopyShareLink}
+                className="text-xs font-mono"
+                title="Copy shareable parcel URL"
+              >
+                <span>{shareCopied ? 'Copied!' : 'Share'}</span>
+              </Button>
+
               <a
                 href={`https://www.google.com/maps?q=${centroid.lat},${centroid.lng}`}
                 target="_blank"
@@ -256,6 +347,7 @@ export const ParcelDetailPage: React.FC = () => {
                 </Button>
               </Link>
             </div>
+
           </div>
 
           {/* Navigation Tabs Bar */}
@@ -693,8 +785,44 @@ export const ParcelDetailPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Citizen Action & Administrative Grievance Bar */}
+            <div className="p-5 rounded-nlip bg-gradient-to-r from-[#211a12] via-[#1a1610] to-[#16130f] border border-nlip-border-hi shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-nlip-amber" />
+                  <h4 className="text-sm font-bold text-nlip-text">
+                    Need Administrative Action on this Parcel?
+                  </h4>
+                </div>
+                <p className="text-xs text-nlip-text-soft max-w-2xl leading-relaxed">
+                  File a formal cadastral boundary demarcation request, apply for a certified Encumbrance Certificate (EC), or raise an area variance / co-sharer objection directly with the State Revenue Directorate.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  icon={<Scale className="w-3.5 h-3.5" />}
+                  onClick={() => openCitizenModal('demarcation')}
+                  className="text-xs"
+                >
+                  File Grievance / Demarcation
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={<FileText className="w-3.5 h-3.5" />}
+                  onClick={() => openCitizenModal('ec_issuance')}
+                  className="text-xs"
+                >
+                  Request EC
+                </Button>
+              </div>
+            </div>
+
             {/* Quick Action Navigation Buttons */}
             <div className="flex flex-wrap gap-3 pt-2">
+
               <Button
                 variant="primary"
                 icon={<Layers className="w-4 h-4" />}
@@ -917,12 +1045,49 @@ export const ParcelDetailPage: React.FC = () => {
         {/* TAB 4: INTELLIGENCE (Task 8 Deliverable)                        */}
         {/* ================================================================= */}
         {currentTab === 'intelligence' && (
-          <DisputeIntelligence
-            scoreData={intelligenceScore}
-            alerts={parcelAlerts}
-            ulpin={parcel.ulpin}
-            isLoading={scoreLoading}
-          />
+          <div className="space-y-6">
+            <DisputeIntelligence
+              scoreData={intelligenceScore}
+              alerts={parcelAlerts}
+              ulpin={parcel.ulpin}
+              isLoading={scoreLoading}
+            />
+
+            {/* Citizen Action Bar in Intelligence Tab */}
+            <div className="p-5 rounded-nlip bg-gradient-to-r from-[#211a12] via-[#1a1610] to-[#16130f] border border-nlip-border-hi shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-nlip-amber" />
+                  <h4 className="text-sm font-bold text-nlip-text">
+                    Dispute Discovered? Initiate Revenue Rectification
+                  </h4>
+                </div>
+                <p className="text-xs text-nlip-text-soft max-w-2xl leading-relaxed">
+                  Log a formal mutation dispute or cadastral boundary demarcation complaint tracked with official reference numbers.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  icon={<Scale className="w-3.5 h-3.5" />}
+                  onClick={() => openCitizenModal('mutation_objection')}
+                  className="text-xs"
+                >
+                  File Objection / Dispute
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={<FileText className="w-3.5 h-3.5" />}
+                  onClick={() => openCitizenModal('area_rectification')}
+                  className="text-xs"
+                >
+                  Rectify Variance
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ================================================================= */}
@@ -952,6 +1117,15 @@ export const ParcelDetailPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Citizen Action & Administrative Grievance Modal */}
+      <CitizenActionModal
+        isOpen={isCitizenModalOpen}
+        onClose={() => setIsCitizenModalOpen(false)}
+        parcel={parcel}
+        initialCategory={citizenActionCategory}
+      />
     </div>
   );
 };
+
