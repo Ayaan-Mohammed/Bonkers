@@ -84,6 +84,8 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
           { name: 'MH: Mumbai', state: 'MH', query: 'MH27830501001', lat: 19.07, lng: 72.87 },
           { name: 'KA: Bengaluru', state: 'KA', query: 'KA29150301001', lat: 12.97, lng: 77.59 },
           { name: 'TN: Chennai', state: 'TN', query: 'TN62080401001', lat: 13.08, lng: 80.27 },
+          { name: 'PB: Amritsar', state: 'PB', query: 'PB03140701001', lat: 31.58, lng: 74.83 },
+          { name: 'MP: Bhopal', state: 'MP', query: 'MP23090401001', lat: 23.21, lng: 77.35 },
         ];
 
         let closest = sites[0];

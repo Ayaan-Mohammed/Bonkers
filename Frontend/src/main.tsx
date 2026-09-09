@@ -17,16 +17,58 @@ const queryClient = new QueryClient({
   },
 });
 
-// Start MSW mock service worker if VITE_USE_MOCKS=true.
-// TODO (Task 13): Remove this call and delete mocks/ once backend-v2 is confirmed live.
-startMocks().then(() => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('[REACT_ERROR_BOUNDARY_CAUGHT]', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ color: '#ff6b6b', padding: 24, background: '#111', fontFamily: 'monospace', minHeight: '100vh' }}>
+          <h2 style={{ fontSize: 20, marginBottom: 12 }}>Application Render Error</h2>
+          <pre style={{ whiteSpace: 'pre-wrap', fontSize: 13, color: '#ffd166' }}>
+            {this.state.error?.stack || String(this.state.error)}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function mountApp() {
+  const rootEl = document.getElementById('root');
+  if (!rootEl) return;
+  ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </QueryClientProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </React.StrictMode>
   );
-});
+}
+
+// Start MSW mock service worker if VITE_USE_MOCKS=true.
+// Ensure app always mounts even if mock registration encounters issues
+startMocks()
+  .catch((err) => {
+    console.warn('[MSW] startMocks deferred or failed:', err);
+  })
+  .finally(() => {
+    mountApp();
+  });
+

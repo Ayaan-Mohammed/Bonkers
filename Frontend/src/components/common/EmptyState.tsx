@@ -31,6 +31,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     { label: '📍 KA: Koramangala 15/03', ulpin: 'KA29150301001' },
     { label: '📍 TN: Chennai 62/08', ulpin: 'TN33620801001' },
     { label: '⚠️ TS: Hyderabad (Dispute Demo)', ulpin: 'TS36280201001' },
+    { label: '🌾 PB: Amritsar Farmland', ulpin: 'PB03140701001' },
+    { label: '🚨 MP: Bhopal (Fraud Demo)', ulpin: 'MP23090401001' },
   ];
 
   return (

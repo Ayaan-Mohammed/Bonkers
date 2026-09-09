@@ -94,7 +94,7 @@ export const MOCK_PARCELS: Parcel[] = [
     patta_number: null,
     area_recorded_sqm: 842,
     area_gis_sqm: 838.4,     // ~0.4% variance — below 2% threshold
-    land_use_type: 'agricultural',
+    land_use_type: 'residential',
     geom: {
       type: 'Feature',
       geometry: {
@@ -234,7 +234,7 @@ export const MOCK_PARCELS: Parcel[] = [
     patta_number: null,
     area_recorded_sqm: 920,
     area_gis_sqm: 995,        // ~8.2% variance — HIGH, badge shown, also disputed
-    land_use_type: 'agricultural',
+    land_use_type: 'mixed',
     geom: {
       type: 'Feature',
       geometry: {
@@ -259,6 +259,76 @@ export const MOCK_PARCELS: Parcel[] = [
     district_name: 'Hyderabad',
     state_name: 'Telangana',
     state_code: 'TS',
+  },
+  {
+    id: 'pcl-pb-001',
+    ulpin: 'PB03140701001',
+    village_id: 'vill-pb-001',
+    survey_number: '14/07',
+    khasra_number: 'K-8871',
+    gata_number: null,
+    patta_number: null,
+    area_recorded_sqm: 4047,    // ~1 acre
+    area_gis_sqm: 4035,         // ~0.3% variance — clean
+    land_use_type: 'agricultural',
+    geom: {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [74.8320, 31.5820],
+          [74.8335, 31.5818],
+          [74.8340, 31.5832],
+          [74.8330, 31.5845],
+          [74.8318, 31.5842],
+          [74.8312, 31.5830],
+          [74.8320, 31.5820],
+        ]],
+      },
+      properties: { ulpin: 'PB03140701001' },
+    },
+    source: 'cadastral_survey',
+    created_at: '2023-04-01T00:00:00+05:30',
+    updated_at: '2026-06-10T08:00:00+05:30',
+    village_name: 'Lopoke',
+    district_name: 'Amritsar',
+    state_name: 'Punjab',
+    state_code: 'PB',
+  },
+  {
+    id: 'pcl-mp-001',
+    ulpin: 'MP23090401001',
+    village_id: 'vill-mp-001',
+    survey_number: '09/04',
+    khasra_number: 'K-3392',
+    gata_number: null,
+    patta_number: null,
+    area_recorded_sqm: 6070,    // ~1.5 acres
+    area_gis_sqm: 7280,         // ~20% variance — MASSIVE discrepancy, fraud indicator
+    land_use_type: 'agricultural',
+    geom: {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [77.3560, 23.2120],
+          [77.3580, 23.2118],
+          [77.3590, 23.2140],
+          [77.3578, 23.2160],
+          [77.3558, 23.2155],
+          [77.3548, 23.2135],
+          [77.3560, 23.2120],
+        ]],
+      },
+      properties: { ulpin: 'MP23090401001' },
+    },
+    source: 'svamitva_drone',
+    created_at: '2024-01-15T00:00:00+05:30',
+    updated_at: '2026-09-01T12:00:00+05:30',
+    village_name: 'Ratibad',
+    district_name: 'Bhopal',
+    state_name: 'Madhya Pradesh',
+    state_code: 'MP',
   },
 ];
 
@@ -381,6 +451,50 @@ export const MOCK_ROR: Record<string, RecordOfRights[]> = {
       status: 'disputed',    // <-- deliberate variance case for Trust Score demo
     },
   ],
+  PB03140701001: [{
+    id: 'ror-pb-001',
+    parcel_id: 'pcl-pb-001',
+    owner_id: 'own-pb-001',
+    owner: { id: 'own-pb-001', full_name: 'Gurpreet Singh', aadhaar_hash: 'sha256_aadhaar_gurpreet', mobile_hash: 'sha256_mob_gurpreet', father_or_spouse_name: 'Harpal Singh', address: 'Village Lopoke, Amritsar, Punjab' },
+    ownership_type: 'sole',
+    share_percentage: 100,
+    tenure_type: 'bhumidhari',
+    khatauni_number: 'KH-2023-PB4491',
+    source_document_ref: null,
+    valid_from: '2010-06-15',
+    valid_to: null,
+    status: 'active',
+  }],
+  MP23090401001: [
+    {
+      id: 'ror-mp-001',
+      parcel_id: 'pcl-mp-001',
+      owner_id: 'own-mp-001',
+      owner: { id: 'own-mp-001', full_name: 'Vikram Patel', aadhaar_hash: 'sha256_aadhaar_vikram', mobile_hash: 'sha256_mob_vikram', father_or_spouse_name: 'Mohan Patel', address: 'Village Ratibad, Bhopal, MP' },
+      ownership_type: 'sole',
+      share_percentage: 100,
+      tenure_type: 'bhumidhari',
+      khatauni_number: 'KH-2024-MP7831',
+      source_document_ref: 'FORGED-SD-MP-2024-0091',
+      valid_from: '2024-03-01',
+      valid_to: null,
+      status: 'disputed',    // <-- forged document, ownership challenged
+    },
+    {
+      id: 'ror-mp-002',
+      parcel_id: 'pcl-mp-001',
+      owner_id: 'own-mp-002',
+      owner: { id: 'own-mp-002', full_name: 'Rajkumar Yadav', aadhaar_hash: 'sha256_aadhaar_rajkumar', mobile_hash: 'sha256_mob_rajkumar', father_or_spouse_name: 'Late Bansilal Yadav', address: 'Village Ratibad, Bhopal, MP' },
+      ownership_type: 'sole',
+      share_percentage: 100,
+      tenure_type: 'bhumidhari',
+      khatauni_number: 'KH-2019-MP3201',
+      source_document_ref: null,
+      valid_from: '2008-01-01',
+      valid_to: '2024-03-01',
+      status: 'disputed',    // <-- original owner claims forgery
+    },
+  ],
 };
 
 // ---------------------------------------------------------------------------
@@ -423,6 +537,18 @@ export const MOCK_REGISTRATIONS: Record<string, Registration[]> = {
   }],
   UP09412601001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [{
+    id: 'reg-mp-001',
+    parcel_id: 'pcl-mp-001',
+    deed_type: 'Sale Deed',
+    deed_number: 'MP-SD-2024-00914',
+    registration_date: '2024-03-01',
+    sub_registrar_office: 'SRO Huzur, Bhopal',
+    consideration_amount: 1800000,
+    ngdrs_ref_id: null,
+    document_hash: 'f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0',
+  }],
 };
 
 // ---------------------------------------------------------------------------
@@ -453,6 +579,29 @@ export const MOCK_ENCUMBRANCES: Record<string, Encumbrance[]> = {
   KA29150301001: [],
   UP09412601001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [
+    {
+      id: 'enc-mp-001',
+      parcel_id: 'pcl-mp-001',
+      type: 'court_case',
+      holder_name: 'District Court, Bhopal — Case No. 2024/CR/1182',
+      amount: null,
+      start_date: '2024-06-10',
+      end_date: null,
+      status: 'active',     // <-- active fraud litigation
+    },
+    {
+      id: 'enc-mp-002',
+      parcel_id: 'pcl-mp-001',
+      type: 'attachment',
+      holder_name: 'Sub-Divisional Magistrate, Huzur, Bhopal',
+      amount: null,
+      start_date: '2024-08-15',
+      end_date: null,
+      status: 'active',     // <-- govt attachment order on suspected fraud
+    },
+  ],
 };
 
 // ---------------------------------------------------------------------------
@@ -491,6 +640,21 @@ export const MOCK_MUTATIONS: Record<string, Mutation[]> = {
   MH27830501001: [],
   UP09412601001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [{
+    id: 'mut-mp-001',
+    parcel_id: 'pcl-mp-001',
+    mutation_type: 'purchase_transfer',
+    previous_owner_id: 'own-mp-002',
+    new_owner_id: 'own-mp-001',
+    previous_owner: { id: 'own-mp-002', full_name: 'Rajkumar Yadav' },
+    new_owner: { id: 'own-mp-001', full_name: 'Vikram Patel' },
+    applied_date: '2024-03-05',
+    approved_date: '2024-03-15',
+    status: 'challenged',    // <-- mutation challenged as fraudulent
+    approving_officer_id: null,
+    remarks: 'Mutation approved based on sale deed. Original owner alleges forged signatures and impersonation.',
+  }],
 };
 
 // ---------------------------------------------------------------------------
@@ -523,6 +687,8 @@ export const MOCK_BUILDING_PERMISSIONS: Record<string, BuildingPermission[]> = {
   KA29150301001: [],
   UP09412601001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [],
 };
 
 // ---------------------------------------------------------------------------
@@ -575,6 +741,24 @@ export const MOCK_TAX: Record<string, PropertyTaxRecord[]> = {
     paid_status: 'paid',
     ulb_id: 'ULB-GCC',
   }],
+  PB03140701001: [{
+    id: 'tax-pb-001',
+    parcel_id: 'pcl-pb-001',
+    assessment_year: 2026,
+    assessed_value: 2800000,
+    tax_amount: 2800,
+    paid_status: 'paid',
+    ulb_id: null,
+  }],
+  MP23090401001: [{
+    id: 'tax-mp-001',
+    parcel_id: 'pcl-mp-001',
+    assessment_year: 2026,
+    assessed_value: 4200000,
+    tax_amount: 12600,
+    paid_status: 'overdue',    // <-- 3 years overdue, fraud indicator
+    ulb_id: null,
+  }],
 };
 
 // ---------------------------------------------------------------------------
@@ -623,6 +807,33 @@ export const MOCK_ALERTS: Record<string, ChangeDetectionAlert[]> = {
   UP09412601001: [],
   KA29150301001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [
+    {
+      id: 'alt-mp-001',
+      parcel_id: 'pcl-mp-001',
+      alert_type: 'boundary_variance',
+      detected_date: '2026-08-05',
+      confidence_score: 0.95,
+      snapshot_before_ref: 'gs://nlip-snapshots/mp-09-04-before-2026-07.tif',
+      snapshot_after_ref: 'gs://nlip-snapshots/mp-09-04-after-2026-08.tif',
+      status: 'open',
+      resolved_by: null,
+      is_simulated: true,
+    },
+    {
+      id: 'alt-mp-002',
+      parcel_id: 'pcl-mp-001',
+      alert_type: 'unauthorized_construction',
+      detected_date: '2026-08-22',
+      confidence_score: 0.88,
+      snapshot_before_ref: null,
+      snapshot_after_ref: null,
+      status: 'open',
+      resolved_by: null,
+      is_simulated: true,
+    },
+  ],
 };
 
 // ---------------------------------------------------------------------------
@@ -705,6 +916,35 @@ export const MOCK_RISK_SCORES: Record<string, DisputeRiskScore> = {
     computed_at: '2026-09-09T06:00:00+05:30',
     model_version: 'v0.1-seed',
   },
+  PB03140701001: {
+    id: 'drs-pb-001',
+    parcel_id: 'pcl-pb-001',
+    score: 8.5,
+    factors: {
+      litigation_active: 0.00,
+      tax_arrears: 0.00,
+      ownership_disputed: 0.00,
+      area_variance_gis: 0.005,
+      building_deviation: 0.00,
+    },
+    computed_at: '2026-09-09T06:00:00+05:30',
+    model_version: 'v0.1-seed',
+  },
+  MP23090401001: {
+    id: 'drs-mp-001',
+    parcel_id: 'pcl-mp-001',
+    score: 94.2,      // <-- CRITICAL risk — fraud case
+    factors: {
+      litigation_active: 0.40,
+      tax_arrears: 0.15,
+      ownership_disputed: 0.30,
+      area_variance_gis: 0.20,
+      building_deviation: 0.00,
+      forged_document_flag: 0.25,
+    },
+    computed_at: '2026-09-09T06:00:00+05:30',
+    model_version: 'v0.1-seed',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -759,6 +999,41 @@ export const MOCK_HISTORY: Record<string, HistoryEvent[]> = {
   UP09412601001: [],
   KA29150301001: [],
   TN33620801001: [],
+  PB03140701001: [],
+  MP23090401001: [
+    {
+      id: 'hev-mp-001',
+      event_type: 'registration',
+      event_date: '2024-03-01',
+      title: 'Sale Deed Registered (Suspected Forged)',
+      description: 'Sale deed MP-SD-2024-00914 registered at SRO Huzur, Bhopal. Original owner Rajkumar Yadav alleges forged signatures and impersonation.',
+      source_data: MOCK_REGISTRATIONS['MP23090401001'][0],
+    },
+    {
+      id: 'hev-mp-002',
+      event_type: 'mutation',
+      event_date: '2024-03-15',
+      title: 'Mutation Challenged',
+      description: 'Ownership mutation to Vikram Patel challenged by original owner. FIR filed under Sections 420, 467, 468 IPC.',
+      source_data: MOCK_MUTATIONS['MP23090401001'][0],
+    },
+    {
+      id: 'hev-mp-003',
+      event_type: 'encumbrance',
+      event_date: '2024-06-10',
+      title: 'Court Case Filed',
+      description: 'District Court Bhopal — Case 2024/CR/1182. Stay order issued on property transfer pending investigation.',
+      source_data: MOCK_ENCUMBRANCES['MP23090401001'][0],
+    },
+    {
+      id: 'hev-mp-004',
+      event_type: 'alert',
+      event_date: '2026-08-05',
+      title: 'Massive Boundary Variance (20%)',
+      description: 'GIS drone survey reveals 20% area excess (7,280 sqm vs 6,070 sqm recorded). Suspected encroachment on adjacent government land.',
+      source_data: MOCK_ALERTS['MP23090401001'][0],
+    },
+  ],
 };
 
 // ---------------------------------------------------------------------------

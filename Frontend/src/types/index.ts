@@ -27,10 +27,10 @@ export type ISODateTime = string;   // ISO 8601 with timezone
 export type OwnershipType = 'sole' | 'joint' | 'tenant' | 'institutional';
 export type RorStatus = 'active' | 'historical' | 'disputed';
 
-export type EncumbranceType = 'mortgage' | 'lien' | 'court_case' | 'lease';
+export type EncumbranceType = 'mortgage' | 'lien' | 'court_case' | 'lease' | 'attachment';
 export type EncumbranceStatus = 'active' | 'closed';
 
-export type MutationStatus = 'pending' | 'approved' | 'rejected';
+export type MutationStatus = 'pending' | 'approved' | 'rejected' | 'challenged';
 
 export type BuildingPermissionStatus =
   | 'applied'
@@ -50,7 +50,8 @@ export type ConsentScopeKey =
 export type AlertType =
   | 'unauthorized_construction'
   | 'landuse_mismatch'
-  | 'boundary_variance';
+  | 'boundary_variance'
+  | 'encroachment';
 export type AlertStatus = 'open' | 'under_review' | 'resolved';
 
 export type GrievanceStatus = 'open' | 'in_progress' | 'resolved';

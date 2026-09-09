@@ -136,13 +136,13 @@ export const ParcelDetailPage: React.FC = () => {
   const { data: intelligenceScore, isLoading: scoreLoading } = useQuery({
     queryKey: ['intelligence', ulpin],
     queryFn: () => getIntelligence(ulpin!),
-    enabled: !!ulpin && currentTab === 'intelligence',
+    enabled: !!ulpin && (currentTab === 'intelligence' || currentTab === 'gis'),
   });
 
   const { data: parcelAlerts } = useQuery({
     queryKey: ['parcel-alerts', ulpin],
     queryFn: () => getAlerts(ulpin!),
-    enabled: !!ulpin && currentTab === 'intelligence',
+    enabled: !!ulpin && (currentTab === 'intelligence' || currentTab === 'gis'),
   });
 
   const [isCitizenModalOpen, setIsCitizenModalOpen] = React.useState(false);
@@ -247,6 +247,54 @@ export const ParcelDetailPage: React.FC = () => {
       : 0;
 
   const hasAreaVariance = variancePct > 2.0;
+
+  // Spatial Factor calculations for GIS & Intelligence linking
+  const recordedSqm = parcel.area_recorded_sqm ?? 0;
+  const gisSqm = parcel.area_gis_sqm ?? recordedSqm;
+  const areaDiffSqm = gisSqm - recordedSqm;
+  const isAreaExcess = areaDiffSqm >= 0;
+  const factorVariancePct = recordedSqm > 0 ? (Math.abs(areaDiffSqm) / recordedSqm) * 100 : 0;
+
+  // Convert sqm to acres (1 acre = 4046.86 sqm)
+  const SQM_PER_ACRE = 4046.86;
+  const recordedAcres = recordedSqm > 0 ? (recordedSqm / SQM_PER_ACRE).toFixed(2) : '0.00';
+  const gisAcres = gisSqm > 0 ? (gisSqm / SQM_PER_ACRE).toFixed(2) : '0.00';
+
+  // Check alerts for boundary or satellite discrepancies
+  const alertsList = Array.isArray(parcelAlerts) ? parcelAlerts : [];
+  const boundaryAlert = alertsList.find(
+    (a) => a && (a.alert_type === 'boundary_variance' || a.alert_type === 'encroachment')
+  );
+  const unauthAlert = alertsList.find((a) => a && a.alert_type === 'unauthorized_construction');
+
+  // Factor status determination (consistent with DisputeIntelligence rules)
+  const isAreaCritical = factorVariancePct > 15;
+  const isAreaWarning = !isAreaCritical && factorVariancePct >= 5;
+  const isBoundaryCritical = boundaryAlert?.status === 'open';
+  const isBoundaryWarning = !isBoundaryCritical && (!!boundaryAlert || !!unauthAlert);
+
+  const isFlaggedSpatialFactor = isAreaCritical || isAreaWarning || isBoundaryCritical || isBoundaryWarning;
+  const spatialFactorSeverity: 'CRITICAL' | 'WARNING' | 'PASS' =
+    isAreaCritical || isBoundaryCritical ? 'CRITICAL' : (isAreaWarning || isBoundaryWarning ? 'WARNING' : 'PASS');
+
+  const boundaryStatusText = isBoundaryCritical
+    ? 'Disputed / Inconsistent'
+    : boundaryAlert
+    ? `Under Review (${(boundaryAlert.status || 'open').replace(/_/g, ' ')})`
+    : isAreaCritical || isAreaWarning
+    ? 'Disputed / Inconsistent'
+    : 'Verified / Consistent';
+
+  // Handler for smooth navigation from Intelligence button to GIS map section
+  const handleViewGisEvidence = () => {
+    navigate(`/parcel/${parcel.ulpin}#gis`);
+    setTimeout(() => {
+      const el = document.getElementById('gis-evidence-card') || document.getElementById('gis-map-container');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
+  };
 
   // Active encumbrances check
   const activeEncumbrances = encumbrances?.filter((e) => e.status === 'active') ?? [];
@@ -852,7 +900,7 @@ export const ParcelDetailPage: React.FC = () => {
         {/* TAB 2: GIS & DRONE MAP (Task 6 Deliverable)                        */}
         {/* ================================================================= */}
         {currentTab === 'gis' && (
-          <div className="space-y-6">
+          <div className="space-y-6" id="gis-map-container">
             {/* GIS Overview Bar */}
             <div className="nlip-glass-card p-4 rounded-nlip border border-nlip-border flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div>
@@ -893,6 +941,118 @@ export const ParcelDetailPage: React.FC = () => {
                 </a>
               </div>
             </div>
+
+            {/* Intelligence Spatial Factor Evidence Comparison Card */}
+            {isFlaggedSpatialFactor && (
+              <div
+                id="gis-evidence-card"
+                className={`p-5 rounded-nlip border backdrop-blur-md transition-all shadow-xl ${
+                  spatialFactorSeverity === 'CRITICAL'
+                    ? 'bg-rose-950/30 border-rose-500/50 shadow-rose-950/30 text-rose-100'
+                    : 'bg-amber-950/30 border-amber-500/50 shadow-amber-950/30 text-amber-100'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`p-2 rounded-lg shrink-0 ${
+                        spatialFactorSeverity === 'CRITICAL'
+                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          : 'bg-amber-500/20 text-nlip-amber border border-amber-500/30'
+                      }`}
+                    >
+                      <AlertTriangle className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold tracking-wide uppercase text-nlip-text-soft">
+                          Intelligence Factor Spatial Cross-Examination
+                        </span>
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${
+                            spatialFactorSeverity === 'CRITICAL'
+                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          }`}
+                        >
+                          {spatialFactorSeverity} FACTOR
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-bold text-nlip-text mt-0.5">
+                        {isAreaCritical || isAreaWarning
+                          ? 'Area Consistency Discrepancy'
+                          : 'Boundary Consistency Discrepancy'}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleTabClick('intelligence')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono text-nlip-amber bg-nlip-amber/10 border border-nlip-amber/30 hover:bg-nlip-amber/20 transition-all shrink-0 self-start sm:self-auto"
+                  >
+                    <span>← Back to Intelligence Score</span>
+                  </button>
+                </div>
+
+                {/* Side-by-side factor comparison */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3.5">
+                  <div className="p-3 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                    <div className="text-[11px] font-sans text-nlip-text-soft uppercase tracking-wider">
+                      Recorded Area
+                    </div>
+                    <div className="text-base font-bold font-mono text-nlip-text">
+                      {recordedAcres} acres
+                    </div>
+                    <div className="text-xs font-mono text-nlip-text-faint">
+                      {recordedSqm.toLocaleString()} m² (Khatauni / Registry)
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                    <div className="text-[11px] font-sans text-nlip-text-soft uppercase tracking-wider">
+                      GIS Area
+                    </div>
+                    <div className="text-base font-bold font-mono text-nlip-amber flex items-center gap-2 flex-wrap">
+                      <span>{gisAcres} acres</span>
+                      <span
+                        className={`text-xs px-1.5 py-0.5 rounded font-mono ${
+                          spatialFactorSeverity === 'CRITICAL'
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        }`}
+                      >
+                        {isAreaExcess
+                          ? `+${factorVariancePct.toFixed(1)}% excess`
+                          : `-${factorVariancePct.toFixed(1)}% deficit`}
+                      </span>
+                    </div>
+                    <div className="text-xs font-mono text-nlip-text-faint">
+                      {gisSqm.toLocaleString()} m² (Drone / ST_Area Mesh)
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                    <div className="text-[11px] font-sans text-nlip-text-soft uppercase tracking-wider">
+                      Boundary Status
+                    </div>
+                    <div
+                      className={`text-base font-bold font-mono flex items-center gap-2 ${
+                        spatialFactorSeverity === 'CRITICAL' ? 'text-rose-400' : 'text-amber-400'
+                      }`}
+                    >
+                      <span className="w-2 h-2 rounded-full bg-current animate-pulse shrink-0" />
+                      <span>{boundaryStatusText}</span>
+                    </div>
+                    <div className="text-xs font-mono text-nlip-text-faint">
+                      {boundaryAlert
+                        ? `Alert: ${(boundaryAlert.alert_type || 'boundary alert').replace(/_/g, ' ')} (${((boundaryAlert.confidence_score ?? 0) * 100).toFixed(0)}% conf)`
+                        : `Cadastral variance: ${factorVariancePct.toFixed(1)}%`}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* The Map Component */}
             <MapView
@@ -1055,7 +1215,7 @@ export const ParcelDetailPage: React.FC = () => {
               alerts={parcelAlerts}
               ulpin={parcel.ulpin}
               isLoading={scoreLoading || parcelLoading}
-              onViewGisEvidence={() => navigate(`/parcel/${parcel.ulpin}#gis`)}
+              onViewGisEvidence={handleViewGisEvidence}
             />
 
             {/* Citizen Action Bar in Intelligence Tab */}

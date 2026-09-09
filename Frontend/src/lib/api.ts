@@ -170,6 +170,7 @@ function fallbackMock<T>(
     if (sub === 'tax') return (MOCK_TAX[ulpin] ?? []) as unknown as T;
     if (sub === 'history') return (MOCK_HISTORY[ulpin] ?? []) as unknown as T;
     if (sub === 'intelligence') return (MOCK_RISK_SCORES[ulpin] ?? MOCK_RISK_SCORES['UP09412601001']) as unknown as T;
+    if (sub === 'alerts') return (MOCK_ALERTS[ulpin] ?? []) as unknown as T;
   }
 
   if (path === '/alerts' || path.startsWith('/alerts')) return MOCK_ALERTS as unknown as T;
