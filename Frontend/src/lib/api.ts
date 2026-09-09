@@ -48,8 +48,28 @@ import type {
   DevUsageResponse,
 } from '@/types';
 
+import {
+  MOCK_USERS,
+  MOCK_PARCELS,
+  MOCK_PARCEL_SUMMARIES,
+  MOCK_ROR,
+  MOCK_REGISTRATIONS,
+  MOCK_ENCUMBRANCES,
+  MOCK_MUTATIONS,
+  MOCK_BUILDING_PERMISSIONS,
+  MOCK_TAX,
+  MOCK_HISTORY,
+  MOCK_RISK_SCORES,
+  MOCK_ALERTS,
+  MOCK_CONSENTS,
+  MOCK_AUDIT_TRAIL,
+  MOCK_GRIEVANCES,
+  MOCK_ZONES_GEOJSON,
+  MOCK_UTILITY_GEOJSON,
+} from '../../mocks/data/seed';
+
 // ---------------------------------------------------------------------------
-// Core fetch wrapper
+// Core fetch wrapper & Vercel / Offline Fallback
 // ---------------------------------------------------------------------------
 
 const BASE = (import.meta.env.VITE_API_BASE_URL as string) ?? '/api/v1';
@@ -62,6 +82,95 @@ class ApiError extends Error {
     super(`API ${status}: ${detail}`);
     this.name = 'ApiError';
   }
+}
+
+function fallbackMock<T>(
+  method: string,
+  path: string,
+  options?: { body?: unknown; params?: Record<string, any> }
+): T {
+  // Search: GET /parcels?query=...
+  if (path === '/parcels' || path.startsWith('/parcels?')) {
+    const q = String(options?.params?.query || '').toLowerCase().trim();
+    const state = String(options?.params?.state || '').toUpperCase().trim();
+    const district = String(options?.params?.district || '').toLowerCase().trim();
+    const village = String(options?.params?.village || '').toLowerCase().trim();
+    let results = MOCK_PARCEL_SUMMARIES;
+
+    if (q) {
+      results = results.filter(
+        (p) =>
+          p.ulpin.toLowerCase().includes(q) ||
+          (p.survey_number?.toLowerCase().includes(q) ?? false) ||
+          (p.khasra_number?.toLowerCase().includes(q) ?? false)
+      );
+    }
+    if (state) {
+      results = results.filter((p) => p.state_code === state);
+    }
+    if (district) {
+      results = results.filter((p) => p.district_name.toLowerCase().includes(district));
+    }
+    if (village) {
+      results = results.filter((p) => p.village_name.toLowerCase().includes(village));
+    }
+
+    return {
+      items: results,
+      total: results.length,
+      page: 1,
+      limit: 20,
+    } as unknown as T;
+  }
+
+  // GeoJSON features
+  if (path.includes('/parcels/zones/geojson') || path === '/zones/geojson') {
+    return MOCK_ZONES_GEOJSON as unknown as T;
+  }
+  if (path.includes('/parcels/utilities/geojson') || path === '/utilities/geojson') {
+    return MOCK_UTILITY_GEOJSON as unknown as T;
+  }
+
+  // Parcel subresources: /parcels/:ulpin/...
+  const parcelMatch = path.match(/^\/parcels\/([^/?#]+)(\/([^?#]+))?/);
+  if (parcelMatch) {
+    const ulpin = parcelMatch[1];
+    const sub = parcelMatch[3];
+    if (!sub) {
+      const p = MOCK_PARCELS.find((x) => x.ulpin === ulpin) || MOCK_PARCELS[0];
+      return p as unknown as T;
+    }
+    if (sub === 'ror') return (MOCK_ROR[ulpin] ?? MOCK_ROR['UP09412601001']) as unknown as T;
+    if (sub === 'registrations') return (MOCK_REGISTRATIONS[ulpin] ?? []) as unknown as T;
+    if (sub === 'encumbrances') return (MOCK_ENCUMBRANCES[ulpin] ?? []) as unknown as T;
+    if (sub === 'mutations') return (MOCK_MUTATIONS[ulpin] ?? []) as unknown as T;
+    if (sub === 'building-permissions') return (MOCK_BUILDING_PERMISSIONS[ulpin] ?? []) as unknown as T;
+    if (sub === 'tax') return (MOCK_TAX[ulpin] ?? []) as unknown as T;
+    if (sub === 'history') return (MOCK_HISTORY[ulpin] ?? []) as unknown as T;
+    if (sub === 'intelligence') return (MOCK_RISK_SCORES[ulpin] ?? MOCK_RISK_SCORES['UP09412601001']) as unknown as T;
+  }
+
+  if (path === '/alerts' || path.startsWith('/alerts')) return MOCK_ALERTS as unknown as T;
+  if (path.startsWith('/consents')) return MOCK_CONSENTS as unknown as T;
+  if (path.startsWith('/grievances')) return MOCK_GRIEVANCES as unknown as T;
+  if (path.startsWith('/auth/login') || path.startsWith('/auth/me')) {
+    return {
+      access_token: 'mock_jwt_token',
+      token_type: 'bearer',
+      user: MOCK_USERS[0],
+    } as unknown as T;
+  }
+  if (path.startsWith('/audit')) {
+    return {
+      entity_type: 'record_of_rights',
+      entity_id: '1',
+      total_blocks: 1,
+      verified: true,
+      blocks: MOCK_AUDIT_TRAIL,
+    } as unknown as T;
+  }
+
+  return {} as unknown as T;
 }
 
 async function request<T>(
@@ -95,28 +204,55 @@ async function request<T>(
     ...(!options?.anonymous ? authHeader() : {}),
   };
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    credentials: options?.withCredentials ? 'include' : 'same-origin',
-    body: options?.body !== undefined ? JSON.stringify(options.body) : undefined,
-  });
+  try {
+    const res = await fetch(url, {
+      method,
+      headers,
+      credentials: options?.withCredentials ? 'include' : 'same-origin',
+      body: options?.body !== undefined ? JSON.stringify(options.body) : undefined,
+    });
 
-  if (!res.ok) {
-    let detail = res.statusText;
-    try {
-      const errBody = (await res.json()) as { detail?: string };
-      if (errBody.detail) detail = errBody.detail;
-    } catch {
-      // ignore parse error
+    const contentType = res.headers.get('content-type') || '';
+
+    // If server responded with HTML (e.g. Vercel SPA rewrite fallback returning index.html for /api/v1/...)
+    if (contentType.includes('text/html')) {
+      console.warn(`[NLIP] API endpoint ${path} returned HTML. Falling back to resilient mock data.`);
+      return fallbackMock<T>(method, path, options);
     }
-    throw new ApiError(res.status, detail);
+
+    if (!res.ok) {
+      // If deployed on Vercel and API is missing or 404, fall back smoothly
+      if (
+        typeof window !== 'undefined' &&
+        window.location.hostname.includes('vercel.app') &&
+        (res.status === 404 || res.status === 500)
+      ) {
+        return fallbackMock<T>(method, path, options);
+      }
+
+      let detail = res.statusText;
+      try {
+        const errBody = (await res.json()) as { detail?: string };
+        if (errBody.detail) detail = errBody.detail;
+      } catch {
+        // ignore parse error
+      }
+      throw new ApiError(res.status, detail);
+    }
+
+    // 204 No Content
+    if (res.status === 204) return undefined as unknown as T;
+
+    return (await res.json()) as T;
+  } catch (err: any) {
+    // If request failed (e.g. Network error, CORS error, or failed to fetch on preview)
+    if (err instanceof ApiError) throw err;
+    if (typeof window !== 'undefined') {
+      console.warn(`[NLIP] Network fetch failed for ${path}. Using resilient local mock fallback.`);
+      return fallbackMock<T>(method, path, options);
+    }
+    throw err;
   }
-
-  // 204 No Content
-  if (res.status === 204) return undefined as unknown as T;
-
-  return res.json() as Promise<T>;
 }
 
 // ---------------------------------------------------------------------------

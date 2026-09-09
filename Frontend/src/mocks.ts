@@ -6,14 +6,26 @@
  */
 
 export async function startMocks(): Promise<void> {
-  if (import.meta.env.VITE_USE_MOCKS !== 'true') return;
+  const isVercel =
+    typeof window !== 'undefined' &&
+    (window.location.hostname.includes('vercel.app') ||
+      window.location.hostname.includes('bonkers') ||
+      window.location.hostname.includes('netlify'));
 
-  const { worker } = await import('../mocks/browser');
-  await worker.start({
-    onUnhandledRequest: 'warn',   // warn in console if a real request slips through unhandled
-    serviceWorker: {
-      url: '/mockServiceWorker.js',
-    },
-  });
-  console.info('[MSW] Mock service worker started. All API calls are intercepted by mocks/handlers.ts');
+  const shouldMock = import.meta.env.VITE_USE_MOCKS === 'true' || isVercel;
+  if (!shouldMock) return;
+
+  try {
+    const { worker } = await import('../mocks/browser');
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+      serviceWorker: {
+        url: '/mockServiceWorker.js',
+      },
+    });
+    console.info('[MSW] Mock service worker active. Intercepting API calls for preview/demo.');
+  } catch (err) {
+    console.warn('[MSW] Service worker registration deferred:', err);
+  }
 }
+
