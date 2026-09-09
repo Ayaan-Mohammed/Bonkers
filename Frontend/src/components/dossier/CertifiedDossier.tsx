@@ -63,16 +63,9 @@ export const CertifiedDossier: React.FC<CertifiedDossierProps> = ({
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
   useEffect(() => {
-    // If running on localhost or dev server, use the live Vercel URL so phone QR scanners can connect
-    const isLocal =
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.startsWith('192.168.') ||
-      window.location.hostname.startsWith('10.');
-
-    const baseUrl = isLocal
-      ? 'https://bonkers-4c8v.vercel.app'
-      : window.location.origin;
+    // Use current origin so QR verification links resolve directly to the active site
+    const baseUrl =
+      (import.meta.env.VITE_PUBLIC_APP_URL as string) || window.location.origin;
 
     const verifyUrl = `${baseUrl}/parcel/${parcel.ulpin}`;
     QRCode.toDataURL(verifyUrl, {
