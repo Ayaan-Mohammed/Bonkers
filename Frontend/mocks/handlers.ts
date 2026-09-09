@@ -275,15 +275,24 @@ export const handlers = [
   http.post(`${BASE}/grievances`, async ({ request }) => {
     await delay(MOCK_DELAY);
     const body = await request.json() as Record<string, unknown>;
-    return HttpResponse.json({
+    const newGrievance = {
       ...MOCK_GRIEVANCES[0],
       id: `grv-${Date.now()}`,
-      parcel_id: body['parcel_id'] as string,
-      category: body['category'] as string,
-      description: body['description'] as string,
-      status: 'open',
+      parcel_id: (body['parcel_id'] || body['ulpin'] || 'pcl-ts-001') as string,
+      applicant: {
+        id: 'usr-citizen-demo',
+        name: (body['complainant_name'] as string) || 'Registered Citizen',
+        email: 'citizen@nlip.gov.in',
+      },
+      category: (body['category'] as string) || 'Dispute Objection',
+      description: (body['description'] as string) || 'Administrative dispute objection recorded via NLIP portal.',
+      status: 'open' as const,
+      sla_due_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+      assigned_officer_id: null,
       created_at: new Date().toISOString(),
-    }, { status: 201 });
+    };
+    MOCK_GRIEVANCES.unshift(newGrievance as any);
+    return HttpResponse.json(newGrievance, { status: 201 });
   }),
 
   // GET /grievances/mine
