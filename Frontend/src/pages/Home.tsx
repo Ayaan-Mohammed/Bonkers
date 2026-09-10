@@ -137,7 +137,7 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs font-mono text-nlip-text-soft pt-4">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-nlip-amber" />
-            <span>28 States & 8 UTs</span>
+            <span>29 States & 8 UTs</span>
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-nlip-amber" />
