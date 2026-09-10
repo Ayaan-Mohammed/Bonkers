@@ -28,7 +28,7 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const sandboxParcels = [
+  const sandboxParcels = [  
     {
       state: 'Uttar Pradesh (UP)',
       ulpin: 'UP09412601001',

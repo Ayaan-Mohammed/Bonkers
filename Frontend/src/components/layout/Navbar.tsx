@@ -189,7 +189,7 @@ export const Navbar: React.FC = () => {
 
         {/* Right Action: Search CTA & Role Switcher */}
         <div className="flex items-center gap-3">
-          {/* Quick Search CTA button */}
+          {/* Quick Search CTA button
           <Link to="/search" className="hidden sm:inline-flex">
             <Button
               variant="outline"
@@ -209,7 +209,7 @@ export const Navbar: React.FC = () => {
           >
             <Globe className="w-3.5 h-3.5 text-nlip-amber" />
             <span>{i18n.language === 'hi' ? 'हिन्दी' : 'EN'}</span>
-          </button>
+          </button> */}
 
           {/* Role Switcher Pill / Session dropdown */}
           <div className="relative">
