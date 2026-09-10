@@ -501,14 +501,8 @@ export const CertifiedDossier: React.FC<CertifiedDossierProps> = ({
                     >
                       <div>
                         <span className="font-semibold block">FY {t.assessment_year}–{t.assessment_year + 1}</span>
-                        <span className="text-[11px] text-nlip-text-soft print:text-gray-600 font-mono">
-                          Assessed: ₹{t.assessed_value?.toLocaleString('en-IN') ?? '—'}
-                        </span>
                       </div>
                       <div className="text-right">
-                        <span className="font-mono font-bold text-nlip-amber print:text-black block">
-                          Tax: ₹{t.tax_amount?.toLocaleString('en-IN') ?? '—'}
-                        </span>
                         <span
                           className={`text-[10px] font-mono uppercase font-bold ${
                             t.paid_status === 'paid'
