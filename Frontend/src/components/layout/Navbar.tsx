@@ -209,7 +209,7 @@ export const Navbar: React.FC = () => {
           >
             <Globe className="w-3.5 h-3.5 text-nlip-amber" />
             <span>{i18n.language === 'hi' ? 'हिन्दी' : 'EN'}</span>
-          </button> */}
+          </button> 
 
           {/* Role Switcher Pill / Session dropdown */}
           <div className="relative">
