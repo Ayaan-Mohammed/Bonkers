@@ -308,6 +308,70 @@ def run_seed():
             remarks="Mutation sanctioned after verification of registered sale deed.",
         )
         db.add(mut)
+        db.flush()
+
+        # Cryptographic Audit Log for Deed Registration (Block 2 chained)
+        payload_reg = {
+            "action": "DEED_REGISTRATION",
+            "deed_number": deed_num,
+            "deed_type": reg.deed_type,
+            "sub_registrar": reg.sub_registrar_office,
+            "amount": reg.consideration_amount,
+        }
+        h2 = compute_block_hash(h1, payload_reg)
+        audit_reg = AuditTrail(
+            entity_type="registration",
+            entity_id=str(reg.id),
+            action="REGISTER",
+            actor_user_id=2,
+            prev_hash=h1,
+            curr_hash=h2,
+            payload_diff=payload_reg,
+            created_at=datetime.now(timezone.utc),
+        )
+        db.add(audit_reg)
+
+        # Cryptographic Audit Log for Mutation Sanction (Block 3 chained)
+        payload_mut = {
+            "action": "MUTATION_SANCTION",
+            "mutation_type": mut.mutation_type,
+            "new_owner": owner.full_name,
+            "status": "approved",
+            "ulpin": parcel.ulpin,
+        }
+        h3 = compute_block_hash(h2, payload_mut)
+        audit_mut = AuditTrail(
+            entity_type="mutation",
+            entity_id=str(mut.id),
+            action="SANCTION",
+            actor_user_id=2,
+            prev_hash=h2,
+            curr_hash=h3,
+            payload_diff=payload_mut,
+            created_at=datetime.now(timezone.utc),
+        )
+        db.add(audit_mut)
+
+        # Cryptographic Parcel Ledger Seal (Block 4 chained)
+        payload_parcel = {
+            "action": "PARCEL_LEDGER_SEAL",
+            "ulpin": parcel.ulpin,
+            "state_code": state_code,
+            "verified_blocks": 3,
+            "tamper_detected": False,
+        }
+        h4 = compute_block_hash(h3, payload_parcel)
+        audit_pcl = AuditTrail(
+            entity_type="parcel",
+            entity_id=str(parcel.id),
+            action="VERIFY",
+            actor_user_id=1,
+            prev_hash=h3,
+            curr_hash=h4,
+            payload_diff=payload_parcel,
+            created_at=datetime.now(timezone.utc),
+        )
+        db.add(audit_pcl)
 
         # Building Permission (~30% of parcels)
         if p_num % 3 == 0:

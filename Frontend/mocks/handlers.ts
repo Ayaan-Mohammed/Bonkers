@@ -321,9 +321,30 @@ export const handlers = [
   // ---------------------------------------------------------------------------
 
   // GET /audit/:entity_type/:entity_id
-  http.get(`${BASE}/audit/:entityType/:entityId`, async () => {
+  http.get(`${BASE}/audit/:entityType/:entityId`, async ({ params }) => {
     await delay(MOCK_DELAY);
-    return HttpResponse.json(MOCK_AUDIT_TRAIL);
+    const { entityType, entityId } = params as { entityType: string; entityId: string };
+
+    let blocks = MOCK_AUDIT_TRAIL;
+    if (entityType === 'parcel') {
+      const parcel = MOCK_PARCELS.find((p) => p.id === entityId || p.ulpin === entityId);
+      const targetParcelId = parcel ? parcel.id : entityId;
+      const filtered = MOCK_AUDIT_TRAIL.filter((b) => b.parcel_id === targetParcelId);
+      if (filtered.length > 0) {
+        blocks = filtered;
+      } else {
+        blocks = MOCK_AUDIT_TRAIL.filter((b) => b.parcel_id === 'pcl-ts-001');
+      }
+    } else if (entityId && entityId !== 'all') {
+      const filtered = MOCK_AUDIT_TRAIL.filter(
+        (b) => b.entity_type === entityType && b.entity_id === entityId
+      );
+      if (filtered.length > 0) {
+        blocks = filtered;
+      }
+    }
+
+    return HttpResponse.json(blocks);
   }),
 
   // ---------------------------------------------------------------------------

@@ -267,6 +267,10 @@ export interface AuditTrailEntry {
   curr_hash: string;         // SHA-256
   payload_diff: Record<string, unknown> | null;
   created_at: ISODateTime;
+  parcel_id?: string;
+  block_number?: number;
+  source_system?: string;
+  remarks?: string;
 }
 
 export interface ChangeDetectionAlert {

@@ -4,4 +4,6 @@ export { ChainOfTitle } from './ChainOfTitle';
 export type { ChainOfTitleProps } from './ChainOfTitle';
 export { CitizenActionModal } from './CitizenActionModal';
 export type { CitizenActionModalProps } from './CitizenActionModal';
+export { DataTrailLedger } from './DataTrailLedger';
+export type { DataTrailLedgerProps } from './DataTrailLedger';
 

@@ -15,13 +15,14 @@ import {
   searchParcels,
   getZonesGeoJSON,
   getUtilityGeoJSON,
+  getParcelAuditTrail,
 } from '@/lib/api';
 import { Badge } from '@/components/common/Badge';
 import { Button } from '@/components/common/Button';
 import { Loader } from '@/components/common/Loader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MapView } from '@/components/map';
-import { CertifiedDossier, ChainOfTitle, CitizenActionModal } from '@/components/dossier';
+import { CertifiedDossier, ChainOfTitle, CitizenActionModal, DataTrailLedger } from '@/components/dossier';
 import { DisputeIntelligence } from '@/components/intelligence';
 import {
   Layers,
@@ -143,6 +144,13 @@ export const ParcelDetailPage: React.FC = () => {
     queryKey: ['parcel-alerts', ulpin],
     queryFn: () => getAlerts(ulpin!),
     enabled: !!ulpin && (currentTab === 'intelligence' || currentTab === 'gis'),
+  });
+
+  // Audit trail query for Data Sources & Audit tab
+  const { data: auditEntries, isLoading: auditLoading } = useQuery({
+    queryKey: ['audit-trail', ulpin],
+    queryFn: () => getParcelAuditTrail(parcel?.id ?? ulpin!),
+    enabled: !!ulpin,
   });
 
   const [isCitizenModalOpen, setIsCitizenModalOpen] = React.useState(false);
@@ -1267,19 +1275,14 @@ export const ParcelDetailPage: React.FC = () => {
         )}
 
         {/* ================================================================= */}
-        {/* TAB 6: DATA SOURCES                                               */}
+        {/* TAB 6: DATA SOURCES & AUDIT TRAIL                                 */}
         {/* ================================================================= */}
         {currentTab === 'data-sources' && (
-          <div className="nlip-glass-card p-8 rounded-nlip border border-nlip-border text-center">
-            <Database className="w-12 h-12 text-nlip-amber mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-nlip-text mb-1">Data Sources & Tamper Audit Trail</h3>
-            <p className="text-xs text-nlip-text-soft max-w-md mx-auto mb-4">
-              Verification transparency showing NGDRS registration API, State Bhulekh portal connection, and SHA-256 integrity hash verification.
-            </p>
-            <Button variant="outline" size="sm" onClick={() => handleTabClick('overview')}>
-              ← Return to Overview
-            </Button>
-          </div>
+          <DataTrailLedger
+            parcel={parcel}
+            auditEntries={auditEntries}
+            isLoading={auditLoading}
+          />
         )}
       </div>
 

@@ -201,13 +201,7 @@ function fallbackMock<T>(
     } as unknown as T;
   }
   if (path.startsWith('/audit')) {
-    return {
-      entity_type: 'record_of_rights',
-      entity_id: '1',
-      total_blocks: 1,
-      verified: true,
-      blocks: MOCK_AUDIT_TRAIL,
-    } as unknown as T;
+    return MOCK_AUDIT_TRAIL as unknown as T;
   }
 
   return {} as unknown as T;
@@ -506,6 +500,9 @@ export const patchGrievance = async (id: string, body: PatchGrievanceRequest): P
 
 export const getAuditTrail = (entityType: string, entityId: string) =>
   request<AuditTrailEntry[]>('GET', `/audit/${entityType}/${entityId}`);
+
+export const getParcelAuditTrail = (parcelId: string) =>
+  request<AuditTrailEntry[]>('GET', `/audit/parcel/${parcelId}`);
 
 // ---------------------------------------------------------------------------
 // Developer sandbox
