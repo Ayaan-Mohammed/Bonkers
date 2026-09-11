@@ -63,7 +63,16 @@ export type UserRole =
   | 'planning_officer'
   | 'bank_official'
   | 'developer'
-  | 'admin';
+  | 'admin'
+  // Departmental, judicial, municipal, and system daemon roles
+  | 'survey_officer'
+  | 'sub_registrar'
+  | 'court_officer'
+  | 'town_planner'
+  | 'system_auditor'
+  | 'bank_officer'
+  | 'tax_assessor'
+  | 'magistrate';
 
 export type LandUseType = 'agricultural' | 'residential' | 'commercial' | 'mixed';
 export type TaxPaidStatus = 'paid' | 'due' | 'overdue';
@@ -262,7 +271,7 @@ export interface AuditTrailEntry {
   entity_id: UUID;
   action: string;
   actor_user_id: UUID;
-  actor?: Pick<User, 'id' | 'name' | 'role'>;
+  actor?: Pick<User, 'id' | 'name'> & { role: UserRole | (string & {}) };
   prev_hash: string | null;  // SHA-256
   curr_hash: string;         // SHA-256
   payload_diff: Record<string, unknown> | null;
