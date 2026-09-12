@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/common/Button';
 import { Badge } from '@/components/common/Badge';
@@ -17,16 +17,6 @@ import {
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [quickInput, setQuickInput] = useState('');
-
-  const handleQuickSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (quickInput.trim()) {
-      navigate(`/search?q=${encodeURIComponent(quickInput.trim())}`);
-    } else {
-      navigate('/search');
-    }
-  };
 
   const sandboxParcels = [  
     {
@@ -107,31 +97,21 @@ export const HomePage: React.FC = () => {
           intelligence.
         </p>
 
-        {/* Quick Search Form */}
-        <form
-          onSubmit={handleQuickSubmit}
-          className="max-w-2xl mx-auto mb-8 p-2 rounded-full bg-nlip-surface/80 border border-nlip-border-hi backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center gap-3 hover:border-nlip-amber/40 transition-colors duration-300"
+        {/* Quick Search CTA / Landing Click */}
+        <Link
+          to="/search"
+          className="max-w-2xl mx-auto mb-8 p-2 rounded-full bg-nlip-surface/80 border border-nlip-border-hi backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center gap-3 hover:border-nlip-amber/70 hover:shadow-[0_8px_32px_rgba(217,144,44,0.15)] transition-all duration-300 group cursor-pointer"
         >
-          <div className="pl-5 text-nlip-amber">
+          <div className="pl-5 text-nlip-amber group-hover:scale-110 transition-transform duration-200">
             <Search className="w-5 h-5" />
           </div>
-          <input
-            type="text"
-            value={quickInput}
-            onChange={(e) => setQuickInput(e.target.value)}
-            placeholder="Search by ULPIN, Survey No, Khasra, or Plot..."
-            className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base font-mono text-nlip-text placeholder:text-nlip-text-faint focus:outline-none"
-          />
-          <Button
-            type="submit"
-            variant="primary"
-            size="md"
-            className="rounded-full shrink-0 px-6"
-            iconRight={<ArrowRight className="w-4 h-4" />}
-          >
-            Search
-          </Button>
-        </form>
+          <span className="flex-1 min-w-0 px-3 py-3 text-left text-base font-mono text-nlip-text-soft group-hover:text-nlip-text transition-colors select-none">
+            Search by ULPIN, Survey No, Khasra, or Plot...
+          </span>
+          <span className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-nlip-amber text-[#17140f] font-semibold text-sm shadow-md group-hover:bg-[#e09e3a] group-hover:shadow-lg transition-all shrink-0">
+            Search <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </span>
+        </Link>
 
         {/* Trust Badges Strip */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs font-mono text-nlip-text-soft pt-4">
