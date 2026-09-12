@@ -95,7 +95,9 @@ export const handlers = [
         (p) =>
           p.ulpin.toLowerCase().includes(query) ||
           (p.survey_number?.toLowerCase().includes(query) ?? false) ||
-          (p.khasra_number?.toLowerCase().includes(query) ?? false),
+          (p.khasra_number?.toLowerCase().includes(query) ?? false) ||
+          (p.district_name?.toLowerCase().includes(query) ?? false) ||
+          (p.village_name?.toLowerCase().includes(query) ?? false),
       );
     }
     if (state) {

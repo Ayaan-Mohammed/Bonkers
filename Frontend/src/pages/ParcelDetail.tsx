@@ -48,8 +48,18 @@ import {
   Share2,
   Scale,
   Check,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
+const tabs = [
+  { id: 'overview', label: 'Parcel Overview', icon: Compass },
+  { id: 'gis', label: 'GIS & Drone Map', icon: Layers },
+  { id: 'dossier', label: 'Certified Dossier', icon: FileCheck2 },
+  { id: 'intelligence', label: 'Dispute Intelligence', icon: Brain },
+  { id: 'history', label: 'Chain of Title & History', icon: HistoryIcon },
+  { id: 'data-sources', label: 'Data Sources & Audit', icon: Database },
+];
 
 export const ParcelDetailPage: React.FC = () => {
   const { ulpin } = useParams<{ ulpin: string }>();
@@ -58,6 +68,31 @@ export const ParcelDetailPage: React.FC = () => {
 
   // Tab selection via URL hash or default to 'overview'
   const currentTab = location.hash.replace('#', '') || 'overview';
+
+  const handleTabClick = (tabKey: string) => {
+    navigate(`/parcel/${ulpin}#${tabKey}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const activeIndex = useMemo(() => {
+    const idx = tabs.findIndex((tab) => tab.id === currentTab);
+    return idx >= 0 ? idx : 0;
+  }, [currentTab]);
+
+  const prevTab = activeIndex > 0 ? tabs[activeIndex - 1] : null;
+  const nextTab = activeIndex < tabs.length - 1 ? tabs[activeIndex + 1] : null;
+
+  const handlePrevTab = () => {
+    if (prevTab) {
+      handleTabClick(prevTab.id);
+    }
+  };
+
+  const handleNextTab = () => {
+    if (nextTab) {
+      handleTabClick(nextTab.id);
+    }
+  };
 
   // Primary parcel query
   const {
@@ -209,10 +244,6 @@ export const ParcelDetailPage: React.FC = () => {
     setTimeout(() => setShareCopied(false), 2400);
   };
 
-  const handleTabClick = (tabKey: string) => {
-    navigate(`/parcel/${ulpin}#${tabKey}`);
-  };
-
   // Coordinates centroid for GIS metrics
   const centroid = useMemo(() => {
     if (!parcel?.geom?.geometry?.coordinates?.[0]) return { lat: 0, lng: 0 };
@@ -307,15 +338,6 @@ export const ParcelDetailPage: React.FC = () => {
   // Active encumbrances check
   const activeEncumbrances = encumbrances?.filter((e) => e.status === 'active') ?? [];
 
-  const tabs = [
-    { id: 'overview', label: 'Parcel Overview', icon: Compass },
-    { id: 'gis', label: 'GIS & Drone Map', icon: Layers },
-    { id: 'dossier', label: 'Certified Dossier', icon: FileCheck2 },
-    { id: 'intelligence', label: 'Dispute Intelligence', icon: Brain },
-    { id: 'history', label: 'Chain of Title & History', icon: HistoryIcon },
-    { id: 'data-sources', label: 'Data Sources & Audit', icon: Database },
-  ];
-
   return (
     <div className="min-h-[85vh] flex flex-col">
       {/* Contextual Sticky Sub-Bar */}
@@ -406,27 +428,58 @@ export const ParcelDetailPage: React.FC = () => {
 
           </div>
 
-          {/* Navigation Tabs Bar */}
-          <div className="flex items-center overflow-x-auto no-scrollbar gap-1 border-t border-nlip-border/50 pt-1.5 pb-1">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = currentTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => handleTabClick(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs sm:text-sm whitespace-nowrap transition-colors border-b-2 ${
-                    isActive
-                      ? 'text-nlip-amber border-nlip-amber bg-white/[0.06] font-bold'
-                      : 'text-nlip-text-soft border-transparent hover:text-nlip-text hover:bg-white/[0.03] font-medium'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+          {/* Navigation Tabs Bar with Next & Previous Quick Navigation */}
+          <div className="flex items-center justify-between border-t border-nlip-border/50 pt-1.5 pb-1 gap-2">
+            <div className="flex items-center overflow-x-auto no-scrollbar gap-1 flex-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = currentTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleTabClick(tab.id)}
+                    className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-lg text-xs sm:text-sm whitespace-nowrap transition-colors border-b-2 ${
+                      isActive
+                        ? 'text-nlip-amber border-nlip-amber bg-white/[0.06] font-bold'
+                        : 'text-nlip-text-soft border-transparent hover:text-nlip-text hover:bg-white/[0.03] font-medium'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick Header Next & Previous Buttons */}
+            <div className="flex items-center gap-1.5 shrink-0 pl-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handlePrevTab}
+                disabled={!prevTab}
+                className="text-xs px-2.5 py-1.5 font-mono h-8 border-nlip-border hover:border-nlip-amber/70 disabled:opacity-30 disabled:hover:border-nlip-border"
+                title={prevTab ? `Go to Previous: ${prevTab.label}` : 'No previous page'}
+                icon={<ChevronLeft className="w-3.5 h-3.5 text-nlip-amber" />}
+              >
+                <span className="hidden md:inline">Prev</span>
+              </Button>
+
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                onClick={handleNextTab}
+                disabled={!nextTab}
+                className="text-xs px-2.5 py-1.5 font-mono h-8 disabled:opacity-30"
+                title={nextTab ? `Go to Next: ${nextTab.label}` : 'No next page'}
+                iconRight={<ChevronRight className="w-3.5 h-3.5" />}
+              >
+                <span className="hidden md:inline">Next</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -1284,6 +1337,88 @@ export const ParcelDetailPage: React.FC = () => {
             isLoading={auditLoading}
           />
         )}
+
+        {/* Bottom Pagination & Page Navigation Card */}
+        <div className="mt-10 pt-6 border-t border-nlip-border-hi/60">
+          <div className="nlip-glass-card rounded-nlip p-4 sm:p-5 border border-nlip-border shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Previous Page Button */}
+            <div className="w-full sm:w-1/3 flex justify-start">
+              {prevTab ? (
+                <button
+                  type="button"
+                  onClick={handlePrevTab}
+                  className="w-full sm:w-auto inline-flex items-center gap-3 px-4 py-2.5 rounded-nlip-sm bg-nlip-surface-hi hover:bg-white/[0.08] border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber transition-all group shadow-sm text-left"
+                >
+                  <div className="w-7 h-7 rounded-full bg-black/40 border border-nlip-border group-hover:border-nlip-amber flex items-center justify-center shrink-0 transition-colors">
+                    <ChevronLeft className="w-4 h-4 text-nlip-amber transition-transform group-hover:-translate-x-0.5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-nlip-text-soft">
+                      Previous Page
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold truncate max-w-[200px]">
+                      {prevTab.label}
+                    </div>
+                  </div>
+                </button>
+              ) : (
+                <div className="text-xs font-mono text-nlip-text-soft/40 italic flex items-center gap-1.5 px-2">
+                  <span>First page</span>
+                </div>
+              )}
+            </div>
+
+            {/* Page Step Indicators */}
+            <div className="flex flex-col items-center gap-2 order-last sm:order-none">
+              <div className="flex items-center gap-1.5">
+                {tabs.map((tab, idx) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleTabClick(tab.id)}
+                    className={`h-2 rounded-full transition-all ${
+                      idx === activeIndex
+                        ? 'w-7 bg-nlip-amber'
+                        : 'w-2 bg-nlip-border-hi hover:bg-nlip-text-soft/60'
+                    }`}
+                    title={`Go to ${tab.label}`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs font-mono text-nlip-text-soft text-center">
+                Page <strong className="text-nlip-amber font-bold">{activeIndex + 1}</strong> of{' '}
+                {tabs.length} · <span className="text-nlip-text font-medium">{tabs[activeIndex]?.label}</span>
+              </span>
+            </div>
+
+            {/* Next Page Button */}
+            <div className="w-full sm:w-1/3 flex justify-end">
+              {nextTab ? (
+                <button
+                  type="button"
+                  onClick={handleNextTab}
+                  className="w-full sm:w-auto inline-flex items-center justify-between sm:justify-end gap-3 px-5 py-2.5 rounded-nlip-sm bg-gradient-to-r from-nlip-amber to-[#c98e3b] text-[#17140f] font-semibold hover:brightness-110 transition-all group shadow-md hover:shadow-amber-glow text-right"
+                >
+                  <div>
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-[#17140f]/80">
+                      Next Page
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold truncate max-w-[200px]">
+                      {nextTab.label}
+                    </div>
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-black/15 flex items-center justify-center shrink-0">
+                    <ChevronRight className="w-4 h-4 text-[#17140f] transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </button>
+              ) : (
+                <div className="text-xs font-mono text-nlip-text-soft/40 italic flex items-center gap-1.5 px-2">
+                  <span>Last page</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Citizen Action & Administrative Grievance Modal */}

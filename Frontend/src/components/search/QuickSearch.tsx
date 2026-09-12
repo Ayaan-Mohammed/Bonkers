@@ -60,6 +60,10 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
   const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
     setQuery(preset.query);
     setSelectedState(preset.state);
+    onSearchChange({
+      query: preset.query.trim(),
+      state: preset.state || undefined,
+    });
   };
 
   const handleLocateGps = () => {
