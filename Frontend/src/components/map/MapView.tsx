@@ -101,7 +101,7 @@ const FitToParcel: React.FC<{ geom: Feature<Polygon>; trigger?: number }> = ({ g
       const geoJsonLayer = L.geoJSON(geom);
       const bounds = geoJsonLayer.getBounds();
       if (bounds.isValid()) {
-        map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 17, duration: 0.75 });
+        map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 15, duration: 0.75 });
       }
     } catch {
       // silently fail if geometry is malformed
@@ -302,7 +302,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
       <MapContainer
         center={center}
-        zoom={16}
+        zoom={15}
         className={`${className} rounded-nlip-sm border border-nlip-border overflow-hidden`}
         zoomControl={true}
         attributionControl={true}
