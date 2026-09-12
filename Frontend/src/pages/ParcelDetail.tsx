@@ -486,11 +486,13 @@ export const ParcelDetailPage: React.FC = () => {
 
       {/* Main Tab Content Area */}
       <div className="max-w-nlip-wrap mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
-        {/* ================================================================= */}
-        {/* TAB 1: OVERVIEW                                                   */}
-        {/* ================================================================= */}
-        {currentTab === 'overview' && (
-          <div className="space-y-6">
+        {/* Animated Page Transition View */}
+        <div key={currentTab} className="nlip-tab-transition">
+          {/* ================================================================= */}
+          {/* TAB 1: OVERVIEW                                                   */}
+          {/* ================================================================= */}
+          {currentTab === 'overview' && (
+            <div className="space-y-6">
             {/* Top Stat Banner */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="nlip-glass-card p-5 rounded-nlip border border-nlip-border">
@@ -928,32 +930,6 @@ export const ParcelDetailPage: React.FC = () => {
                 </Button>
               </div>
             </div>
-
-            {/* Quick Action Navigation Buttons */}
-            <div className="flex flex-wrap gap-3 pt-2">
-
-              <Button
-                variant="primary"
-                icon={<Layers className="w-4 h-4" />}
-                onClick={() => handleTabClick('gis')}
-              >
-                Open GIS & Drone Map
-              </Button>
-              <Button
-                variant="outline"
-                icon={<FileCheck2 className="w-4 h-4" />}
-                onClick={() => handleTabClick('dossier')}
-              >
-                View Certified Dossier
-              </Button>
-              <Button
-                variant="outline"
-                icon={<Brain className="w-4 h-4" />}
-                onClick={() => handleTabClick('intelligence')}
-              >
-                Check Dispute Intelligence
-              </Button>
-            </div>
           </div>
         )}
 
@@ -1337,6 +1313,7 @@ export const ParcelDetailPage: React.FC = () => {
             isLoading={auditLoading}
           />
         )}
+        </div>
 
         {/* Bottom Pagination & Page Navigation Card */}
         <div className="mt-10 pt-6 border-t border-nlip-border-hi/60">
@@ -1347,7 +1324,7 @@ export const ParcelDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handlePrevTab}
-                  className="w-full sm:w-auto inline-flex items-center gap-3 px-4 py-2.5 rounded-nlip-sm bg-nlip-surface-hi hover:bg-white/[0.08] border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber transition-all group shadow-sm text-left"
+                  className="w-full sm:w-auto inline-flex items-center gap-3 px-4 py-2.5 rounded-nlip-sm bg-nlip-surface-hi hover:bg-white/[0.08] border border-nlip-border hover:border-nlip-amber/60 text-nlip-text hover:text-nlip-amber transition-all duration-200 group shadow-sm text-left"
                 >
                   <div className="w-7 h-7 rounded-full bg-black/40 border border-nlip-border group-hover:border-nlip-amber flex items-center justify-center shrink-0 transition-colors">
                     <ChevronLeft className="w-4 h-4 text-nlip-amber transition-transform group-hover:-translate-x-0.5" />
@@ -1362,8 +1339,9 @@ export const ParcelDetailPage: React.FC = () => {
                   </div>
                 </button>
               ) : (
-                <div className="text-xs font-mono text-nlip-text-soft/40 italic flex items-center gap-1.5 px-2">
-                  <span>First page</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-nlip-sm border border-nlip-border/20 text-nlip-text-soft/35 select-none bg-black/20 text-xs font-mono">
+                  <ChevronLeft className="w-3.5 h-3.5 opacity-30" />
+                  <span>Start of Dossier</span>
                 </div>
               )}
             </div>
@@ -1376,12 +1354,12 @@ export const ParcelDetailPage: React.FC = () => {
                     key={tab.id}
                     type="button"
                     onClick={() => handleTabClick(tab.id)}
-                    className={`h-2 rounded-full transition-all ${
+                    className={`h-2 rounded-full transition-all duration-300 ${
                       idx === activeIndex
-                        ? 'w-7 bg-nlip-amber'
+                        ? 'w-7 bg-nlip-amber shadow-[0_0_8px_rgba(242,186,99,0.5)]'
                         : 'w-2 bg-nlip-border-hi hover:bg-nlip-text-soft/60'
                     }`}
-                    title={`Go to ${tab.label}`}
+                    title={`Jump to ${tab.label}`}
                   />
                 ))}
               </div>
@@ -1397,7 +1375,7 @@ export const ParcelDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleNextTab}
-                  className="w-full sm:w-auto inline-flex items-center justify-between sm:justify-end gap-3 px-5 py-2.5 rounded-nlip-sm bg-gradient-to-r from-nlip-amber to-[#c98e3b] text-[#17140f] font-semibold hover:brightness-110 transition-all group shadow-md hover:shadow-amber-glow text-right"
+                  className="w-full sm:w-auto inline-flex items-center justify-between sm:justify-end gap-3 px-5 py-2.5 rounded-nlip-sm bg-gradient-to-r from-nlip-amber to-[#c98e3b] text-[#17140f] font-semibold hover:brightness-110 active:scale-[0.98] transition-all duration-200 group shadow-md hover:shadow-amber-glow text-right"
                 >
                   <div>
                     <div className="text-[10px] uppercase font-mono tracking-wider text-[#17140f]/80">
@@ -1412,8 +1390,9 @@ export const ParcelDetailPage: React.FC = () => {
                   </div>
                 </button>
               ) : (
-                <div className="text-xs font-mono text-nlip-text-soft/40 italic flex items-center gap-1.5 px-2">
-                  <span>Last page</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-nlip-sm border border-nlip-border/20 text-nlip-text-soft/35 select-none bg-black/20 text-xs font-mono">
+                  <span>End of Dossier</span>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-30" />
                 </div>
               )}
             </div>
