@@ -21,7 +21,6 @@ const STATES = [
 
 const PRESETS = [
   { label: 'UP Khasra K-2234', query: 'K-2234', state: 'UP' },
-  { label: 'MH 7/12-0501', query: '7/12-0501', state: 'MH' },
   { label: 'KA 15/03 (Bengaluru)', query: '15/03', state: 'KA' },
   { label: 'TS 28/02 (Hyderabad)', query: '28/02', state: 'TS' },
   { label: 'TS 104/01 (Jangaon)', query: '104/01', state: 'TS' },
