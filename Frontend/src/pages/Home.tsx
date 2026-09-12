@@ -52,6 +52,14 @@ export const HomePage: React.FC = () => {
       variant: 'red' as const,
     },
     {
+      state: 'Telangana (TS - Jangaon)',
+      ulpin: 'TS36210401002',
+      loc: 'Jangaon · Pembarthi',
+      desc: 'Clean agricultural craft parcel, 1,050 m², 0.14% GIS variance, verified Pattadar title.',
+      badge: 'Clean Title',
+      variant: 'green' as const,
+    },
+    {
       state: 'Punjab (PB)',
       ulpin: 'PB03140701001',
       loc: 'Amritsar · Lopoke',

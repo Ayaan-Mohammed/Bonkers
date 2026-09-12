@@ -42,7 +42,7 @@ def run_seed():
     print("[*] Seeding Administrative Hierarchy (4 States)...")
     states_data = [
         {"name": "Uttar Pradesh", "code": "UP", "lat": 26.8467, "lon": 80.9462, "districts": ["Varanasi", "Lucknow", "Gorakhpur", "Prayagraj"]},
-        {"name": "Telangana", "code": "TS", "lat": 17.3850, "lon": 78.4867, "districts": ["Hyderabad", "Rangareddy", "Medchal", "Warangal"]},
+        {"name": "Telangana", "code": "TS", "lat": 17.3850, "lon": 78.4867, "districts": ["Hyderabad", "Rangareddy", "Medchal", "Warangal", "Jangaon"]},
         {"name": "Maharashtra", "code": "MH", "lat": 18.5204, "lon": 73.8567, "districts": ["Pune", "Nagpur", "Thane", "Nashik"]},
         {"name": "Karnataka", "code": "KA", "lat": 12.9716, "lon": 77.5946, "districts": ["Bengaluru Urban", "Mysuru", "Dharwad", "Belagavi"]},
     ]

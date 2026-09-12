@@ -134,6 +134,23 @@ const ADMIN_DATA: AdminState[] = [
           },
         ],
       },
+      {
+        name: 'Jangaon',
+        talukas: [
+          {
+            name: 'Jangaon Mandal',
+            villages: ['Pembarthi', 'Jangaon', 'Shamirpet', 'Yeshwanthapur'],
+          },
+          {
+            name: 'Station Ghanpur',
+            villages: ['Station Ghanpur', 'Shivunipalle', 'Chaggal'],
+          },
+          {
+            name: 'Palakurthi',
+            villages: ['Palakurthi', 'Valmidi'],
+          },
+        ],
+      },
     ],
   },
 ];

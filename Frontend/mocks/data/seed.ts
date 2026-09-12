@@ -261,6 +261,41 @@ export const MOCK_PARCELS: Parcel[] = [
     state_code: 'TS',
   },
   {
+    id: 'pcl-ts-002',
+    ulpin: 'TS36210401002',
+    village_id: 'vill-ts-002',
+    survey_number: '104/01',
+    khasra_number: 'KH-812',
+    gata_number: null,
+    patta_number: 'PATTA-TS-JG-5501',
+    area_recorded_sqm: 1050,
+    area_gis_sqm: 1048.5,     // ~0.14% variance — Clean title
+    land_use_type: 'agricultural',
+    geom: {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [79.1795, 17.7195],
+          [79.1825, 17.7193],
+          [79.1828, 17.7220],
+          [79.1812, 17.7235],
+          [79.1785, 17.7228],
+          [79.1780, 17.7205],
+          [79.1795, 17.7195],
+        ]],
+      },
+      properties: { ulpin: 'TS36210401002' },
+    },
+    source: 'cadastral_survey',
+    created_at: '2025-02-10T00:00:00+05:30',
+    updated_at: '2026-08-15T11:00:00+05:30',
+    village_name: 'Pembarthi',
+    district_name: 'Jangaon',
+    state_name: 'Telangana',
+    state_code: 'TS',
+  },
+  {
     id: 'pcl-pb-001',
     ulpin: 'PB03140701001',
     village_id: 'vill-pb-001',
@@ -451,6 +486,20 @@ export const MOCK_ROR: Record<string, RecordOfRights[]> = {
       status: 'disputed',    // <-- deliberate variance case for Trust Score demo
     },
   ],
+  TS36210401002: [{
+    id: 'ror-ts-003',
+    parcel_id: 'pcl-ts-002',
+    owner_id: 'own-ts-003',
+    owner: { id: 'own-ts-003', full_name: 'B. Anjaiah Chary', aadhaar_hash: 'sha256_aadhaar_anjaiah', mobile_hash: 'sha256_mob_anjaiah', father_or_spouse_name: 'Narayana Chary', address: 'Pembarthi Village, Jangaon District, Telangana' },
+    ownership_type: 'sole',
+    share_percentage: 100,
+    tenure_type: 'pattadar',
+    khatauni_number: 'KH-JG-2024-0012',
+    source_document_ref: 'TS-DHARANI-ROR-98124',
+    valid_from: '2016-03-20',
+    valid_to: null,
+    status: 'active',
+  }],
   PB03140701001: [{
     id: 'ror-pb-001',
     parcel_id: 'pcl-pb-001',
@@ -538,6 +587,17 @@ export const MOCK_REGISTRATIONS: Record<string, Registration[]> = {
   UP09412601001: [],
   TN33620801001: [],
   PB03140701001: [],
+  TS36210401002: [{
+    id: 'reg-ts-002',
+    parcel_id: 'pcl-ts-002',
+    deed_type: 'Sale Deed',
+    deed_number: 'TS-SD-2016-04128',
+    registration_date: '2016-03-20',
+    sub_registrar_office: 'SRO Jangaon',
+    consideration_amount: 4200000,
+    ngdrs_ref_id: 'NGDRS-2016-TS3604',
+    document_hash: 'd4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4',
+  }],
   MP23090401001: [{
     id: 'reg-mp-001',
     parcel_id: 'pcl-mp-001',
@@ -576,6 +636,7 @@ export const MOCK_ENCUMBRANCES: Record<string, Encumbrance[]> = {
     end_date: null,
     status: 'active',     // <-- deliberate variance: active litigation, high risk
   }],
+  TS36210401002: [],
   KA29150301001: [],
   UP09412601001: [],
   TN33620801001: [],
@@ -641,6 +702,20 @@ export const MOCK_MUTATIONS: Record<string, Mutation[]> = {
   UP09412601001: [],
   TN33620801001: [],
   PB03140701001: [],
+  TS36210401002: [{
+    id: 'mut-ts-002',
+    parcel_id: 'pcl-ts-002',
+    mutation_type: 'purchase_transfer',
+    previous_owner_id: 'own-ts-004',
+    new_owner_id: 'own-ts-003',
+    previous_owner: { id: 'own-ts-004', full_name: 'K. Mallesh Rao' },
+    new_owner: { id: 'own-ts-003', full_name: 'B. Anjaiah Chary' },
+    applied_date: '2016-03-25',
+    approved_date: '2016-04-10',
+    status: 'approved',
+    approving_officer_id: 'usr-003',
+    remarks: 'Sale deed purchase transfer approved via Dharani revenue portal.',
+  }],
   MP23090401001: [{
     id: 'mut-mp-001',
     parcel_id: 'pcl-mp-001',
@@ -684,6 +759,7 @@ export const MOCK_BUILDING_PERMISSIONS: Record<string, BuildingPermission[]> = {
     status: 'deviation_flagged',  // <-- flags for high-risk TS parcel
     plan_document_ref: null,
   }],
+  TS36210401002: [],
   KA29150301001: [],
   UP09412601001: [],
   TN33620801001: [],
@@ -696,6 +772,15 @@ export const MOCK_BUILDING_PERMISSIONS: Record<string, BuildingPermission[]> = {
 // ---------------------------------------------------------------------------
 
 export const MOCK_TAX: Record<string, PropertyTaxRecord[]> = {
+  TS36210401002: [{
+    id: 'tax-ts-002',
+    parcel_id: 'pcl-ts-002',
+    assessment_year: 2026,
+    assessed_value: 3600000,
+    tax_amount: 3600,
+    paid_status: 'paid',
+    ulb_id: 'GP-PEMBARTHI-JG',
+  }],
   MH27830501001: [{
     id: 'tax-mh-001',
     parcel_id: 'pcl-mh-001',
@@ -804,6 +889,7 @@ export const MOCK_ALERTS: Record<string, ChangeDetectionAlert[]> = {
     resolved_by: 'usr-003',
     is_simulated: true,
   }],
+  TS36210401002: [],
   UP09412601001: [],
   KA29150301001: [],
   TN33620801001: [],
@@ -945,6 +1031,20 @@ export const MOCK_RISK_SCORES: Record<string, DisputeRiskScore> = {
     computed_at: '2026-09-09T06:00:00+05:30',
     model_version: 'v0.1-seed',
   },
+  TS36210401002: {
+    id: 'drs-ts-002',
+    parcel_id: 'pcl-ts-002',
+    score: 6.2,
+    factors: {
+      litigation_active: 0.00,
+      tax_arrears: 0.00,
+      ownership_disputed: 0.00,
+      area_variance_gis: 0.002,
+      building_deviation: 0.00,
+    },
+    computed_at: '2026-09-09T06:00:00+05:30',
+    model_version: 'v0.1-seed',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -1000,6 +1100,24 @@ export const MOCK_HISTORY: Record<string, HistoryEvent[]> = {
   KA29150301001: [],
   TN33620801001: [],
   PB03140701001: [],
+  TS36210401002: [
+    {
+      id: 'hev-ts-004',
+      event_type: 'registration',
+      event_date: '2016-03-20',
+      title: 'Sale Deed Registered',
+      description: 'Sale deed registered at SRO Jangaon for agricultural craft plot in Pembarthi.',
+      source_data: MOCK_REGISTRATIONS['TS36210401002'][0],
+    },
+    {
+      id: 'hev-ts-005',
+      event_type: 'mutation',
+      event_date: '2016-04-10',
+      title: 'Pattadar Passbook Mutation Approved',
+      description: 'Title mutation sanctioned via Dharani Revenue Records to B. Anjaiah Chary.',
+      source_data: MOCK_MUTATIONS['TS36210401002'][0],
+    },
+  ],
   MP23090401001: [
     {
       id: 'hev-mp-001',

@@ -24,6 +24,7 @@ const PRESETS = [
   { label: 'MH 7/12-0501', query: '7/12-0501', state: 'MH' },
   { label: 'KA 15/03 (Bengaluru)', query: '15/03', state: 'KA' },
   { label: 'TS 28/02 (Hyderabad)', query: '28/02', state: 'TS' },
+  { label: 'TS 104/01 (Jangaon)', query: '104/01', state: 'TS' },
   { label: 'TN 62/08 (Chennai)', query: '62/08', state: 'TN' },
 ];
 
@@ -81,6 +82,7 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
         const sites = [
           { name: 'UP: Lucknow Sadar', state: 'UP', query: 'UP09412601001', lat: 26.85, lng: 80.95 },
           { name: 'TS: Hyderabad', state: 'TS', query: 'TS36280201001', lat: 17.38, lng: 78.48 },
+          { name: 'TS: Jangaon (Pembarthi)', state: 'TS', query: 'TS36210401002', lat: 17.72, lng: 79.18 },
           { name: 'MH: Mumbai', state: 'MH', query: 'MH27830501001', lat: 19.07, lng: 72.87 },
           { name: 'KA: Bengaluru', state: 'KA', query: 'KA29150301001', lat: 12.97, lng: 77.59 },
           { name: 'TN: Chennai', state: 'TN', query: 'TN62080401001', lat: 13.08, lng: 80.27 },
